@@ -108,9 +108,15 @@ figcaption{font-size:14px; color:var(--muted); margin-top:10px; max-width:680px}
 /* ---- comparison grid ---- */
 .comp-scroll-note{display:none; font-size:12px; color:var(--dim); margin:6px 0 0}
 .comp-grid{overflow-x:auto; margin:8px 0 26px; -webkit-overflow-scrolling:touch}
-.comp-row{display:grid; grid-template-columns:112px repeat(7,86px); gap:4px;
+.comp-row{display:grid; grid-template-columns:112px repeat(7,118px); gap:4px;
   align-items:center; margin-bottom:4px; width:max-content}
 @media(min-width:740px){.comp-row{grid-template-columns:112px repeat(7,1fr); width:auto}}
+/* Wide screens: break the grid out of the 860px text column to near-viewport
+   width so the tiles are large enough to actually compare. */
+@media(min-width:980px){
+  .comp-grid{position:relative; left:50%; transform:translateX(-50%);
+    width:min(1380px, calc(100vw - 56px))}
+}
 .comp-row .rl{font-size:12.5px; color:var(--muted); padding-right:8px; line-height:1.3}
 .comp-row.metrakon .rl{color:var(--cyan)}
 .comp-row img{width:100%; border-radius:2px; background:#080808; display:block}
