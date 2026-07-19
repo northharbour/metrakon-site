@@ -88,6 +88,23 @@ figure{margin:0 0 30px}
   color:var(--dim); font-family:var(--mono); font-size:12px; text-align:center; padding:16px}
 figcaption{font-size:14px; color:var(--muted); margin-top:10px; max-width:680px}
 
+/* ---- wipe slider ---- */
+.wipe{position:relative; background:#080808; border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; cursor:ew-resize; touch-action:none;
+  user-select:none; -webkit-user-select:none}
+.wipe img{width:100%; display:block; pointer-events:none}
+.wipe .wipe-top{position:absolute; inset:0}
+.wipe-handle{position:absolute; top:0; bottom:0; width:2px; margin-left:-1px;
+  background:var(--accent); pointer-events:none}
+.wipe-handle::after{content:'\2194'; position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%); background:var(--accent); color:#1a1200;
+  width:28px; height:28px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-size:14px}
+.wipe .tag{position:absolute; top:8px; left:8px; font-family:var(--mono); font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase; background:rgba(0,0,0,.72);
+  color:var(--text); padding:3px 7px; border-radius:3px; pointer-events:none}
+.wipe .tag-r{left:auto; right:8px}
+
 /* ---- comparison grid ---- */
 .comp-scroll-note{display:none; font-size:12px; color:var(--dim); margin:6px 0 0}
 .comp-grid{overflow-x:auto; margin:8px 0 26px; -webkit-overflow-scrolling:touch}
@@ -317,17 +334,16 @@ footer a{color:var(--muted)}
       </div>
     </div>
     <figure style="margin-top:30px">
-      <div class="pair">
-        <div class="shot">
-          <span class="tag">Before</span>
-          <div class="ph">original light mix<br>assets/light-before.jpg</div>
-        </div>
-        <div class="shot">
-          <span class="tag">After</span>
-          <div class="ph">sensor-balanced light<br>assets/light-after.jpg</div>
-        </div>
+      <div class="wipe" id="light-wipe">
+        <img src="assets/comp/light_sensor.jpg" alt="Sensor-balanced scanning light" loading="lazy" decoding="async">
+        <img class="wipe-top" src="assets/comp/light_daylight.jpg" alt="Daylight-balanced scanning light"
+             loading="lazy" decoding="async" style="clip-path:inset(0 50% 0 0)">
+        <div class="wipe-handle" style="left:50%"></div>
+        <span class="tag">Daylight-balanced</span>
+        <span class="tag tag-r">Sensor-balanced</span>
       </div>
-      <figcaption>Identical negatives and identical processing; only the scanning light mix differs.</figcaption>
+      <figcaption>Drag to compare. The same negative, converted identically; only the scanning
+      light mix differs — daylight-balanced on the left, balanced for the sensor on the right.</figcaption>
     </figure>
 
     <h3>White light works too</h3>
@@ -489,6 +505,26 @@ footer a{color:var(--muted)}
 
   preloadFrame(curFrame);
   paint();
+
+  // ---- light-comparison wipe slider ----
+  var wipe = document.getElementById('light-wipe');
+  if (wipe) {
+    var top = wipe.querySelector('.wipe-top');
+    var handle = wipe.querySelector('.wipe-handle');
+    var setPos = function (clientX) {
+      var r = wipe.getBoundingClientRect();
+      var pct = Math.max(0, Math.min(100, (clientX - r.left) / r.width * 100));
+      top.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+      handle.style.left = pct + '%';
+    };
+    var down = false;
+    wipe.addEventListener('pointerdown', function (e) {
+      down = true; wipe.setPointerCapture(e.pointerId); setPos(e.clientX);
+    });
+    wipe.addEventListener('pointermove', function (e) { if (down) setPos(e.clientX); });
+    wipe.addEventListener('pointerup',     function () { down = false; });
+    wipe.addEventListener('pointercancel', function () { down = false; });
+  }
 })();
 </script>
 

@@ -27,9 +27,45 @@ TOOLS = {
 SIZES = {'thumb': (520, 80), 'large': (1500, 82)}   # name → (width, jpeg quality)
 
 
+# Scan-light pair (RGB daylight-balanced vs RGB sensor-balanced), shown as a wipe
+# slider. Rendered at the same width and cropped to a common aspect; the sensor
+# image is shifted by the measured 2px@900 vertical offset so the wipe seam aligns.
+LIGHT_PAIR = {
+    'light_daylight': 'RGB Native WB/RGB Daylight.jpg',
+    'light_sensor':   'RGB Native WB/RGB SensorNative.jpg',
+}
+LIGHT_WIDTH, LIGHT_Q = 1500, 82
+
+
+def build_light_pair(src: Path, out_root: Path) -> None:
+    imgs = {}
+    for key, rel in LIGHT_PAIR.items():
+        p = src / rel
+        if not p.exists():
+            print(f'MISSING {p} — light pair skipped')
+            return
+        im = Image.open(p)
+        im.thumbnail((LIGHT_WIDTH, LIGHT_WIDTH * 10), Image.LANCZOS)
+        imgs[key] = im
+    # common canvas: centre-crop both to the smaller height, nudging the sensor
+    # image by the measured alignment offset (scaled to output width)
+    h = min(i.height for i in imgs.values())
+    w = min(i.width for i in imgs.values())
+    dy = round(2 * LIGHT_WIDTH / 900)          # measured: sensor sits 2px low at 900px
+    for key, im in imgs.items():
+        oy = (im.height - h) // 2 + (dy if key == 'light_sensor' else 0)
+        oy = max(0, min(im.height - h, oy))
+        box = ((im.width - w) // 2, oy, (im.width - w) // 2 + w, oy + h)
+        im.crop(box).convert('RGB').save(out_root / f'{key}.jpg',
+                                         quality=LIGHT_Q, optimize=True)
+    print(f'light pair: done ({w}x{h})')
+
+
 def main(src_dir: str) -> None:
     src = Path(src_dir)
     out_root = Path(__file__).resolve().parent.parent / 'assets' / 'comp'
+    out_root.mkdir(parents=True, exist_ok=True)
+    build_light_pair(src, out_root)
     total = 0
     for size_name, (width, quality) in SIZES.items():
         out = out_root / size_name
