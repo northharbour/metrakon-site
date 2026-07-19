@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metrakon — calibrated film negative conversion</title>
+<meta name="description" content="Metrakon converts camera-scanned colour film negatives into finished positives using a measured calibration of your film stock and scanning rig, for consistent results across a whole roll.">
+<meta property="og:title" content="Metrakon — calibrated film negative conversion">
+<meta property="og:description" content="Measured calibration instead of per-image guesswork. Every frame of a roll lands at the same density, with the same colour.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.ico">
+<style>
+:root{
+  --bg:#121212; --surface:#1b1b1b; --surface-2:#161616; --border:#2d2d2d;
+  --muted:#8a8a8a; --dim:#626262; --text:#e6e6e6;
+  --accent:#c5852d; --cyan:#4fc8dd; --radius:4px;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:var(--font); font-size:16px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%; height:auto; display:block}
+a{color:var(--cyan); text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:860px; margin:0 auto; padding:0 24px}
+
+/* ---- header ---- */
+header{border-bottom:1px solid var(--border); position:relative; background:var(--surface-2)}
+header::after{
+  content:''; position:absolute; left:0; right:0; bottom:-2px; height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--cyan));
+}
+.head-in{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 24px; max-width:860px; margin:0 auto}
+.brand{font-weight:600; letter-spacing:.14em; font-size:15px; text-transform:uppercase}
+.brand .k{color:var(--accent)}
+.head-note{font-size:13px; color:var(--dim)}
+
+/* ---- hero ---- */
+.hero{padding:76px 0 60px}
+.eyebrow{
+  font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 18px;
+}
+h1{font-size:40px; line-height:1.2; margin:0 0 20px; font-weight:600; letter-spacing:-.01em}
+.lede{font-size:19px; line-height:1.6; color:#cfcfcf; margin:0 0 16px; max-width:660px}
+.sub{font-size:16px; color:var(--muted); margin:0; max-width:660px}
+
+/* ---- sections ---- */
+section{padding:52px 0; border-top:1px solid var(--border)}
+h2{font-size:23px; font-weight:600; margin:0 0 18px; letter-spacing:-.01em}
+h3{font-size:16px; font-weight:600; margin:28px 0 8px}
+p{margin:0 0 16px; max-width:680px}
+p:last-child{margin-bottom:0}
+.muted{color:var(--muted)}
+
+/* ---- feature list ---- */
+.points{list-style:none; padding:0; margin:0; display:grid; gap:20px}
+.points li{padding-left:18px; border-left:2px solid var(--border); max-width:680px}
+.points strong{display:block; font-weight:600; margin-bottom:3px}
+.points span{color:var(--muted); font-size:15px}
+
+/* ---- comparison figures ---- */
+figure{margin:0 0 30px}
+.pair{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media(max-width:640px){.pair{grid-template-columns:1fr}}
+.shot{
+  background:#080808; border:1px solid var(--border); border-radius:var(--radius);
+  overflow:hidden; position:relative;
+}
+.shot img{width:100%}
+.shot .tag{
+  position:absolute; top:8px; left:8px; font-family:var(--mono); font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase; background:rgba(0,0,0,.72);
+  color:var(--text); padding:3px 7px; border-radius:3px;
+}
+/* placeholder shown until a real image is dropped in — delete .ph when adding <img> */
+.ph{aspect-ratio:3/2; display:flex; align-items:center; justify-content:center;
+  color:var(--dim); font-family:var(--mono); font-size:12px; text-align:center; padding:16px}
+figcaption{font-size:14px; color:var(--muted); margin-top:10px; max-width:680px}
+
+/* ---- stat row ---- */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:26px 0 0}
+@media(max-width:640px){.stats{grid-template-columns:1fr}}
+.stat{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px}
+.stat .n{font-family:var(--mono); font-size:21px; color:var(--cyan); margin-bottom:4px}
+.stat .l{font-size:13px; color:var(--muted); line-height:1.45}
+
+/* ---- signup ---- */
+.signup{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px}
+.signup h2{margin-bottom:10px}
+form{display:flex; gap:10px; margin-top:20px; max-width:480px}
+@media(max-width:520px){form{flex-direction:column}}
+input[type=email]{
+  flex:1; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);
+  color:var(--text); font-family:var(--font); font-size:15px; padding:11px 13px;
+}
+input[type=email]:focus{outline:none; border-color:var(--accent)}
+button{
+  background:var(--accent); color:#1a1200; border:0; border-radius:var(--radius);
+  font-family:var(--font); font-size:15px; font-weight:600; padding:11px 20px; cursor:pointer;
+}
+button:hover{filter:brightness(1.08)}
+.form-note{font-size:13px; color:var(--dim); margin-top:12px}
+
+/* ---- footer ---- */
+footer{border-top:1px solid var(--border); padding:30px 0 44px; color:var(--dim); font-size:14px}
+footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <div class="brand">Metra<span class="k">kon</span></div>
+    <div class="head-note">In development</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <p class="eyebrow">Film negative conversion</p>
+    <h1>Consistent scans, measured rather than estimated</h1>
+    <p class="lede">
+      Metrakon converts camera-scanned colour negatives into finished positives. Instead of
+      analysing each image and estimating a correction, it measures how your film stock behaves
+      on your scanning rig, once, and converts every frame through that measurement.
+    </p>
+    <p class="sub">
+      The result is what minilab scanners did well: a whole roll that lands at the same density
+      with the same colour, without an operator correcting frame by frame.
+    </p>
+  </div>
+
+  <section>
+    <h2>The problem with per-image correction</h2>
+    <p>
+      Most negative conversion works from the image: it reads each frame's statistics — white
+      point, black point, average colour — and estimates a correction. That approach fails in
+      exactly the situations that fill real rolls.
+    </p>
+    <ul class="points">
+      <li>
+        <strong>Scenes without neutral content drift.</strong>
+        <span>A red room, a forest, a sunset — average-to-grey logic reads the scene itself as a
+        colour cast and corrects it away.</span>
+      </li>
+      <li>
+        <strong>Mis-exposed frames get corrected toward the wrong target.</strong>
+        <span>Over-exposed frames come out bright and desaturated; night shots get lifted to grey.</span>
+      </li>
+      <li>
+        <strong>Frame-by-frame analysis drifts frame by frame.</strong>
+        <span>Two photos taken seconds apart can render differently because something in the scene
+        changed the histogram.</span>
+      </li>
+    </ul>
+    <p style="margin-top:26px">
+      A conversion can only be as consistent as the thing it anchors to, and scene statistics are
+      not stable. The film's physical behaviour is.
+    </p>
+  </section>
+
+  <section>
+    <h2>What Metrakon measures instead</h2>
+    <p>
+      A short calibration session — a colour chart photographed on one roll of the stock, bracketed
+      in one-stop steps — captures how that film actually responds on your light and your camera.
+    </p>
+    <ul class="points">
+      <li>
+        <strong>A density fingerprint</strong>
+        <span>Dozens of measured points along each colour channel's response curve, across ±3 stops.
+        Neutral reads neutral at every density level, not just at one — which removes the shadow and
+        highlight casts that a single white balance move can never fix.</span>
+      </li>
+      <li>
+        <strong>A fitted colour matrix</strong>
+        <span>The chart's colour patches fit a cross-channel correction for the overlap between the
+        film's dye layers and the camera's colour filters. It passes statistical quality gates or it
+        is not used.</span>
+      </li>
+      <li>
+        <strong>The film's own base</strong>
+        <span>Each roll's unexposed film base is measured and subtracted in density space, so the
+        orange mask and the scan light's colour cancel exactly — per roll, not estimated per frame.</span>
+      </li>
+      <li>
+        <strong>Exposure as arithmetic</strong>
+        <span>On a negative, an exposure error is a uniform density offset. It is removed with a gain
+        that preserves colour ratios, placing every frame at the same print density.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- =====================================================================
+       COMPARISONS — drop your images into landing/assets/ and replace the
+       <div class="ph">…</div> blocks with <img src="assets/your-file.jpg" alt="…">
+       ===================================================================== -->
+  <section>
+    <h2>Roll consistency</h2>
+    <p>
+      The same scene shot across a three-stop bracket, converted with no per-frame adjustment.
+      Levelled medians land within a couple of 8-bit levels of each other, with colour held.
+    </p>
+    <figure>
+      <div class="shot">
+        <span class="tag">Bracket, no per-frame correction</span>
+        <div class="ph">contact sheet / bracket strip<br>assets/roll-consistency.jpg</div>
+      </div>
+      <figcaption>Replace with a contact sheet of one roll, or a −3…+3 bracket strip.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Scanning light, measured at the sensor</h2>
+    <p>
+      Digital cameras apply substantial white balance gains to raw sensor data before you see
+      anything — on a typical body, around ×2.6 on red and ×1.6 on blue. A light mix that looks
+      well balanced on the camera's histogram can leave the sensor badly starved of red, and colour
+      negative film blocks most red to begin with.
+    </p>
+    <p>
+      Tuning the light against raw, gain-free sensor values instead of the camera's processed
+      preview produced a substantial improvement in red-channel quality for the same scan.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <div class="n">34% &rarr; 89%</div>
+        <div class="l">Raw red channel level at clear film base, before and after tuning</div>
+      </div>
+      <div class="stat">
+        <div class="n">~2&times;</div>
+        <div class="l">Cleaner red content for the same exposure and film</div>
+      </div>
+      <div class="stat">
+        <div class="n">4.58 &rarr; 4.74</div>
+        <div class="l">Measured white density — the red response now resolves to the top of its range</div>
+      </div>
+    </div>
+    <figure style="margin-top:30px">
+      <div class="pair">
+        <div class="shot">
+          <span class="tag">Before</span>
+          <div class="ph">original light mix<br>assets/light-before.jpg</div>
+        </div>
+        <div class="shot">
+          <span class="tag">After</span>
+          <div class="ph">sensor-balanced light<br>assets/light-after.jpg</div>
+        </div>
+      </div>
+      <figcaption>Identical negatives and identical processing; only the scanning light mix differs.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Who it is for</h2>
+    <p>
+      Metrakon is built for volume: film labs digitising customer rolls with a digital camera, and
+      photographers scanning their own work who care more about consistency than about per-frame
+      control.
+    </p>
+    <p>
+      It is not a general-purpose editor, and it deliberately will not convert without a
+      calibration. That constraint is what the consistency is built on. Calibrating a stock takes
+      about five minutes and is done once per film stock and light source.
+    </p>
+  </section>
+
+  <section>
+    <div class="signup">
+      <h2>Status</h2>
+      <p class="muted" style="margin-bottom:0">
+        Metrakon is in active development and not yet available. This page will be updated as it
+        moves toward release.
+      </p>
+
+      <!-- ===================================================================
+           EMAIL CAPTURE — HIDDEN FOR NOW. To switch it back on:
+             1. Delete this comment's opening and closing markers
+             2. Set action= to a real endpoint (GitHub Pages is static and
+                cannot process submissions itself). Free options:
+                  Formspree  — action="https://formspree.io/f/XXXXXXX"
+                  Buttondown — action="https://buttondown.email/api/emails/embed-subscribe/USERNAME"
+             3. Change the <h2> above back to "Follow development" and restore
+                the invitation wording in the paragraph above.
+
+      <form action="#REPLACE-WITH-YOUR-FORM-ENDPOINT" method="POST">
+        <input type="email" name="email" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Keep me posted</button>
+      </form>
+      <p class="form-note">Tell me what you shoot and scan with in your reply — it genuinely shapes what gets built.</p>
+
+           =================================================================== -->
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Metrakon — a project by North Harbour Instruments.
+  </div>
+</footer>
+
+</body>
+</html>
