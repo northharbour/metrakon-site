@@ -16,7 +16,7 @@ script. Re-run after changing the source exports; output filenames are stable.
 """
 import sys
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps
 
 DEFAULT_SRC = 'C:/Users/Blix/Pictures/Private/Ben'
 
@@ -55,6 +55,14 @@ SETS = {
 }
 
 SIZES = {'thumb': (520, 80), 'large': (1500, 82)}   # name → (width, jpeg quality)
+
+# Per-file rotation overrides (degrees CCW), for exports whose file is genuinely
+# unrotated with no EXIF orientation either (EXIF-tagged files are handled
+# generally via exif_transpose on load). FilmLab exported the portrait frame
+# 06559 as unrotated landscape; every other tool shows it upright.
+ROTATE = {
+    ('filmlab', '06559'): 90,
+}
 
 
 # Scan-light pair (RGB daylight-balanced vs RGB sensor-balanced), shown as a wipe
@@ -103,7 +111,10 @@ def build_images(src: Path, out_root: Path, tools: dict, frames: list) -> int:
                 if not p.exists():
                     print(f'MISSING {p}')
                     continue
-                im = Image.open(p)
+                im = ImageOps.exif_transpose(Image.open(p))
+                deg = ROTATE.get((tool, f))
+                if deg:
+                    im = im.rotate(deg, expand=True)
                 im.thumbnail((width, width * 10), Image.LANCZOS)
                 im.convert('RGB').save(out / f'{tool}_{f}.jpg',
                                        quality=quality, optimize=True)

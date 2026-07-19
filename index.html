@@ -125,12 +125,15 @@ figcaption{font-size:14px; color:var(--muted); margin-top:10px; max-width:680px}
 }
 .viewer-tools button:hover{filter:none; border-color:var(--dim); color:var(--text)}
 .viewer-tools button.active{background:var(--accent); border-color:var(--accent); color:#1a1200; font-weight:600}
-.viewer-stage{background:#080808; border-radius:2px; min-height:220px}
-.viewer-stage img{width:100%; border-radius:2px}
+/* Fixed 3:2 stage: every frame (portrait ones letterbox) renders at the same
+   height, so switching frames/tools never reflows the page or jumps the scroll. */
+.viewer-stage{background:#080808; border-radius:2px; min-height:220px; aspect-ratio:3/2;
+  display:flex; align-items:center; justify-content:center}
+.viewer-stage img{width:100%; height:100%; object-fit:contain; border-radius:2px}
 .viewer-frames{display:flex; gap:6px; margin-top:12px; overflow-x:auto}
 .viewer-frames img{
-  width:76px; flex:0 0 auto; border-radius:2px; cursor:pointer;
-  opacity:.55; border:1px solid transparent;
+  width:108px; height:72px; object-fit:cover; flex:0 0 auto; border-radius:2px;
+  cursor:pointer; opacity:.55; border:1px solid transparent;
 }
 .viewer-frames img:hover{opacity:.85}
 .viewer-frames img.active{opacity:1; border-color:var(--accent)}
