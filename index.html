@@ -258,33 +258,19 @@ footer a{color:var(--muted)}
       files. The only manual adjustment in any tool was density, brought toward a similar level
       where the tool offers a density control; nothing else was touched. A converter that anchors
       to the film renders these frames nearly alike; a converter that estimates from each image
-      drifts.
+      drifts. The same test is shown for two film stocks — switch between them below.
     </p>
     <p class="muted" style="font-size:15px">
       Each row is one tool across the bracket. Read along a row: the differences within a row are
       what that tool would do across an ordinary roll.
     </p>
 
+    <div class="viewer-tools" id="stock-select" style="margin:0 0 10px">
+      <span class="muted" style="font-size:13px; align-self:center; margin-right:4px">Film stock</span>
+    </div>
     <div class="comp-grid" id="comp-grid"></div>
 
-    <div class="stats">
-      <div class="stat">
-        <div class="n">13</div>
-        <div class="l">Metrakon median brightness spread (8-bit levels) over the normal and
-        over-exposed frames. The levelling is automatic.</div>
-      </div>
-      <div class="stat">
-        <div class="n">42–56</div>
-        <div class="l">The same spread in the other tools — even with density matched by hand
-        where the tool allows it.</div>
-      </div>
-      <div class="stat">
-        <div class="n">warm &rarr; cool</div>
-        <div class="l">Per-image estimation drifts colour with exposure: Negative Lab Pro's
-        balance swings from warm (mean R−G +15) to cool (−4) along the bracket. Metrakon's
-        holds one direction.</div>
-      </div>
-    </div>
+    <div class="stats" id="comp-stats"></div>
 
     <h3>Inspect a frame</h3>
     <p class="muted" style="font-size:15px">
@@ -295,6 +281,20 @@ footer a{color:var(--muted)}
       <div class="viewer-stage"><img id="viewer-img" alt="Comparison frame" decoding="async"></div>
       <div class="viewer-frames" id="viewer-frames"></div>
     </div>
+
+    <h3>Real scenes</h3>
+    <p class="muted" style="font-size:15px" id="samples-intro">
+      A set of varied scenes from the same film stock, converted by each tool with the same
+      settings as the bracket and no per-frame adjustments. Pick a frame, then switch tools.
+    </p>
+    <div class="viewer" id="samples-viewer">
+      <div class="viewer-tools" id="sviewer-tools"></div>
+      <div class="viewer-stage"><img id="sviewer-img" alt="Sample scene" decoding="async"></div>
+      <div class="viewer-frames" id="sviewer-frames"></div>
+    </div>
+    <p class="muted" id="samples-none" style="display:none; font-size:14px">
+      No real-scene sample set for this film stock yet.
+    </p>
 
     <p class="muted" style="font-size:14px; margin-top:22px">
       Method: identical RAW camera scans (white-light source) converted in each tool. The only
@@ -420,91 +420,185 @@ footer a{color:var(--muted)}
 
 <script>
 (function () {
-  // Comparison data. Tool keys match the filenames tools/make_comparison.py writes.
+  // Comparison data. Tool keys match the filenames tools/make_comparison.py writes;
+  // stock frame lists match its SETS config.
   var TOOLS = [
     { key: 'metrakon',     label: 'Metrakon' },
     { key: 'filmlab',      label: 'FilmLab' },
     { key: 'nlp',          label: 'Negative Lab Pro' },
     { key: 'smartconvert', label: 'SmartConvert' }
   ];
-  var FRAMES = ['09519', '09520', '09521', '09522', '09523', '09524', '09525'];
+  var SETS = {
+    '250d': {
+      label: 'Vision3 250D',
+      frames: ['06570', '06571', '06572', '06573', '06574', '06575', '06576'],
+      samples: ['06553', '06555', '06556', '06559', '06563',
+                '06577', '06582', '06583', '06585', '06587'],
+      stats: [
+        ['1', 'Metrakon median brightness spread (8-bit levels) over the normal and ' +
+              'over-exposed frames of this bracket. The levelling is automatic.'],
+        ['8–29', 'The same spread in the other tools — even with density matched ' +
+              'by hand where the tool allows it.'],
+        ['+8 → −14', 'Negative Lab Pro’s mean R−G balance swings from warm on ' +
+              'under-exposed frames to cool on over-exposed ones. Metrakon holds within ' +
+              '8 levels of neutral across the bracket.']
+      ]
+    },
+    gold: {
+      label: 'Kodak Gold 200',
+      frames: ['09519', '09520', '09521', '09522', '09523', '09524', '09525'],
+      samples: null,
+      stats: [
+        ['13', 'Metrakon median brightness spread (8-bit levels) over the normal and ' +
+              'over-exposed frames. The levelling is automatic.'],
+        ['42–56', 'The same spread in the other tools — even with density matched ' +
+              'by hand where the tool allows it.'],
+        ['warm → cool', 'Per-image estimation drifts colour with exposure: Negative Lab ' +
+              'Pro’s balance swings from warm (mean R−G +15) to cool (−4) along the ' +
+              'bracket. Metrakon’s holds one direction.']
+      ]
+    }
+  };
+  var STOCK_ORDER = ['250d', 'gold'];
+  var curStock = '250d';
   var thumb = function (t, f) { return 'assets/comp/thumb/' + t + '_' + f + '.jpg'; };
   var large = function (t, f) { return 'assets/comp/large/' + t + '_' + f + '.jpg'; };
 
+  // ---- viewer factory: swap tools in place on one frame ----
+  function makeViewer(toolsId, stageId, framesId) {
+    var curTool = 'metrakon', curFrame = null, frames = [];
+    var stageImg = document.getElementById(stageId);
+    var toolsEl  = document.getElementById(toolsId);
+    var framesEl = document.getElementById(framesId);
+    var preloaded = {};
+    function preloadFrame(f) {
+      TOOLS.forEach(function (t) {
+        var src = large(t.key, f);
+        if (!preloaded[src]) { var i = new Image(); i.src = src; preloaded[src] = true; }
+      });
+    }
+    function paint() {
+      if (!curFrame) return;
+      stageImg.src = large(curTool, curFrame);
+      toolsEl.querySelectorAll('button').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.key === curTool);
+      });
+      framesEl.querySelectorAll('img').forEach(function (i) {
+        i.classList.toggle('active', i.dataset.frame === curFrame);
+      });
+    }
+    function setTool(k)  { curTool = k; paint(); }
+    function setFrame(f) { curFrame = f; preloadFrame(f); paint(); }
+    function setFrames(list) {
+      frames = list;
+      framesEl.innerHTML = '';
+      list.forEach(function (f) {
+        var i = document.createElement('img');
+        i.src = thumb('metrakon', f); i.dataset.frame = f;
+        i.loading = 'lazy'; i.alt = 'Frame ' + f;
+        i.addEventListener('click', function () { setFrame(f); });
+        framesEl.appendChild(i);
+      });
+      if (frames.indexOf(curFrame) === -1) curFrame = frames[0];
+      preloadFrame(curFrame);
+      paint();
+    }
+    TOOLS.forEach(function (t) {
+      var b = document.createElement('button');
+      b.textContent = t.label; b.dataset.key = t.key;
+      b.addEventListener('click', function () { setTool(t.key); });
+      toolsEl.appendChild(b);
+    });
+    function onKey(e) {
+      var fi = frames.indexOf(curFrame);
+      var ti = TOOLS.findIndex(function (t) { return t.key === curTool; });
+      if (e.key === 'ArrowRight' && fi < frames.length - 1) { setFrame(frames[fi + 1]); e.preventDefault(); }
+      if (e.key === 'ArrowLeft'  && fi > 0)                 { setFrame(frames[fi - 1]); e.preventDefault(); }
+      if (e.key === 'ArrowDown'  && ti < TOOLS.length - 1)  { setTool(TOOLS[ti + 1].key); e.preventDefault(); }
+      if (e.key === 'ArrowUp'    && ti > 0)                 { setTool(TOOLS[ti - 1].key); e.preventDefault(); }
+    }
+    return { setFrames: setFrames, setTool: setTool, setFrame: setFrame,
+             stage: stageImg, key: onKey };
+  }
+
+  var chartViewer  = makeViewer('viewer-tools',  'viewer-img',  'viewer-frames');
+  var sampleViewer = makeViewer('sviewer-tools', 'sviewer-img', 'sviewer-frames');
+
   // ---- grid: one row per tool across the bracket ----
   var grid = document.getElementById('comp-grid');
-  TOOLS.forEach(function (t) {
-    var row = document.createElement('div');
-    row.className = 'comp-row' + (t.key === 'metrakon' ? ' metrakon' : '');
-    var lbl = document.createElement('div');
-    lbl.className = 'rl'; lbl.textContent = t.label;
-    row.appendChild(lbl);
-    FRAMES.forEach(function (f) {
-      var img = document.createElement('img');
-      img.src = thumb(t.key, f); img.loading = 'lazy'; img.decoding = 'async';
-      img.alt = t.label + ' frame ' + f;
-      img.title = 'Open in the viewer';
-      img.style.cursor = 'pointer';
-      img.addEventListener('click', function () { setFrame(f); setTool(t.key); });
-      row.appendChild(img);
-    });
-    grid.appendChild(row);
-  });
-
-  // ---- viewer: swap tools in place on one frame ----
-  var curTool = 'metrakon', curFrame = FRAMES[0];
-  var stageImg   = document.getElementById('viewer-img');
-  var toolsEl    = document.getElementById('viewer-tools');
-  var framesEl   = document.getElementById('viewer-frames');
-  var preloaded  = {};
-
-  function preloadFrame(f) {
+  function renderGrid(set) {
+    grid.innerHTML = '';
     TOOLS.forEach(function (t) {
-      var src = large(t.key, f);
-      if (!preloaded[src]) { var i = new Image(); i.src = src; preloaded[src] = true; }
+      var row = document.createElement('div');
+      row.className = 'comp-row' + (t.key === 'metrakon' ? ' metrakon' : '');
+      var lbl = document.createElement('div');
+      lbl.className = 'rl'; lbl.textContent = t.label;
+      row.appendChild(lbl);
+      set.frames.forEach(function (f) {
+        var img = document.createElement('img');
+        img.src = thumb(t.key, f); img.loading = 'lazy'; img.decoding = 'async';
+        img.alt = t.label + ' frame ' + f;
+        img.title = 'Open in the viewer';
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', function () {
+          chartViewer.setFrame(f); chartViewer.setTool(t.key);
+        });
+        row.appendChild(img);
+      });
+      grid.appendChild(row);
     });
   }
-  function paint() {
-    stageImg.src = large(curTool, curFrame);
-    toolsEl.querySelectorAll('button').forEach(function (b) {
-      b.classList.toggle('active', b.dataset.key === curTool);
-    });
-    framesEl.querySelectorAll('img').forEach(function (i) {
-      i.classList.toggle('active', i.dataset.frame === curFrame);
-    });
-  }
-  function setTool(k)  { curTool = k; paint(); }
-  function setFrame(f) { curFrame = f; preloadFrame(f); paint(); }
 
-  TOOLS.forEach(function (t) {
+  var statsEl = document.getElementById('comp-stats');
+  function renderStats(set) {
+    statsEl.innerHTML = '';
+    set.stats.forEach(function (s) {
+      var tile = document.createElement('div'); tile.className = 'stat';
+      var n = document.createElement('div'); n.className = 'n'; n.textContent = s[0];
+      var l = document.createElement('div'); l.className = 'l'; l.textContent = s[1];
+      tile.appendChild(n); tile.appendChild(l);
+      statsEl.appendChild(tile);
+    });
+  }
+
+  // ---- film-stock selector ----
+  var stockSel = document.getElementById('stock-select');
+  function setStock(key) {
+    curStock = key;
+    var set = SETS[key];
+    stockSel.querySelectorAll('button').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.key === key);
+    });
+    renderGrid(set);
+    renderStats(set);
+    chartViewer.setFrames(set.frames);
+    var has = !!(set.samples && set.samples.length);
+    document.getElementById('samples-viewer').style.display = has ? '' : 'none';
+    document.getElementById('samples-intro').style.display  = has ? '' : 'none';
+    document.getElementById('samples-none').style.display   = has ? 'none' : '';
+    if (has) sampleViewer.setFrames(set.samples);
+  }
+  STOCK_ORDER.forEach(function (key) {
     var b = document.createElement('button');
-    b.textContent = t.label; b.dataset.key = t.key;
-    b.addEventListener('click', function () { setTool(t.key); });
-    toolsEl.appendChild(b);
-  });
-  FRAMES.forEach(function (f) {
-    var i = document.createElement('img');
-    i.src = thumb('metrakon', f); i.dataset.frame = f;
-    i.loading = 'lazy'; i.alt = 'Frame ' + f;
-    i.addEventListener('click', function () { setFrame(f); });
-    framesEl.appendChild(i);
+    b.textContent = SETS[key].label; b.dataset.key = key;
+    b.addEventListener('click', function () { setStock(key); });
+    stockSel.appendChild(b);
   });
 
-  // keyboard: ←/→ frames, ↑/↓ tools (only while the viewer is on screen)
+  // keyboard: ←/→ frames, ↑/↓ tools — routed to the viewer most on screen
   document.addEventListener('keydown', function (e) {
     if (e.target.tagName === 'INPUT') return;
-    var r = stageImg.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > innerHeight) return;
-    var fi = FRAMES.indexOf(curFrame);
-    var ti = TOOLS.findIndex(function (t) { return t.key === curTool; });
-    if (e.key === 'ArrowRight' && fi < FRAMES.length - 1) { setFrame(FRAMES[fi + 1]); e.preventDefault(); }
-    if (e.key === 'ArrowLeft'  && fi > 0)                 { setFrame(FRAMES[fi - 1]); e.preventDefault(); }
-    if (e.key === 'ArrowDown'  && ti < TOOLS.length - 1)  { setTool(TOOLS[ti + 1].key); e.preventDefault(); }
-    if (e.key === 'ArrowUp'    && ti > 0)                 { setTool(TOOLS[ti - 1].key); e.preventDefault(); }
+    var best = null, bestVis = 0;
+    [chartViewer, sampleViewer].forEach(function (v) {
+      if (v.stage.offsetParent === null) return;
+      var r = v.stage.getBoundingClientRect();
+      var vis = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
+      if (vis > bestVis) { bestVis = vis; best = v; }
+    });
+    if (best && bestVis > 0) best.key(e);
   });
 
-  preloadFrame(curFrame);
-  paint();
+  setStock(curStock);
 
   // ---- light-comparison wipe slider ----
   var wipe = document.getElementById('light-wipe');
