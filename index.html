@@ -311,6 +311,47 @@ footer a{color:var(--muted)}
   </section>
 
   <section>
+    <h2>Aged film, measured</h2>
+    <p>
+      Aged film — expired stock, or exposed rolls that waited years for development — does not
+      simply fade. Its colour balance shifts unevenly across the tonal range: shadows drift
+      toward magenta while highlights drift toward teal. Because the error bends with density,
+      no white-balance move can remove it — white balance is a straight-line correction, and
+      this is a curve. Auto-balancing converters average the two casts against each other and
+      leave both in the frame: magenta shadows, teal skies.
+    </p>
+    <p>
+      Obelisk treats ageing the way it treats everything else: as something to measure rather
+      than estimate. The same film stock is calibrated twice — once fresh, and once from film
+      deliberately aged before development — capturing how ageing actually bends each colour
+      channel's response, at every density level.
+    </p>
+    <p>
+      The correction is a single per-roll control. Zero is the fresh calibration; raising the
+      de-aging strength applies the measured ageing shift in reverse until the roll's neutrals
+      line up. Shadows and highlights return to neutral together, because the correction
+      follows the same curve the ageing did — not a compromise between two casts.
+    </p>
+    <!-- DE-AGING WIPE SLOT (planned): the same frame from a genuinely aged customer roll,
+         de-aging 0 vs dialled in — the site's wipe machinery handles it. Drop the two
+         renders into assets/ and uncomment (ids must be unique; the wipe script below
+         binds #light-wipe only, so copy those ~15 lines for #deage-wipe when enabling):
+    <figure style="margin-top:28px">
+      <div class="wipe" id="deage-wipe">
+        <img src="assets/deage_corrected.jpg" alt="De-aging applied" loading="lazy" decoding="async">
+        <img class="wipe-top" src="assets/deage_off.jpg" alt="Fresh calibration only"
+             loading="lazy" decoding="async" style="clip-path:inset(0 50% 0 0)">
+        <div class="wipe-handle" style="left:50%"></div>
+        <span class="tag">Fresh calibration</span>
+        <span class="tag tag-r">De-aging applied</span>
+      </div>
+      <figcaption>Drag to compare. An aged roll through the fresh calibration, and the same
+      frame with the measured de-aging correction dialled in.</figcaption>
+    </figure>
+    -->
+  </section>
+
+  <section>
     <h2>Consistency, compared</h2>
     <p>
       The test below is one exposure bracket — the same scene shot seven times, from several stops
