@@ -2,14 +2,21 @@
 
     python tools/make_measurement_figures.py [path\to\negacon.db]
 
-Reads a REAL calibrated profile (Vision3 250D, id 30) from the app database and writes:
-    assets/fp_fingerprint.svg   the per-channel density fingerprint (curve + points)
-    assets/fp_matrix.svg        the fitted colour matrix acting on the 24 chart patches
+Faithful ports of the APP'S OWN fingerprint-viewer plots (the ones Ben approved),
+computed from a real production calibration (Kodak Gold 200, profile 19) through the
+app's pipeline itself:
 
-DELIBERATE: no numeric axis labels — the plots show real measured shapes, but the
-calibration values themselves (the product's IP) are not reconstructable from them.
+    assets/fp_fingerprint.svg   neutral-cast view: R−G / B−G deviation vs input density —
+                                smoothed use-time curves (pipeline._fp_channel_pairs),
+                                measured points as dots, the AGED calibration dashed
+    assets/fp_matrix.svg        colour view: hue ring with arrows showing how the fitted
+                                density matrix moves each hue, plus the summary stats
+
+The cast plot shows channel DIFFERENCES and the ring shows relative moves — neither
+exposes the absolute per-channel calibration maps (the product's IP).
 """
 import json
+import math
 import sqlite3
 import sys
 from pathlib import Path
@@ -17,122 +24,169 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent.parent
 DB = Path(sys.argv[1]) if len(sys.argv) > 1 else \
     HERE.parent / 'negacon-converter' / 'data' / 'negacon.db'
-PROFILE_ID = 30           # Vision3 250D (RGB) — fingerprint + matrix + stored chart samples
+APP = HERE.parent / 'negacon-converter'
+PROFILE = 19              # Kodak Gold 200 (RGB): fingerprint + aged fingerprint + matrix
 
-BG, GRID, TEXT = '#0e0e0e', '#242424', '#8a8a8a'
-CH_COL = {'r': '#d4574a', 'g': '#9f9fa2', 'b': '#4fc8dd'}
-# classic ColorChecker 24 sRGB swatches, row-major (patch sampling order)
-CC = ['#735244', '#c29682', '#627a9d', '#576c43', '#8580b1', '#67bdaa',
-      '#d67e2c', '#505ba6', '#c15a63', '#5e3c6c', '#9dbc40', '#e0a32e',
-      '#383d96', '#469449', '#af363c', '#e7c71f', '#bb5695', '#0885a1',
-      '#f3f3f2', '#c8c8c8', '#a0a0a0', '#7a7a79', '#555555', '#343434']
+BG, GRID, TEXT, ZERO = '#0e0e0e', '#242424', '#8a8a8a', '#4a4a4a'
+RG_COL, BG_COL = '#c5852d', '#4fc8dd'      # the app viewer's R−G / B−G colours
 W, H = 720, 480
 
-
-def interp(x, xs, ys):
-    if x <= xs[0]: return ys[0]
-    if x >= xs[-1]: return ys[-1]
-    for i in range(1, len(xs)):
-        if x <= xs[i]:
-            f = (x - xs[i - 1]) / max(xs[i] - xs[i - 1], 1e-9)
-            return ys[i - 1] + f * (ys[i] - ys[i - 1])
-    return ys[-1]
+sys.path.insert(0, str(APP))
+import numpy as np           # noqa: E402  (the app venv provides it)
+import pipeline as apppipe   # noqa: E402
 
 
 def svg_head():
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
-            f'font-family="ui-monospace,Menlo,Consolas,monospace" font-size="13">\n'
+            f'font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12.5">\n'
             f'<rect width="{W}" height="{H}" fill="{BG}"/>\n')
 
 
-def fingerprint_svg(cb):
-    out = cb['out']
-    xmax = max(max(cb[c]) for c in 'rgb') * 1.06
-    ymax = max(out) * 1.08
-    L, R_, T, B_ = 56, 24, 26, 52          # margins
+def _maps(cb):
+    """Per-channel smoothed use-time maps (dense x, y arrays) via the app pipeline."""
+    return {c: [np.asarray(a, float) for a in apppipe._fp_channel_pairs(cb, c)] for c in 'rgb'}
+
+
+def neutral_cast_svg(cb, cb_aged):
+    m = _maps(cb)
+    hi = min(float(m[c][0][-1]) for c in 'rgb')          # common calibrated range
+    d = np.linspace(0.0, hi, 240)
+    ev = lambda mm, x: np.interp(x, mm[0], mm[1])
+    rg = ev(m['r'], d) - ev(m['g'], d)
+    bgc = ev(m['b'], d) - ev(m['g'], d)
+    curves = [(rg, RG_COL, False), (bgc, BG_COL, False)]
+    if cb_aged:
+        ma = _maps(cb_aged)
+        hia = min(float(ma[c][0][-1]) for c in 'rgb')
+        da = np.linspace(0.0, min(hi, hia), 240)
+        curves.append(((ev(ma['r'], da) - ev(ma['g'], da), da), RG_COL, True))
+        curves.append(((ev(ma['b'], da) - ev(ma['g'], da), da), BG_COL, True))
+    ymax = max(float(np.max(np.abs(c[0][0] if isinstance(c[0], tuple) else c[0])))
+               for c in curves) * 1.3
+    ymax = max(ymax, 0.2)
+    L, R_, T, B_ = 64, 22, 22, 66
     pw, ph = W - L - R_, H - T - B_
-    X = lambda v: L + v / xmax * pw
-    Y = lambda v: T + ph - v / ymax * ph
+    X = lambda v: L + v / hi * pw
+    Y = lambda v: T + ph / 2 - v / ymax * ph / 2
     s = svg_head()
-    for f in (0.25, 0.5, 0.75, 1.0):       # quiet quarter grid, unlabelled
-        s += f'<line x1="{L}" y1="{Y(ymax*f/1.08):.1f}" x2="{L+pw}" y2="{Y(ymax*f/1.08):.1f}" stroke="{GRID}"/>\n'
-        s += f'<line x1="{X(xmax*f/1.06):.1f}" y1="{T}" x2="{X(xmax*f/1.06):.1f}" y2="{T+ph}" stroke="{GRID}"/>\n'
-    s += f'<line x1="{L}" y1="{T+ph}" x2="{L+pw}" y2="{T+ph}" stroke="{TEXT}" stroke-width="1.2"/>\n'
-    s += f'<line x1="{L}" y1="{T}" x2="{L}" y2="{T+ph}" stroke="{TEXT}" stroke-width="1.2"/>\n'
-    for c in 'rgb':
-        pts = sorted(zip(cb[c], out))
-        path = ' '.join(f'{X(x):.1f},{Y(y):.1f}' for x, y in pts)
-        s += f'<polyline points="{path}" fill="none" stroke="{CH_COL[c]}" stroke-width="2.2"/>\n'
-        for x, y in pts:
-            s += f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="4" fill="{CH_COL[c]}" stroke="{BG}" stroke-width="1.2"/>\n'
-    s += (f'<text x="{L+pw/2:.0f}" y="{H-16}" fill="{TEXT}" text-anchor="middle">'
-          f'measured channel density above film base &#8594;</text>\n')
-    s += (f'<text x="18" y="{T+ph/2:.0f}" fill="{TEXT}" text-anchor="middle" '
-          f'transform="rotate(-90 18 {T+ph/2:.0f})">reference density &#8594;</text>\n')
-    lx = L + 18
-    for c, name in (('r', 'red'), ('g', 'green'), ('b', 'blue')):
-        s += f'<circle cx="{lx}" cy="{T+14}" r="5" fill="{CH_COL[c]}"/>\n'
-        s += f'<text x="{lx+11}" y="{T+18}" fill="{TEXT}">{name}</text>\n'
-        lx += 72
+    for f in (0.25, 0.5, 0.75, 1.0):
+        s += f'<line x1="{X(hi*f):.1f}" y1="{T}" x2="{X(hi*f):.1f}" y2="{T+ph}" stroke="{GRID}"/>\n'
+    for yv in (-ymax / 1.3, -ymax / 2.6, ymax / 2.6, ymax / 1.3):
+        s += f'<line x1="{L}" y1="{Y(yv):.1f}" x2="{L+pw}" y2="{Y(yv):.1f}" stroke="{GRID}"/>\n'
+    s += f'<line x1="{L}" y1="{Y(0):.1f}" x2="{L+pw}" y2="{Y(0):.1f}" stroke="{ZERO}" stroke-width="1.4"/>\n'
+    s += f'<line x1="{L}" y1="{T}" x2="{L}" y2="{T+ph}" stroke="{TEXT}"/>\n'
+    # ticks
+    for f in (0.0, 0.25, 0.5, 0.75, 1.0):
+        s += (f'<text x="{X(hi*f):.0f}" y="{T+ph+18}" fill="{TEXT}" text-anchor="middle">'
+              f'{hi*f:.1f}</text>\n')
+    for yv in (-ymax / 1.3, 0.0, ymax / 1.3):
+        s += (f'<text x="{L-8}" y="{Y(yv)+4:.1f}" fill="{TEXT}" text-anchor="end">'
+              f'{yv:+.2f}'.replace('+0.00', '0.00') + '</text>\n')
+    # curves (solid fresh, dashed aged)
+    for data, col, dashed in curves:
+        ys, xs = (data[0], data[1]) if isinstance(data, tuple) else (data, d)
+        path = ' '.join(f'{X(float(x)):.1f},{Y(float(y)):.1f}' for x, y in zip(xs, ys))
+        dash = ' stroke-dasharray="6 5"' if dashed else ''
+        s += f'<polyline points="{path}" fill="none" stroke="{col}" stroke-width="2.4"{dash}/>\n'
+    # measured points: raw control points of the FRESH fp, cast vs the green map
+    out = np.asarray(cb['out'], float)
+    for ch, col in (('r', RG_COL), ('b', BG_COL)):
+        xs = np.asarray(cb[ch], float)
+        keep = xs <= hi
+        ys = out[keep] - np.interp(xs[keep], m['g'][0], m['g'][1])
+        for x, y in zip(xs[keep], ys):
+            s += (f'<circle cx="{X(float(x)):.1f}" cy="{Y(float(y)):.1f}" r="4" '
+                  f'fill="{col}" stroke="{BG}" stroke-width="1.2"/>\n')
+    s += (f'<text x="{L+pw/2:.0f}" y="{H-26}" fill="{TEXT}" text-anchor="middle">'
+          f'input density</text>\n')
+    s += (f'<text x="20" y="{T+ph/2:.0f}" fill="{TEXT}" text-anchor="middle" '
+          f'transform="rotate(-90 20 {T+ph/2:.0f})">neutral cast (channel &#8722; green)</text>\n')
+    s += (f'<text x="{L}" y="{H-8}" fill="{TEXT}">'
+          f'<tspan fill="{RG_COL}">&#9644;</tspan> R&#8722;G  '
+          f'<tspan fill="{BG_COL}">&#9644;</tspan> B&#8722;G &#183; dots = measured points'
+          + (' &#183; &#8211;&#8211; aged' if cb_aged else '') + '</text>\n')
     return s + '</svg>\n'
 
 
-def matrix_svg(cb, M, meds):
-    out = cb['out']
-    bal = []
-    for m in meds:
-        bal.append([interp(m[i], cb[c], out) for i, c in enumerate('rgb')])
-    post = [[sum(M[r][c] * v[c] for c in range(3)) for r in range(3)] for v in bal]
-    chroma = lambda v: (v[0] - v[1], v[2] - v[1])          # (R−G, B−G) in density
-    pre_c, post_c = [chroma(v) for v in bal], [chroma(v) for v in post]
-    rng = max(abs(x) for p in pre_c + post_c for x in p) * 1.15
-    # square plot area centred horizontally, vertical margins 20/56
-    T, ph = 20, H - 76
+def _hue_colour(theta_deg):
+    """Plane angle → display colour (+x red, +y blue, −x cyan, −y yellow)."""
+    h = (360.0 - theta_deg) % 360.0
+    c, x = 0.62, 0.62 * (1 - abs((h / 60.0) % 2 - 1))
+    seq = [(c, x, 0), (x, c, 0), (0, c, x), (0, x, c), (x, 0, c), (c, 0, x)]
+    r, g, b = seq[int(h // 60) % 6]
+    to = lambda v: int((v + 0.28) * 255)
+    return f'#{to(r):02x}{to(g):02x}{to(b):02x}'
+
+
+def matrix_ring_svg(M):
+    chroma = lambda v: (v[0] - v[1], v[2] - v[1])
+    pre, post, cols = [], [], []
+    for k in range(12):
+        th = k * 30.0
+        a, b = math.cos(math.radians(th)), math.sin(math.radians(th))
+        g = -(a + b) / 3.0
+        v = [a + g, g, b + g]                    # mean-free density vector with that chroma
+        mv = [sum(M[r][c] * v[c] for c in range(3)) for r in range(3)]
+        pre.append((a, b)); post.append(chroma(mv)); cols.append(_hue_colour(th))
+    sat = sum(math.hypot(*p) for p in post) / 12.0
+    hue_shifts = []
+    for (a, b), (a2, b2) in zip(pre, post):
+        dth = math.degrees(math.atan2(b2, a2) - math.atan2(b, a))
+        dth = (dth + 180) % 360 - 180
+        hue_shifts.append(dth)
+    mx_shift = max(hue_shifts, key=abs)
+    names = 'RGB'
+    off = [(abs(M[i][j]), f'{names[i]}&#8592;{names[j]}')
+           for i in range(3) for j in range(3) if i != j]
+    ct_v, ct_n = max(off)
+    det = (M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1])
+           - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0])
+           + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]))
+    rng = max(max(math.hypot(*p) for p in post), 1.0) * 1.5
+    T, ph = 18, H - 72
     Xp = lambda v: (W - ph) / 2 + (v + rng) / (2 * rng) * ph
     Yp = lambda v: T + ph - (v + rng) / (2 * rng) * ph
     s = svg_head()
     x0, y0 = Xp(0), Yp(0)
-    s += f'<line x1="{Xp(-rng):.1f}" y1="{y0:.1f}" x2="{Xp(rng):.1f}" y2="{y0:.1f}" stroke="{GRID}" stroke-width="1.4"/>\n'
-    s += f'<line x1="{x0:.1f}" y1="{Yp(-rng):.1f}" x2="{x0:.1f}" y2="{Yp(rng):.1f}" stroke="{GRID}" stroke-width="1.4"/>\n'
-    for f in (0.5, 1.0):                    # neutral rings, unlabelled
-        r = f * rng / (2 * rng) * ph
-        s += (f'<circle cx="{x0:.1f}" cy="{y0:.1f}" r="{r:.1f}" fill="none" '
-              f'stroke="{GRID}" stroke-dasharray="3 5"/>\n')
-    order = sorted(range(24), key=lambda i: i < 18)   # greys first, colours on top
-    for i in order:
-        grey = i >= 18
-        col = CC[i]
-        (x1, y1), (x2, y2) = pre_c[i], post_c[i]
-        r = 4 if grey else 6
-        if not grey:
-            s += (f'<line x1="{Xp(x1):.1f}" y1="{Yp(y1):.1f}" x2="{Xp(x2):.1f}" y2="{Yp(y2):.1f}" '
-                  f'stroke="{col}" stroke-width="2" opacity="0.75"/>\n')
-        s += (f'<circle cx="{Xp(x1):.1f}" cy="{Yp(y1):.1f}" r="{r}" fill="none" '
-              f'stroke="{col}" stroke-width="2" opacity="0.85"/>\n')
-        s += (f'<circle cx="{Xp(x2):.1f}" cy="{Yp(y2):.1f}" r="{r}" fill="{col}" '
-              f'stroke="{BG}" stroke-width="1.4"/>\n')
-    s += (f'<text x="{W/2:.0f}" y="{H-34}" fill="{TEXT}" text-anchor="middle">'
-          f'red &#8596; green</text>\n')
-    s += (f'<text x="{W/2:.0f}" y="{H-14}" fill="{TEXT}" text-anchor="middle" font-size="12">'
-          f'24 chart patches &#183; open = measured, filled = corrected &#183; greys stay centred</text>\n')
-    s += (f'<text x="{(W-ph)/2-10:.0f}" y="{T+ph/2:.0f}" fill="{TEXT}" text-anchor="middle" '
-          f'transform="rotate(-90 {(W-ph)/2-10:.0f} {T+ph/2:.0f})">blue &#8596; green</text>\n')
+    s += f'<line x1="{Xp(-rng):.1f}" y1="{y0:.1f}" x2="{Xp(rng):.1f}" y2="{y0:.1f}" stroke="{ZERO}"/>\n'
+    s += f'<line x1="{x0:.1f}" y1="{Yp(-rng):.1f}" x2="{x0:.1f}" y2="{Yp(rng):.1f}" stroke="{ZERO}"/>\n'
+    ring_r = 1.0 / (2 * rng) * ph
+    s += (f'<circle cx="{x0:.1f}" cy="{y0:.1f}" r="{ring_r:.1f}" fill="none" '
+          f'stroke="{TEXT}" stroke-dasharray="4 6" opacity="0.6"/>\n')
+    for (a, b), (a2, b2), col in zip(pre, post, cols):
+        x1, y1, x2, y2 = Xp(a), Yp(b), Xp(a2), Yp(b2)
+        s += f'<circle cx="{x1:.1f}" cy="{y1:.1f}" r="4.5" fill="{col}"/>\n'
+        s += (f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
+              f'stroke="{col}" stroke-width="2.6"/>\n')
+        ang = math.atan2(y2 - y1, x2 - x1)
+        for da in (math.radians(155), math.radians(-155)):
+            s += (f'<line x1="{x2:.1f}" y1="{y2:.1f}" '
+                  f'x2="{x2 + 9*math.cos(ang+da):.1f}" y2="{y2 + 9*math.sin(ang+da):.1f}" '
+                  f'stroke="{col}" stroke-width="2.6"/>\n')
+    s += f'<text x="{Xp(rng)-6:.0f}" y="{y0-8:.1f}" fill="{TEXT}" text-anchor="end">R&#8722;G &#8594; red</text>\n'
+    s += f'<text x="{Xp(-rng)+6:.0f}" y="{y0-8:.1f}" fill="{TEXT}">cyan</text>\n'
+    s += f'<text x="{x0+8:.1f}" y="{Yp(rng)+16:.1f}" fill="{TEXT}">B&#8722;G &#8594; blue</text>\n'
+    s += f'<text x="{x0+8:.1f}" y="{Yp(-rng)-6:.1f}" fill="{TEXT}">yellow</text>\n'
+    s += (f'<text x="{(W-ph)/2:.0f}" y="{H-10}" fill="{TEXT}">'
+          f'arrows = how the matrix moves each hue &#183; dashed = input chroma</text>\n')
+    s += (f'<text x="{(W+ph)/2:.0f}" y="{H-10}" fill="{TEXT}" text-anchor="end">'
+          f'saturation &#215;{sat:.2f} &#183; max hue shift {mx_shift:+.0f}&#176; &#183; '
+          f'crosstalk {ct_v:.2f} ({ct_n}) &#183; det {det:.2f}</text>\n')
     return s + '</svg>\n'
 
 
 def main():
     conn = sqlite3.connect(f'file:{DB}?mode=ro', uri=True)
     row = conn.execute(
-        'SELECT channel_balance, density_matrix, calib_samples FROM profiles WHERE id=?',
-        (PROFILE_ID,)).fetchone()
+        'SELECT channel_balance, channel_balance_aged, density_matrix FROM profiles WHERE id=?',
+        (PROFILE,)).fetchone()
     conn.close()
     cb = json.loads(row[0])
-    M = json.loads(row[1])
-    frames = json.loads(row[2])['chart']['frames']
-    meds = frames[len(frames) // 2]['meds']         # mid-bracket frame
-    (HERE / 'assets' / 'fp_fingerprint.svg').write_text(fingerprint_svg(cb), encoding='utf-8')
-    (HERE / 'assets' / 'fp_matrix.svg').write_text(matrix_svg(cb, M, meds), encoding='utf-8')
-    print('wrote assets/fp_fingerprint.svg, assets/fp_matrix.svg')
+    cb_aged = json.loads(row[1]) if row[1] else None
+    M = json.loads(row[2])
+    (HERE / 'assets' / 'fp_fingerprint.svg').write_text(neutral_cast_svg(cb, cb_aged), encoding='utf-8')
+    (HERE / 'assets' / 'fp_matrix.svg').write_text(matrix_ring_svg(M), encoding='utf-8')
+    print('wrote assets/fp_fingerprint.svg, assets/fp_matrix.svg  [Kodak Gold 200]')
 
 
 if __name__ == '__main__':
