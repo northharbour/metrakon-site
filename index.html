@@ -226,9 +226,11 @@ footer a{color:var(--muted)}
     <h2>Built as an instrument</h2>
     <p>
       Obelisk is designed for production scanning: a deterministic converter for high-volume
-      lab work, developed in daily use at a working film lab. The design premise is that a
-      conversion should behave like a measuring instrument — the same negative renders the
-      same way every time, for the operator today and for a different operator next month.
+      lab work. It is built inside a working film lab, for the lab bench, and is proven in
+      daily production on thousands of real customer frames — not on test charts alone. The
+      design premise is that a conversion should behave like a measuring instrument: the same
+      negative renders the same way every time, for the operator today and for a different
+      operator next month.
     </p>
     <ul class="points">
       <li>
@@ -258,6 +260,26 @@ footer a{color:var(--muted)}
         keyboard-first review pass.</span>
       </li>
     </ul>
+    <figure style="margin-top:30px">
+      <div class="pair">
+        <div class="shot">
+          <img src="assets/fp_fingerprint.svg" alt="Measured per-channel density fingerprint" loading="lazy">
+          <span class="tag">Density fingerprint</span>
+        </div>
+        <div class="shot">
+          <img src="assets/fp_matrix.svg" alt="Fitted colour correction acting on the chart patches" loading="lazy">
+          <span class="tag">Colour correction</span>
+        </div>
+      </div>
+      <figcaption>
+        From a production calibration (Vision3 250D). Left: the film's measured density
+        response, per colour channel, sampled across a seven-frame exposure bracket of the
+        chart — the fingerprint every conversion runs through. Right: the fitted colour
+        correction acting on the chart's 24 patches, open circle measured, filled circle
+        corrected. The neutral patches sit at the centre and barely move — the correction is
+        constructed so it cannot disturb greys.
+      </figcaption>
+    </figure>
     <!-- DENSITY ANIMATION SLOT (planned): short screen captures of the density control
          moved up and down on one frame — the image travelling through the fixed print
          curve with blacks anchored, nothing re-estimated. Export as a small looping
