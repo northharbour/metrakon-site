@@ -1,4 +1,4 @@
-# Metrakon landing site
+# Obelisk landing site
 
 A single self-contained static page. No build step, no dependencies — GitHub Pages serves
 `index.html` directly.
@@ -9,7 +9,8 @@ A single self-contained static page. No build step, no dependencies — GitHub P
    with `<img src="assets/…" alt="…">`. Three slots are marked in the HTML:
    - `roll-consistency.jpg` — contact sheet or bracket strip (the strongest single proof)
    - `light-before.jpg` / `light-after.jpg` — the scanning light comparison
-2. **Favicon.** Add `assets/favicon.ico` (the app's `static/negacon.ico` works), or remove the
+2. **Favicon.** `assets/favicon.ico` / `icon-512.png` / `apple-touch-icon.png` are generated from the app's
+   obelisk tile (`static/icon-n-512.png`) — regenerate them after an icon change, or remove the
    `<link rel="icon">` line.
 3. **Numbers.** The three stats in the light section are from the 2026-07-17 measurements. Check
    they still reflect the current rig before publishing.

@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Metrakon — calibrated film negative conversion</title>
-<meta name="description" content="Metrakon converts camera-scanned colour film negatives into finished positives using a measured calibration of your film stock and scanning rig, for consistent results across a whole roll.">
-<meta property="og:title" content="Metrakon — calibrated film negative conversion">
+<title>Obelisk — calibrated film negative conversion</title>
+<meta name="description" content="Obelisk converts camera-scanned colour film negatives into finished positives using a measured calibration of your film stock and scanning rig, for consistent results across a whole roll.">
+<meta property="og:title" content="Obelisk — calibrated film negative conversion">
 <meta property="og:description" content="Measured calibration instead of per-image guesswork. Every frame of a roll lands at the same density, with the same colour.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://image.northharbourinstruments.com/assets/icon-512.png">
@@ -177,7 +177,7 @@ footer a{color:var(--muted)}
 
 <header>
   <div class="head-in">
-    <div class="brand">Metra<span class="k">kon</span></div>
+    <div class="brand">Obe<span class="k">lisk</span></div>
     <div class="head-note">In development</div>
   </div>
 </header>
@@ -188,7 +188,7 @@ footer a{color:var(--muted)}
     <p class="eyebrow">Film negative conversion</p>
     <h1>Consistent scans, measured rather than estimated</h1>
     <p class="lede">
-      Metrakon converts camera-scanned colour negatives into finished positives. Instead of
+      Obelisk converts camera-scanned colour negatives into finished positives. Instead of
       analysing each image and estimating a correction, it measures how your film stock behaves
       on your scanning rig, once, and converts every frame through that measurement.
     </p>
@@ -197,6 +197,57 @@ footer a{color:var(--muted)}
       with the same colour, without an operator correcting frame by frame.
     </p>
   </div>
+
+  <section>
+    <h2>Built as an instrument</h2>
+    <p>
+      Obelisk is designed for production scanning: a deterministic converter for high-volume
+      lab work, developed in daily use at a working film lab. The design premise is that a
+      conversion should behave like a measuring instrument — the same negative renders the
+      same way every time, for the operator today and for a different operator next month.
+    </p>
+    <ul class="points">
+      <li>
+        <strong>Deterministic, not estimated.</strong>
+        <span>There is no per-image auto-balance. Nearly every converter reads each frame and
+        estimates a correction from it; Obelisk converts through a fixed, measured calibration,
+        so a result can be reproduced exactly — frame to frame, roll to roll, machine to
+        machine.</span>
+      </li>
+      <li>
+        <strong>Colour from calibration.</strong>
+        <span>Colour is established once, by measurement, per film stock and light source —
+        not re-decided per image. A fitted correction that fails its statistical quality gates
+        is refused rather than applied.</span>
+      </li>
+      <li>
+        <strong>Density is the control.</strong>
+        <span>Brightness works the way a printer or minilab handles it: as print density. One
+        control moves the frame through a fixed print curve, blacks anchored — no black-point
+        stretching, no re-fitted histogram. Adjusting a frame feels like printing, not
+        editing.</span>
+      </li>
+      <li>
+        <strong>Built for throughput.</strong>
+        <span>A roll is one decision, not thirty-six frames of decisions: assign the film
+        profile and convert. Frames arrive levelled, oriented and cropped, ready for a
+        keyboard-first review pass.</span>
+      </li>
+    </ul>
+    <!-- DENSITY ANIMATION SLOT (planned): short screen captures of the density control
+         moved up and down on one frame — the image travelling through the fixed print
+         curve with blacks anchored, nothing re-estimated. Export as a small looping
+         .webm (+ .mp4 fallback if desired), drop into assets/, and uncomment:
+    <figure style="margin-top:28px">
+      <video autoplay loop muted playsinline
+             style="width:100%;border:1px solid var(--border);border-radius:var(--radius)">
+        <source src="assets/density_sweep.webm" type="video/webm">
+      </video>
+      <figcaption>The density control: the whole frame moves through a fixed print curve,
+      the way a darkroom exposure change would. Contrast, colour and blacks hold.</figcaption>
+    </figure>
+    -->
+  </section>
 
   <section>
     <h2>The problem with per-image correction</h2>
@@ -228,7 +279,7 @@ footer a{color:var(--muted)}
   </section>
 
   <section>
-    <h2>What Metrakon measures instead</h2>
+    <h2>What Obelisk measures instead</h2>
     <p>
       A short calibration session — a colour chart photographed on one roll of the stock, bracketed
       in one-stop steps — captures how that film actually responds on your light and your camera.
@@ -310,7 +361,7 @@ footer a{color:var(--muted)}
       manual adjustment anywhere was density, brought toward a similar level where the tool
       provides a density control; Negative Lab Pro offers no simple density control and was left
       at its defaults. No colour, contrast or other settings were changed in any tool. Deep
-      under-exposed frames are left dark by Metrakon by design rather than lifted.
+      under-exposed frames are left dark by Obelisk by design rather than lifted.
       Full-resolution exports were downsized identically for the web. Product names belong to
       their respective owners.
     </p>
@@ -357,7 +408,7 @@ footer a{color:var(--muted)}
 
     <h3>White light works too</h3>
     <p>
-      None of this makes an RGB source a requirement. Metrakon works with white light — an LED
+      None of this makes an RGB source a requirement. Obelisk works with white light — an LED
       panel, a light table — because calibration is measured for whichever light you actually use.
       The chart session is identical either way, and a white-light profile is as consistent across
       a roll as an RGB one.
@@ -378,9 +429,43 @@ footer a{color:var(--muted)}
   </section>
 
   <section>
+    <h2>Lab workflow</h2>
+    <p>
+      The workflow is roll-centric, modelled on how a lab runs a day of scanning rather than
+      on a photo editor.
+    </p>
+    <ul class="points">
+      <li>
+        <strong>One decision per roll.</strong>
+        <span>Scans land in a watched folder, group into rolls, and convert in the background
+        against the roll's film profile. By the time the operator sits down, the roll is
+        rendered, levelled and consistent.</span>
+      </li>
+      <li>
+        <strong>Automatic orientation.</strong>
+        <span>A local model turns every frame the right way up as it converts. It runs
+        entirely on the machine — no cloud service, nothing leaves the lab — and it suggests
+        rather than forces: a frame is never rotated against an operator's decision.</span>
+      </li>
+      <li>
+        <strong>Review at speed.</strong>
+        <span>A keyboard-first review pass steps through the roll — adjust, retouch, export.
+        Exports run on their own queue, so the next frame is never waiting on the last
+        one's output.</span>
+      </li>
+      <li>
+        <strong>Grading that travels with the roll.</strong>
+        <span>Every per-frame decision is recorded alongside the scans themselves, not only
+        in the application. Clear a roll, archive it, re-scan it next year — it comes back
+        exactly as it was delivered.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
     <h2>Who it is for</h2>
     <p>
-      Metrakon is built for volume: film labs digitising customer rolls with a digital camera, and
+      Obelisk is built for volume: film labs digitising customer rolls with a digital camera, and
       photographers scanning their own work who care more about consistency than about per-frame
       control.
     </p>
@@ -389,14 +474,20 @@ footer a{color:var(--muted)}
       calibration. That constraint is what the consistency is built on. Calibrating a stock takes
       about five minutes and is done once per film stock and light source.
     </p>
+    <p>
+      Its natural reference point is the professional scanner-software class — the tools a lab
+      standardises on and trains staff around — rather than single-image conversion plugins.
+      It is calibrated, repeatable, and deliberately uneventful in daily use.
+    </p>
   </section>
 
   <section>
     <div class="signup">
       <h2>Status</h2>
       <p class="muted" style="margin-bottom:0">
-        Metrakon is in active development and not yet available. This page will be updated as it
-        moves toward release.
+        Obelisk is in active development and not yet available. It already runs in daily
+        production at the film lab it is being built in. It will be released as a commercial
+        product; availability and pricing will be announced here.
       </p>
 
       <!-- ===================================================================
@@ -423,16 +514,17 @@ footer a{color:var(--muted)}
 
 <footer>
   <div class="wrap">
-    Metrakon — a project by North Harbour Instruments.
+    Obelisk — a project by North Harbour Instruments.
   </div>
 </footer>
 
 <script>
 (function () {
   // Comparison data. Tool keys match the filenames tools/make_comparison.py writes;
-  // stock frame lists match its SETS config.
+  // stock frame lists match its SETS config. NOTE: the 'metrakon' key is the app's
+  // historical filename id (assets/comp/*/metrakon_*.jpg) — only the LABEL renames.
   var TOOLS = [
-    { key: 'metrakon',     label: 'Metrakon' },
+    { key: 'metrakon',     label: 'Obelisk' },
     { key: 'filmlab',      label: 'FilmLab' },
     { key: 'nlp',          label: 'Negative Lab Pro' },
     { key: 'smartconvert', label: 'SmartConvert' }
@@ -444,12 +536,12 @@ footer a{color:var(--muted)}
       samples: ['06553', '06555', '06556', '06559', '06563',
                 '06577', '06582', '06583', '06585', '06587'],
       stats: [
-        ['1', 'Metrakon median brightness spread (8-bit levels) over the normal and ' +
+        ['1', 'Obelisk median brightness spread (8-bit levels) over the normal and ' +
               'over-exposed frames of this bracket. The levelling is automatic.'],
         ['8–29', 'The same spread in the other tools — even with density matched ' +
               'by hand where the tool allows it.'],
         ['+8 → −14', 'Negative Lab Pro’s mean R−G balance swings from warm on ' +
-              'under-exposed frames to cool on over-exposed ones. Metrakon holds within ' +
+              'under-exposed frames to cool on over-exposed ones. Obelisk holds within ' +
               '8 levels of neutral across the bracket.']
       ]
     },
@@ -458,13 +550,13 @@ footer a{color:var(--muted)}
       frames: ['09519', '09520', '09521', '09522', '09523', '09524', '09525'],
       samples: null,
       stats: [
-        ['13', 'Metrakon median brightness spread (8-bit levels) over the normal and ' +
+        ['13', 'Obelisk median brightness spread (8-bit levels) over the normal and ' +
               'over-exposed frames. The levelling is automatic.'],
         ['42–56', 'The same spread in the other tools — even with density matched ' +
               'by hand where the tool allows it.'],
         ['warm → cool', 'Per-image estimation drifts colour with exposure: Negative Lab ' +
               'Pro’s balance swings from warm (mean R−G +15) to cool (−4) along the ' +
-              'bracket. Metrakon’s holds one direction.']
+              'bracket. Obelisk’s holds one direction.']
       ]
     }
   };
