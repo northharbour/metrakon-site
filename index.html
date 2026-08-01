@@ -250,6 +250,59 @@ footer a{color:var(--muted)}
   </section>
 
   <section>
+    <h2>Lab workflow</h2>
+    <p>
+      The workflow is roll-centric, modelled on how a lab runs a day of scanning rather than
+      on a photo editor.
+    </p>
+    <ul class="points">
+      <li>
+        <strong>One decision per roll.</strong>
+        <span>Scans land in a watched folder, group into rolls, and convert in the background
+        against the roll's film profile. By the time the operator sits down, the roll is
+        rendered, levelled and consistent.</span>
+      </li>
+      <li>
+        <strong>Automatic orientation.</strong>
+        <span>A local model turns every frame the right way up as it converts. It runs
+        entirely on the machine — no cloud service, nothing leaves the lab — and it suggests
+        rather than forces: a frame is never rotated against an operator's decision.</span>
+      </li>
+      <li>
+        <strong>Review at speed.</strong>
+        <span>A keyboard-first review pass steps through the roll — adjust, retouch, export.
+        Exports run on their own queue, so the next frame is never waiting on the last
+        one's output.</span>
+      </li>
+      <li>
+        <strong>Grading that travels with the roll.</strong>
+        <span>Every per-frame decision is recorded alongside the scans themselves, not only
+        in the application. Clear a roll, archive it, re-scan it next year — it comes back
+        exactly as it was delivered.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Who it is for</h2>
+    <p>
+      Obelisk is built for volume: film labs digitising customer rolls with a digital camera, and
+      photographers scanning their own work who care more about consistency than about per-frame
+      control.
+    </p>
+    <p>
+      It is not a general-purpose editor, and it deliberately will not convert without a
+      calibration. That constraint is what the consistency is built on. Calibrating a stock takes
+      about five minutes and is done once per film stock and light source.
+    </p>
+    <p>
+      Its natural reference point is the professional scanner-software class — the tools a lab
+      standardises on and trains staff around — rather than single-image conversion plugins.
+      It is calibrated, repeatable, and deliberately uneventful in daily use.
+    </p>
+  </section>
+
+  <section>
     <h2>The problem with per-image correction</h2>
     <p>
       Most negative conversion works from the image: it reads each frame's statistics — white
@@ -352,63 +405,6 @@ footer a{color:var(--muted)}
   </section>
 
   <section>
-    <h2>Consistency, compared</h2>
-    <p>
-      The test below is one exposure bracket — the same scene shot seven times, from several stops
-      under to several stops over — scanned once, then converted by four tools from the same RAW
-      files. The only manual adjustment in any tool was density, brought toward a similar level
-      where the tool offers a density control; nothing else was touched. A converter that anchors
-      to the film renders these frames nearly alike; a converter that estimates from each image
-      drifts. The same test is shown for two film stocks — switch between them below.
-    </p>
-    <p class="muted" style="font-size:15px">
-      Each row is one tool across the bracket. Read along a row: the differences within a row are
-      what that tool would do across an ordinary roll.
-    </p>
-
-    <div class="viewer-tools" id="stock-select" style="margin:0 0 10px">
-      <span class="muted" style="font-size:13px; align-self:center; margin-right:4px">Film stock</span>
-    </div>
-    <div class="comp-grid" id="comp-grid"></div>
-
-    <div class="stats" id="comp-stats"></div>
-
-    <h3>Inspect a frame</h3>
-    <p class="muted" style="font-size:15px">
-      Pick a frame, then switch tools — the image swaps in place, so differences show as a flicker.
-    </p>
-    <div class="viewer">
-      <div class="viewer-tools" id="viewer-tools"></div>
-      <div class="viewer-stage"><img id="viewer-img" alt="Comparison frame" decoding="async"></div>
-      <div class="viewer-frames" id="viewer-frames"></div>
-    </div>
-
-    <h3>Real scenes</h3>
-    <p class="muted" style="font-size:15px" id="samples-intro">
-      A set of varied scenes from the same film stock, converted by each tool with the same
-      settings as the bracket and no per-frame adjustments. Pick a frame, then switch tools.
-    </p>
-    <div class="viewer" id="samples-viewer">
-      <div class="viewer-tools" id="sviewer-tools"></div>
-      <div class="viewer-stage"><img id="sviewer-img" alt="Sample scene" decoding="async"></div>
-      <div class="viewer-frames" id="sviewer-frames"></div>
-    </div>
-    <p class="muted" id="samples-none" style="display:none; font-size:14px">
-      No real-scene sample set for this film stock yet.
-    </p>
-
-    <p class="muted" style="font-size:14px; margin-top:22px">
-      Method: identical RAW camera scans (white-light source) converted in each tool. The only
-      manual adjustment anywhere was density, brought toward a similar level where the tool
-      provides a density control; Negative Lab Pro offers no simple density control and was left
-      at its defaults. No colour, contrast or other settings were changed in any tool. Deep
-      under-exposed frames are left dark by Obelisk by design rather than lifted.
-      Full-resolution exports were downsized identically for the web. Product names belong to
-      their respective owners.
-    </p>
-  </section>
-
-  <section>
     <h2>Scanning light, measured at the sensor</h2>
     <p>
       Digital cameras apply substantial white balance gains to raw sensor data before you see
@@ -470,55 +466,59 @@ footer a{color:var(--muted)}
   </section>
 
   <section>
-    <h2>Lab workflow</h2>
+    <h2>Consistency, compared</h2>
     <p>
-      The workflow is roll-centric, modelled on how a lab runs a day of scanning rather than
-      on a photo editor.
+      The test below is one exposure bracket — the same scene shot seven times, from several stops
+      under to several stops over — scanned once, then converted by four tools from the same RAW
+      files. The only manual adjustment in any tool was density, brought toward a similar level
+      where the tool offers a density control; nothing else was touched. A converter that anchors
+      to the film renders these frames nearly alike; a converter that estimates from each image
+      drifts. The same test is shown for two film stocks — switch between them below.
     </p>
-    <ul class="points">
-      <li>
-        <strong>One decision per roll.</strong>
-        <span>Scans land in a watched folder, group into rolls, and convert in the background
-        against the roll's film profile. By the time the operator sits down, the roll is
-        rendered, levelled and consistent.</span>
-      </li>
-      <li>
-        <strong>Automatic orientation.</strong>
-        <span>A local model turns every frame the right way up as it converts. It runs
-        entirely on the machine — no cloud service, nothing leaves the lab — and it suggests
-        rather than forces: a frame is never rotated against an operator's decision.</span>
-      </li>
-      <li>
-        <strong>Review at speed.</strong>
-        <span>A keyboard-first review pass steps through the roll — adjust, retouch, export.
-        Exports run on their own queue, so the next frame is never waiting on the last
-        one's output.</span>
-      </li>
-      <li>
-        <strong>Grading that travels with the roll.</strong>
-        <span>Every per-frame decision is recorded alongside the scans themselves, not only
-        in the application. Clear a roll, archive it, re-scan it next year — it comes back
-        exactly as it was delivered.</span>
-      </li>
-    </ul>
-  </section>
+    <p class="muted" style="font-size:15px">
+      Each row is one tool across the bracket. Read along a row: the differences within a row are
+      what that tool would do across an ordinary roll.
+    </p>
 
-  <section>
-    <h2>Who it is for</h2>
-    <p>
-      Obelisk is built for volume: film labs digitising customer rolls with a digital camera, and
-      photographers scanning their own work who care more about consistency than about per-frame
-      control.
+    <div class="viewer-tools" id="stock-select" style="margin:0 0 10px">
+      <span class="muted" style="font-size:13px; align-self:center; margin-right:4px">Film stock</span>
+    </div>
+    <div class="comp-grid" id="comp-grid"></div>
+
+    <div class="stats" id="comp-stats"></div>
+
+    <h3>Inspect a frame</h3>
+    <p class="muted" style="font-size:15px">
+      Pick a frame, then switch tools — the image swaps in place, so differences show as a flicker.
     </p>
-    <p>
-      It is not a general-purpose editor, and it deliberately will not convert without a
-      calibration. That constraint is what the consistency is built on. Calibrating a stock takes
-      about five minutes and is done once per film stock and light source.
+    <div class="viewer">
+      <div class="viewer-tools" id="viewer-tools"></div>
+      <div class="viewer-stage"><img id="viewer-img" alt="Comparison frame" decoding="async"></div>
+      <div class="viewer-frames" id="viewer-frames"></div>
+    </div>
+
+    <h3>Real scenes</h3>
+    <p class="muted" style="font-size:15px" id="samples-intro">
+      A set of varied scenes from the same film stock, converted by each tool with the same
+      settings as the bracket and no per-frame adjustments. Pick a frame, then switch tools.
     </p>
-    <p>
-      Its natural reference point is the professional scanner-software class — the tools a lab
-      standardises on and trains staff around — rather than single-image conversion plugins.
-      It is calibrated, repeatable, and deliberately uneventful in daily use.
+    <div class="viewer" id="samples-viewer">
+      <div class="viewer-tools" id="sviewer-tools"></div>
+      <div class="viewer-stage"><img id="sviewer-img" alt="Sample scene" decoding="async"></div>
+      <div class="viewer-frames" id="sviewer-frames"></div>
+    </div>
+    <p class="muted" id="samples-none" style="display:none; font-size:14px">
+      No real-scene sample set for this film stock yet.
+    </p>
+
+    <p class="muted" style="font-size:14px; margin-top:22px">
+      Method: identical RAW camera scans (white-light source) converted in each tool. The only
+      manual adjustment anywhere was density, brought toward a similar level where the tool
+      provides a density control; Negative Lab Pro offers no simple density control and was left
+      at its defaults. No colour, contrast or other settings were changed in any tool. Deep
+      under-exposed frames are left dark by Obelisk by design rather than lifted.
+      Full-resolution exports were downsized identically for the web. Product names belong to
+      their respective owners.
     </p>
   </section>
 
