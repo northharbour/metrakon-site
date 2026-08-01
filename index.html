@@ -83,6 +83,11 @@ figure{margin:0 0 30px}
   letter-spacing:.1em; text-transform:uppercase; background:rgba(0,0,0,.72);
   color:var(--text); padding:3px 7px; border-radius:3px;
 }
+/* ---- warning-flag chips (the app's sidebar indicators, reproduced as a legend) ---- */
+.flag{display:inline-block; font-family:var(--mono); font-size:12px; line-height:1.5;
+  padding:1px 8px; border-radius:3px; background:rgba(0,0,0,.45);
+  border:1px solid var(--border); margin-right:8px; vertical-align:1px}
+
 /* placeholder shown until a real image is dropped in — delete .ph when adding <img> */
 .ph{aspect-ratio:3/2; display:flex; align-items:center; justify-content:center;
   color:var(--dim); font-family:var(--mono); font-size:12px; text-align:center; padding:16px}
@@ -462,6 +467,58 @@ footer a{color:var(--muted)}
       overlap between channels changes with the light, so a profile calibrated under one cannot be
       converted to another — scanning the same stock under a different light means one more
       five-minute chart session.
+    </p>
+  </section>
+
+  <section>
+    <h2>Metrics and warnings</h2>
+    <p>
+      A deterministic conversion is only as good as the scan behind it, so Obelisk measures
+      the scans themselves and says so when something is wrong — at intake, while it can
+      still be fixed, not after a roll has been delivered. These are the indicators the
+      operator sees, on the frames they apply to.
+    </p>
+    <ul class="points">
+      <li>
+        <strong><span class="flag" style="color:#d4574a">&#9888; 17% clip</span>Scan too bright</strong>
+        <span>Raw sensor channels are checked for clipping before any processing. A clipped
+        scan has destroyed data at capture — nothing downstream can recover it — so the frame
+        is flagged with the measured clip fraction and the instruction is simple: rescan
+        darker.</span>
+      </li>
+      <li>
+        <strong><span class="flag" style="color:#8a7fd6">&#9888; 42%</span>Scan too dim</strong>
+        <span>Scan level is read as a percentage of sensor scale against the calibrated
+        target. A dim scan converts, but with more noise and less colour separation — the
+        flag says how many stops to raise before that cost is paid.</span>
+      </li>
+      <li>
+        <strong><span class="flag" style="color:#e2ab4d">&#9650; +1.4</span><span class="flag" style="color:#8a7fd6">&#9660; thin</span>Film exposure, separated from scan exposure</strong>
+        <span>A badly made scan and a badly exposed negative are different mistakes, and the
+        flags keep them apart. Each frame's over- or under-exposure is measured in density
+        from the film itself — useful to the lab, and worth passing on to the customer whose
+        meter runs a stop out.</span>
+      </li>
+      <li>
+        <strong><span class="flag" style="color:#e2ab4d">&#9888; light</span>Wrong scanning light</strong>
+        <span>Every roll's film-base signature is compared against the one recorded at
+        calibration. A roll scanned under the wrong light source — the mistake that otherwise
+        surfaces as a roll that will not dial in — is flagged at the roll header before any
+        time is spent on it.</span>
+      </li>
+      <li>
+        <strong><span class="flag" style="color:#e2ab4d">f/2.8 &ne; f/5.6</span>Wrong lens setting</strong>
+        <span>The aperture a profile was calibrated at is stored with it, and each scan's
+        EXIF is checked against it. A mis-set lens changes the light through the whole rig;
+        it is caught per frame instead of discovered per roll.</span>
+      </li>
+    </ul>
+    <p style="margin-top:26px">
+      While setting a rig up, a live tuning mode measures each new scan as it lands —
+      per-channel sensor levels against the target band, in a readout designed to be legible
+      from the scanning position. The same per-frame measurements accumulate per roll, which
+      is the basis for a planned customer-facing exposure report: how many frames over, how
+      many under, and by how much.
     </p>
   </section>
 
