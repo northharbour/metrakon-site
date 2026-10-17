@@ -31,7 +31,7 @@ export const LEGAL = {
   street: 'c/o Blix GbR, Pappenheimstr. 3',
   city: '80335 München',          // postcode + city
   country: 'Germany',
-  email: '',         // must be reachable; defaults the site contact email too
+  email: 'info@northharbourinstruments.com', // must be reachable; defaults the site contact email too
   phone: '',         // optional but recommended (§ 5 DDG wants a second fast channel)
   vatId: 'DE453709438',         // USt-IdNr., only if you have one (Kleinunternehmer: leave empty)
   register: '',      // only for a registered company, e.g. 'Amtsgericht München, HRB 12345'
