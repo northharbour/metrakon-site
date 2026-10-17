@@ -1,0 +1,187 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { TOOLS, SETS, STOCK_ORDER } from '../data/comparison';
+const payload = JSON.stringify({ TOOLS, SETS, STOCK_ORDER });
+---
+<Base title="Comparison" description="One exposure bracket and a set of real scenes, converted from identical RAW files by Obelisk, FilmLab, Negative Lab Pro and SmartConvert.">
+  <PageHero
+    eyebrow="Comparison"
+    title="Same RAW files. Four converters."
+    lede="One exposure bracket — the same scene shot seven times, from several stops under to several stops over — scanned once and converted by four tools. Read along a row: the differences within a row are what that tool would do across an ordinary roll."
+  />
+
+  <div class="wrap cmp" data-cmp={payload}>
+    <div class="cmp-bar">
+      <span class="muted small">Film stock</span>
+      <div class="seg" role="group" aria-label="Film stock" data-stocks>
+        {STOCK_ORDER.map((k, i) => <button data-k={k} aria-pressed={i === 0 ? 'true' : 'false'}>{SETS[k].label}</button>)}
+      </div>
+    </div>
+
+    <section class="cmp-sec">
+      <div class="cmp-head"><h2>The bracket</h2><span class="muted small">Under → over. Click any tile to inspect it.</span></div>
+      <div class="grid-scroll"><div class="cgrid" data-grid></div></div>
+      <div class="cstats" data-stats></div>
+    </section>
+
+    <section class="cmp-sec">
+      <div class="cmp-head"><h2>Inspect a frame</h2><span class="muted small">Switch tools — the image swaps in place, so differences show as a flicker. Keys: ←/→ frames, ↑/↓ tools.</span></div>
+      <div class="viewer" data-viewer="bracket">
+        <div class="seg vtools" role="group" aria-label="Tool" data-vtools></div>
+        <div class="vstage"><img data-vimg alt="Comparison frame" decoding="async" /></div>
+        <div class="vframes" data-vframes></div>
+      </div>
+    </section>
+
+    <section class="cmp-sec" data-samples-sec>
+      <div class="cmp-head"><h2>Real scenes</h2><span class="muted small">Varied scenes from the same stock, converted with the bracket’s settings and no per-frame adjustments.</span></div>
+      <div class="viewer" data-viewer="samples">
+        <div class="seg vtools" role="group" aria-label="Tool" data-vtools></div>
+        <div class="vstage"><img data-vimg alt="Sample scene" decoding="async" /></div>
+        <div class="vframes" data-vframes></div>
+      </div>
+    </section>
+    <p class="muted small" data-samples-none hidden>No real-scene sample set for this film stock yet.</p>
+
+    <section class="method card">
+      <h2>Method</h2>
+      <p>
+        Identical RAW camera scans (white-light source) converted in each tool. The only manual
+        adjustment anywhere was density, brought toward a similar level where the tool provides a
+        density control; Negative Lab Pro offers no simple density control and was left at its
+        defaults. No colour, contrast or other settings were changed in any tool. Deep
+        under-exposed frames are left dark by Obelisk by design rather than lifted. Full-resolution
+        exports were downsized identically for the web.
+      </p>
+      <p class="muted small">Product names belong to their respective owners. Comparison made by North Harbour Instruments.</p>
+    </section>
+  </div>
+</Base>
+
+<script>
+  type Tool = { key: string; label: string };
+  type Set = { label: string; frames: string[]; samples: string[] | null; stats: [string, string][] };
+  const root = document.querySelector<HTMLElement>('[data-cmp]')!;
+  const { TOOLS, SETS } = JSON.parse(root.dataset.cmp!) as { TOOLS: Tool[]; SETS: Record<string, Set> };
+  const thumb = (t: string, f: string) => `/assets/comp/thumb/${t}_${f}.jpg`;
+  const large = (t: string, f: string) => `/assets/comp/large/${t}_${f}.jpg`;
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string) => { const e = document.createElement(tag); if (cls) e.className = cls; return e; };
+
+  function makeViewer(box: HTMLElement) {
+    let tool = 'metrakon', frame = '', frames: string[] = [];
+    const img = box.querySelector<HTMLImageElement>('[data-vimg]')!;
+    const tools = box.querySelector<HTMLElement>('[data-vtools]')!;
+    const strip = box.querySelector<HTMLElement>('[data-vframes]')!;
+    const pre = new Set<string>();
+    const preload = (f: string) => TOOLS.forEach((t) => { const s = large(t.key, f); if (!pre.has(s)) { new Image().src = s; pre.add(s); } });
+    const paint = () => {
+      if (!frame) return;
+      img.src = large(tool, frame);
+      tools.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.k === tool)));
+      strip.querySelectorAll<HTMLImageElement>('img').forEach((i) => i.classList.toggle('on', i.dataset.f === frame));
+    };
+    TOOLS.forEach((t) => {
+      const b = el('button', t.key === 'metrakon' ? 'is-obelisk' : ''); b.textContent = t.label; b.dataset.k = t.key;
+      b.addEventListener('click', () => { tool = t.key; paint(); }); tools.appendChild(b);
+    });
+    const setFrame = (f: string) => { frame = f; preload(f); paint(); };
+    return {
+      box, img,
+      setFrames(list: string[]) {
+        frames = list; strip.innerHTML = '';
+        list.forEach((f) => {
+          const i = el('img'); i.src = thumb('metrakon', f); i.dataset.f = f; i.loading = 'lazy'; i.alt = `Frame ${f}`;
+          i.addEventListener('click', () => setFrame(f)); strip.appendChild(i);
+        });
+        if (!list.includes(frame)) frame = list[0];
+        preload(frame); paint();
+      },
+      setFrame, setTool(k: string) { tool = k; paint(); },
+      key(e: KeyboardEvent) {
+        const fi = frames.indexOf(frame), ti = TOOLS.findIndex((t) => t.key === tool);
+        if (e.key === 'ArrowRight' && fi < frames.length - 1) { setFrame(frames[fi + 1]); e.preventDefault(); }
+        if (e.key === 'ArrowLeft' && fi > 0) { setFrame(frames[fi - 1]); e.preventDefault(); }
+        if (e.key === 'ArrowDown' && ti < TOOLS.length - 1) { tool = TOOLS[ti + 1].key; paint(); e.preventDefault(); }
+        if (e.key === 'ArrowUp' && ti > 0) { tool = TOOLS[ti - 1].key; paint(); e.preventDefault(); }
+      },
+    };
+  }
+
+  const bracket = makeViewer(root.querySelector('[data-viewer="bracket"]')!);
+  const samples = makeViewer(root.querySelector('[data-viewer="samples"]')!);
+  const grid = root.querySelector<HTMLElement>('[data-grid]')!;
+  const stats = root.querySelector<HTMLElement>('[data-stats]')!;
+
+  function setStock(k: string) {
+    const s = SETS[k];
+    root.querySelectorAll('[data-stocks] button').forEach((b) => b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.k === k)));
+    grid.innerHTML = '';
+    TOOLS.forEach((t) => {
+      const row = el('div', 'crow' + (t.key === 'metrakon' ? ' ob' : ''));
+      const lab = el('div', 'clab'); lab.textContent = t.label; row.appendChild(lab);
+      s.frames.forEach((f) => {
+        const i = el('img'); i.src = thumb(t.key, f); i.loading = 'lazy'; i.decoding = 'async'; i.alt = `${t.label}, frame ${f}`;
+        i.addEventListener('click', () => { bracket.setFrame(f); bracket.setTool(t.key); bracket.box.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+        row.appendChild(i);
+      });
+      grid.appendChild(row);
+    });
+    stats.innerHTML = '';
+    s.stats.forEach(([n, l]) => { const d = el('div', 'cstat'); const a = el('span', 'data'); a.textContent = n; const p = el('p'); p.textContent = l; d.append(a, p); stats.appendChild(d); });
+    bracket.setFrames(s.frames);
+    const has = !!s.samples?.length;
+    root.querySelector<HTMLElement>('[data-samples-sec]')!.hidden = !has;
+    root.querySelector<HTMLElement>('[data-samples-none]')!.hidden = has;
+    if (has) samples.setFrames(s.samples!);
+  }
+  root.querySelectorAll<HTMLButtonElement>('[data-stocks] button').forEach((b) => b.addEventListener('click', () => setStock(b.dataset.k!)));
+  setStock('250d');
+
+  // Arrow keys go to whichever viewer is most on screen
+  document.addEventListener('keydown', (e) => {
+    if ((e.target as HTMLElement).closest('input,textarea')) return;
+    let best: ReturnType<typeof makeViewer> | null = null, vis = 0;
+    [bracket, samples].forEach((v) => {
+      if (v.box.offsetParent === null) return;
+      const r = v.img.getBoundingClientRect();
+      const s = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
+      if (s > vis) { vis = s; best = v; }
+    });
+    if (best && vis > 0) (best as ReturnType<typeof makeViewer>).key(e);
+  });
+</script>
+
+<style>
+  .cmp { padding-top: 40px; padding-bottom: 96px; }
+  .cmp-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; position: sticky; top: 68px; z-index: 5; padding: 12px 0; background: linear-gradient(var(--bg) 70%, transparent); }
+  .cmp-sec { margin-top: 48px; }
+  .cmp-head { display: flex; align-items: baseline; gap: 8px 18px; flex-wrap: wrap; margin-bottom: 18px; }
+  .cmp-head h2 { font-size: 26px; }
+  .grid-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+  .cgrid { min-width: 860px; }
+  .cgrid :global(.crow) { display: grid; grid-template-columns: 130px repeat(7, 1fr); gap: 5px; align-items: center; margin-bottom: 5px; }
+  .cgrid :global(.clab) { font-size: 13.5px; color: var(--muted); padding-right: 8px; }
+  .cgrid :global(.crow.ob .clab) { color: var(--cyan); font-weight: 600; }
+  .cgrid :global(img) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 4px; cursor: zoom-in; background: #040507; transition: transform .15s; }
+  .cgrid :global(img:hover) { transform: scale(1.03); }
+  .cgrid :global(.crow.ob img) { outline: 1px solid rgba(79,200,221,.5); outline-offset: 1px; }
+  .cstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 22px; }
+  .cstats :global(.cstat) { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .cstats :global(.data) { font-size: 24px; }
+  .cstats :global(p) { color: var(--muted); font-size: 14px; margin-top: 8px; line-height: 1.5; }
+  @media (max-width: 760px) { .cstats { grid-template-columns: 1fr; } }
+
+  .viewer { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 14px; }
+  .vtools { margin-bottom: 12px; }
+  .vstage { aspect-ratio: 3 / 2; background: #040507; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .vstage img { width: 100%; height: 100%; object-fit: contain; }
+  .vframes { display: flex; gap: 6px; margin-top: 12px; overflow-x: auto; padding-bottom: 4px; }
+  .vframes :global(img) { width: 104px; height: 69px; object-fit: cover; flex: 0 0 auto; border-radius: 4px; cursor: pointer; opacity: .5; outline: 1px solid transparent; transition: opacity .15s; }
+  .vframes :global(img:hover) { opacity: .85; }
+  .vframes :global(img.on) { opacity: 1; outline-color: var(--amber); }
+
+  .method { margin-top: 56px; padding: 28px; }
+  .method h2 { font-size: 22px; margin-bottom: 12px; }
+  .method p { color: var(--text-2); max-width: 820px; }
+</style>

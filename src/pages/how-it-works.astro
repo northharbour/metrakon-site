@@ -1,0 +1,221 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Wipe from '../components/Wipe.astro';
+
+const TOC = [
+  ['problem', 'The problem with estimating'],
+  ['measures', 'What Obelisk measures'],
+  ['density', 'Density is the control'],
+  ['aged', 'Aged film'],
+  ['light', 'Scanning light'],
+  ['calibration', 'Calibration in practice'],
+];
+---
+<Base title="How it works" description="Obelisk converts colour negatives through a measured calibration of the film stock on your rig: a density fingerprint, a gated colour matrix, a per-roll film base and exposure as arithmetic.">
+  <PageHero
+    eyebrow="How it works"
+    title="Measure the film. Then convert through the measurement."
+    lede="A conversion can only be as consistent as the thing it anchors to. Scene statistics are not stable; the film’s physical behaviour is. This is how Obelisk uses that."
+  />
+
+  <div class="wrap doc-grid">
+    <nav class="toc" aria-label="On this page">
+      <p class="toc-h">On this page</p>
+      {TOC.map(([id, l]) => <a href={`#${id}`} data-toc={id}>{l}</a>)}
+    </nav>
+
+    <article class="doc">
+      <section id="problem">
+        <h2>The problem with estimating</h2>
+        <p>
+          Most negative conversion works from the image: it reads each frame’s statistics —
+          white point, black point, average colour — and estimates a correction. That approach
+          fails in exactly the situations that fill real rolls.
+        </p>
+        <ul class="points">
+          <li><strong>Scenes without neutral content drift.</strong> A red room, a forest, a sunset — average-to-grey logic reads the scene itself as a colour cast and corrects it away.</li>
+          <li><strong>Mis-exposed frames are corrected toward the wrong target.</strong> Over-exposed frames come out bright and desaturated; night shots get lifted to grey.</li>
+          <li><strong>Frame-by-frame analysis drifts frame by frame.</strong> Two photos taken seconds apart render differently because something in the scene changed the histogram.</li>
+        </ul>
+        <p>
+          Obelisk has no per-image auto-balance. Every frame converts through a fixed, measured
+          calibration, so a result can be reproduced exactly — frame to frame, roll to roll,
+          operator to operator.
+        </p>
+      </section>
+
+      <section id="measures">
+        <h2>What Obelisk measures</h2>
+        <p>
+          A short calibration session — a colour chart photographed on one roll of the stock,
+          bracketed in one-stop steps — captures how that film responds on your light and your
+          camera.
+        </p>
+        <div class="mcards">
+          <div class="mcard"><span class="data">Fingerprint</span><h3>Neutral at every density</h3><p>Dozens of measured points along each channel’s response, across ±3 stops. Grey reads grey in the shadows, midtones and highlights — removing the casts that a single white balance move can never fix.</p></div>
+          <div class="mcard"><span class="data">Matrix</span><h3>Gated colour correction</h3><p>The chart’s colour patches fit a cross-channel correction for the overlap between the film’s dyes and the camera’s filters. It must preserve neutrals and pass statistical quality gates, or it is not used.</p></div>
+          <div class="mcard"><span class="data">Base</span><h3>The film’s own zero</h3><p>Each roll’s unexposed base is measured from the clear film between frames, agreed across the roll, and subtracted in density space. The orange mask and the scan light cancel exactly.</p></div>
+          <div class="mcard"><span class="data">Exposure</span><h3>Arithmetic, not guesswork</h3><p>On a negative, an exposure error is a uniform density offset. It is removed with a gain that preserves colour ratios, placing every frame at the same print density.</p></div>
+        </div>
+        <figure class="figure">
+          <div class="pair">
+            <img src="/assets/fp_fingerprint.svg" alt="Measured per-channel density fingerprint" loading="lazy" />
+            <img src="/assets/fp_matrix.svg" alt="Fitted colour correction acting on each hue" loading="lazy" />
+          </div>
+          <figcaption>
+            From a production calibration (Kodak Gold 200) — the instrument’s own readouts.
+            Left: the neutral axis of the measured fingerprint — how far each channel deviates
+            from neutral at every density, fitted through the calibration points; dashed curves
+            are the same stock’s measured <em>aged</em> response. Right: the fitted colour
+            correction as its action on each hue — the dashed ring is the uncorrected input, each
+            arrow is where the correction moves that hue.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="density">
+        <h2>Density is the control</h2>
+        <p>
+          Brightness works the way a printer or minilab handles it: as print density. One control
+          moves the frame through a fixed print curve with the blacks anchored — no black-point
+          stretching, no re-fitted histogram. A density change on screen behaves like an exposure
+          change at the enlarger, so contrast and colour hold while the frame gets lighter or
+          darker.
+        </p>
+        <p>
+          The same maths runs in two places: on the GPU for live grading as you drag, and in the
+          export path at full resolution. They are kept in parity, so what you approve is what
+          you deliver.
+        </p>
+      </section>
+
+      <section id="aged">
+        <h2>Aged film, measured</h2>
+        <p>
+          Aged film — expired stock, or exposed rolls that waited years for development — does
+          not simply fade. Its colour balance shifts unevenly across the tonal range: shadows
+          drift toward magenta while highlights drift toward teal. Because the error bends with
+          density, no white-balance move can remove it. Auto-balancing converters average the
+          two casts against each other and leave both in the frame.
+        </p>
+        <p>
+          Obelisk calibrates the same stock twice — once fresh, and once from film deliberately
+          aged before development — capturing how ageing bends each channel’s response at every
+          density. The correction is a single per-roll control: zero is the fresh calibration,
+          and raising it applies the measured ageing shift in reverse until the roll’s neutrals
+          line up. Shadows and highlights return to neutral together, because the correction
+          follows the same curve the ageing did.
+        </p>
+      </section>
+
+      <section id="light">
+        <h2>Scanning light, measured at the sensor</h2>
+        <p>
+          Cameras apply large white-balance gains to raw data before you see anything — on a
+          typical body, around ×2.6 on red and ×1.6 on blue. A light that looks balanced on the
+          camera’s histogram can leave the sensor badly starved of red, and colour negative film
+          blocks most red to begin with. Tuning the light against raw, gain-free sensor values
+          gave a substantial improvement in red-channel quality for the same scan.
+        </p>
+        <div class="stats">
+          <div><span class="data">34% → 89%</span><p>Raw red level at clear film base, before and after tuning</p></div>
+          <div><span class="data">~2×</span><p>Cleaner red content for the same exposure and film</p></div>
+          <div><span class="data">4.58 → 4.74</span><p>Measured white density — red now resolves to the top of its range</p></div>
+        </div>
+        <figure class="figure">
+          <Wipe before="/assets/comp/light_daylight.jpg" after="/assets/comp/light_sensor.jpg"
+                beforeLabel="Daylight-balanced" afterLabel="Sensor-balanced" alt="The same negative, converted identically" />
+          <figcaption>Drag to compare. The same negative, converted identically; only the scanning light mix differs.</figcaption>
+        </figure>
+        <h3>White light works too</h3>
+        <p>
+          None of this makes an RGB source a requirement. Obelisk works with an LED panel or a
+          light table, because calibration is measured for whichever light you actually use, and
+          a white-light profile is as consistent across a roll as an RGB one. Measured on the
+          same negatives scanned both ways, narrowband RGB resolves about 20% more separation
+          between colours — so RGB extracts more, but white light is a perfectly workable start.
+        </p>
+        <p class="note">
+          One rule holds regardless: a profile belongs to a light source as well as a film stock.
+          Scanning the same stock under a different light means one more five-minute chart
+          session — and Obelisk flags a roll whose base signature doesn’t match its profile’s light.
+        </p>
+      </section>
+
+      <section id="calibration">
+        <h2>Calibration in practice</h2>
+        <p>Calibration is done once per film stock and light source, and takes about five minutes at the scanning station.</p>
+        <ol class="howto">
+          <li><strong>Shoot a chart.</strong> Photograph a standard colour chart on one roll of the stock, bracketed in one-stop steps.</li>
+          <li><strong>Develop and scan</strong> the roll on your rig, exactly as you scan customer film.</li>
+          <li><strong>Point Obelisk at the bracket.</strong> It fits the fingerprint and colour matrix, checks the fit against its quality gates, and records the light, aperture and rig it was made on.</li>
+        </ol>
+        <p>
+          Profiles are portable bundles: back them up, move them to a second scanning station, or
+          rebuild one from its stored chart measurements when the fitting improves — without
+          rescanning.
+        </p>
+      </section>
+
+      <div class="doc-cta card">
+        <div>
+          <h3>See the results on real frames</h3>
+          <p class="muted">Bracket and real-scene comparisons against three other converters, from identical RAW files.</p>
+        </div>
+        <a class="btn btn-ghost" href="/compare/">Open the comparison <span class="arrow">→</span></a>
+      </div>
+    </article>
+  </div>
+</Base>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) links.forEach((l) => l.classList.toggle('on', l.dataset.toc === e.target.id));
+  }), { rootMargin: '-30% 0px -60% 0px' });
+  document.querySelectorAll('.doc > section[id]').forEach((s) => io.observe(s));
+</script>
+
+<style>
+  .doc-grid { display: grid; grid-template-columns: 220px 1fr; gap: clamp(32px, 6vw, 88px); padding-top: 56px; padding-bottom: 96px; }
+  .toc { position: sticky; top: 96px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
+  .toc-h { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+  .toc a { color: var(--muted); font-size: 14.5px; padding: 6px 0 6px 14px; border-left: 2px solid var(--line); text-decoration: none; transition: color .15s, border-color .15s; }
+  .toc a:hover { color: var(--text); }
+  .toc a.on { color: var(--text); border-left-color: var(--amber); }
+  @media (max-width: 900px) { .doc-grid { grid-template-columns: 1fr; padding-top: 36px; } .toc { display: none; } }
+
+  .doc { max-width: 760px; min-width: 0; }
+  .doc section { padding-bottom: 56px; margin-bottom: 56px; border-bottom: 1px solid var(--line); scroll-margin-top: 96px; }
+  .doc h2 { font-size: clamp(26px, 3vw, 34px); margin-bottom: 20px; }
+  .doc h3 { font-size: 19px; margin: 32px 0 10px; }
+  .doc p { color: var(--text-2); }
+  .doc em { color: var(--text); }
+  .points { list-style: none; padding: 0; margin: 24px 0; display: grid; gap: 14px; }
+  .points li { padding: 16px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); color: var(--muted); font-size: 15.5px; }
+  .points strong { color: var(--text); display: block; margin-bottom: 2px; }
+  .mcards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 28px 0; }
+  .mcard { padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .mcard .data { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; }
+  .mcard h3 { margin: 10px 0 8px; font-size: 17px; }
+  .mcard p { font-size: 15px; color: var(--muted); }
+  @media (max-width: 640px) { .mcards { grid-template-columns: 1fr; } }
+  .figure { margin: 30px 0 0; }
+  .figure .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .figure .pair img { border-radius: var(--r); border: 1px solid var(--line); width: 100%; }
+  @media (max-width: 640px) { .figure .pair { grid-template-columns: 1fr; } }
+  .figure figcaption { font-size: 14px; color: var(--muted); margin-top: 12px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 26px 0 0; }
+  .stats > div { padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .stats .data { font-size: 20px; }
+  .stats p { font-size: 13.5px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
+  .note { font-size: 15px; padding: 14px 18px; border-left: 2px solid var(--amber); background: rgba(240,151,63,.05); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+  .howto { padding: 0; margin: 22px 0; list-style: none; counter-reset: s; display: grid; gap: 12px; }
+  .howto li { counter-increment: s; position: relative; padding: 2px 0 2px 46px; color: var(--muted); }
+  .howto li::before { content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-family: var(--mono); font-size: 13px; color: var(--cyan); border: 1px solid var(--line-2); border-radius: 6px; padding: 3px 6px; }
+  .howto strong { color: var(--text); }
+  .doc-cta { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding: 28px; flex-wrap: wrap; }
+  .doc-cta h3 { margin: 0 0 6px; }
+</style>

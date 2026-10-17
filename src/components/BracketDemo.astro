@@ -1,0 +1,114 @@
+---
+// Home-page consistency demo: Obelisk and one per-image converter side by side, on the
+// same RAW exposure bracket. Drag through the bracket; the strips under each pane show the
+// whole bracket at once, which is what that tool would do across an ordinary roll.
+import { TOOLS, SETS, STOCK_ORDER, thumb, large } from '../data/comparison';
+const rivals = TOOLS.filter((t) => t.key !== 'metrakon');
+const init = SETS['250d'];
+const payload = JSON.stringify({ SETS, STOCK_ORDER });
+---
+<div class="bd" data-bd={payload}>
+  <div class="bd-controls">
+    <div class="seg" role="group" aria-label="Film stock" data-stock>
+      {STOCK_ORDER.map((k, i) => <button aria-pressed={i === 0 ? 'true' : 'false'} data-k={k}>{SETS[k].label}</button>)}
+    </div>
+    <div class="seg" role="group" aria-label="Compare against" data-rival>
+      {rivals.map((t, i) => <button aria-pressed={i === 1 ? 'true' : 'false'} data-k={t.key}>{t.label}</button>)}
+    </div>
+  </div>
+
+  <div class="bd-panes">
+    {[{ key: 'metrakon', label: 'Obelisk', side: 'a' }, { key: 'nlp', label: 'Negative Lab Pro', side: 'b' }].map((p) => (
+      <figure class={`bd-pane ${p.side}`} data-side={p.side}>
+        <div class="bd-img">
+          <img data-big src={large(p.key, init.frames[3])} alt={`${p.label} conversion`} decoding="async" loading="lazy" />
+          <span class={`tag bd-label ${p.side === 'a' ? 'is-ob' : ''}`} data-label>{p.label}</span>
+        </div>
+        <div class="bd-roll" data-roll>
+          {init.frames.map((f, i) => <img src={thumb(p.key, f)} alt="" loading="lazy" decoding="async" class={i === 3 ? 'on' : ''} />)}
+        </div>
+      </figure>
+    ))}
+  </div>
+
+  <div class="bd-scrub">
+    <span class="muted small">Under</span>
+    <input type="range" min="0" max="6" step="1" value="3" aria-label="Bracket frame, under-exposed to over-exposed" data-range />
+    <span class="muted small">Over</span>
+    <span class="data bd-pos" data-pos>4 / 7</span>
+  </div>
+</div>
+
+<script>
+  type Sets = Record<string, { label: string; frames: string[] }>;
+  document.querySelectorAll<HTMLElement>('[data-bd]').forEach((root) => {
+    const { SETS } = JSON.parse(root.dataset.bd!) as { SETS: Sets };
+    const LABELS: Record<string, string> = { filmlab: 'FilmLab', nlp: 'Negative Lab Pro', smartconvert: 'SmartConvert' };
+    let stock = '250d', rival = 'nlp', i = 3;
+    const range = root.querySelector<HTMLInputElement>('[data-range]')!;
+    const pos = root.querySelector<HTMLElement>('[data-pos]')!;
+    const panes = [...root.querySelectorAll<HTMLElement>('[data-side]')];
+    const toolFor = (side: string) => (side === 'a' ? 'metrakon' : rival);
+    const big = (t: string, f: string) => `/assets/comp/large/${t}_${f}.jpg`;
+    const sm = (t: string, f: string) => `/assets/comp/thumb/${t}_${f}.jpg`;
+
+    function paint(rebuild = false) {
+      const frames = SETS[stock].frames;
+      panes.forEach((p) => {
+        const t = toolFor(p.dataset.side!);
+        p.querySelector<HTMLImageElement>('[data-big]')!.src = big(t, frames[i]);
+        if (p.dataset.side === 'b') p.querySelector('[data-label]')!.textContent = LABELS[t];
+        const roll = p.querySelector<HTMLElement>('[data-roll]')!;
+        if (rebuild) {
+          roll.innerHTML = '';
+          frames.forEach((f, j) => {
+            const im = document.createElement('img');
+            im.src = sm(t, f); im.alt = ''; im.decoding = 'async';
+            im.addEventListener('click', () => { i = j; range.value = String(j); paint(); });
+            roll.appendChild(im);
+          });
+        }
+        roll.querySelectorAll('img').forEach((im, j) => im.classList.toggle('on', j === i));
+      });
+      pos.textContent = `${i + 1} / ${frames.length}`;
+    }
+    function preload() {
+      SETS[stock].frames.forEach((f) => { ['metrakon', rival].forEach((t) => { new Image().src = big(t, f); }); });
+    }
+    range.addEventListener('input', () => { i = +range.value; paint(); });
+    const wire = (sel: string, fn: (k: string) => void) => {
+      const g = root.querySelector<HTMLElement>(sel)!;
+      g.querySelectorAll<HTMLButtonElement>('button').forEach((b) => b.addEventListener('click', () => {
+        g.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        fn(b.dataset.k!); paint(true); preload();
+      }));
+    };
+    wire('[data-stock]', (k) => { stock = k; });
+    wire('[data-rival]', (k) => { rival = k; });
+    // Clickable thumbs on the server-rendered strips too
+    paint(true);
+    new IntersectionObserver(([e], o) => { if (e.isIntersecting) { preload(); o.disconnect(); } }).observe(root);
+  });
+</script>
+
+<style>
+  .bd-controls { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .bd-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .bd-pane { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 10px; }
+  .bd-pane.a { border-color: rgba(79,200,221,.35); box-shadow: 0 0 60px -30px rgba(79,200,221,.5); }
+  .bd-img { position: relative; aspect-ratio: 3 / 2; background: #040507; border-radius: 8px; overflow: hidden; }
+  .bd-img img { width: 100%; height: 100%; object-fit: cover; }
+  .bd-label { position: absolute; left: 10px; top: 10px; }
+  .bd-label.is-ob { color: var(--cyan); }
+  .bd-roll { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+  .bd-roll :global(img) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 3px; opacity: .6; cursor: pointer; outline: 1px solid transparent; transition: opacity .15s; }
+  .bd-roll :global(img:hover) { opacity: .9; }
+  .bd-roll :global(img.on) { opacity: 1; outline-color: var(--amber); }
+  .bd-scrub { display: flex; align-items: center; gap: 14px; margin: 22px auto 0; max-width: 640px; }
+  .bd-scrub input { flex: 1; accent-color: var(--amber); height: 28px; }
+  .bd-pos { min-width: 44px; text-align: right; font-size: 13px; }
+  @media (max-width: 720px) {
+    .bd-panes { grid-template-columns: 1fr; }
+    .bd-controls .seg { width: 100%; }
+  }
+</style>

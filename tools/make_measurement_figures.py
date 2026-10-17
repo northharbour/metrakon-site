@@ -6,10 +6,10 @@ Faithful ports of the APP'S OWN fingerprint-viewer plots (the ones Ben approved)
 computed from a real production calibration (Kodak Gold 200, profile 19) through the
 app's pipeline itself:
 
-    assets/fp_fingerprint.svg   neutral-cast view: R−G / B−G deviation vs input density —
+    public/assets/fp_fingerprint.svg   neutral-cast view: R−G / B−G deviation vs input density —
                                 smoothed use-time curves (pipeline._fp_channel_pairs),
                                 measured points as dots, the AGED calibration dashed
-    assets/fp_matrix.svg        colour view: hue ring with arrows showing how the fitted
+    public/assets/fp_matrix.svg        colour view: hue ring with arrows showing how the fitted
                                 density matrix moves each hue, plus the summary stats
 
 The cast plot shows channel DIFFERENCES and the ring shows relative moves — neither
@@ -167,9 +167,9 @@ def matrix_ring_svg(M):
     s += f'<text x="{Xp(-rng)+6:.0f}" y="{y0-8:.1f}" fill="{TEXT}">cyan</text>\n'
     s += f'<text x="{x0+8:.1f}" y="{Yp(rng)+16:.1f}" fill="{TEXT}">B&#8722;G &#8594; blue</text>\n'
     s += f'<text x="{x0+8:.1f}" y="{Yp(-rng)-6:.1f}" fill="{TEXT}">yellow</text>\n'
-    s += (f'<text x="{(W-ph)/2:.0f}" y="{H-10}" fill="{TEXT}">'
+    s += (f'<text x="{W/2:.0f}" y="{H-28}" fill="{TEXT}" text-anchor="middle">'
           f'arrows = how the matrix moves each hue &#183; dashed = input chroma</text>\n')
-    s += (f'<text x="{(W+ph)/2:.0f}" y="{H-10}" fill="{TEXT}" text-anchor="end">'
+    s += (f'<text x="{W/2:.0f}" y="{H-10}" fill="{TEXT}" text-anchor="middle">'
           f'saturation &#215;{sat:.2f} &#183; max hue shift {mx_shift:+.0f}&#176; &#183; '
           f'crosstalk {ct_v:.2f} ({ct_n}) &#183; det {det:.2f}</text>\n')
     return s + '</svg>\n'
@@ -184,9 +184,9 @@ def main():
     cb = json.loads(row[0])
     cb_aged = json.loads(row[1]) if row[1] else None
     M = json.loads(row[2])
-    (HERE / 'assets' / 'fp_fingerprint.svg').write_text(neutral_cast_svg(cb, cb_aged), encoding='utf-8')
-    (HERE / 'assets' / 'fp_matrix.svg').write_text(matrix_ring_svg(M), encoding='utf-8')
-    print('wrote assets/fp_fingerprint.svg, assets/fp_matrix.svg  [Kodak Gold 200]')
+    (HERE / 'public' / 'assets' / 'fp_fingerprint.svg').write_text(neutral_cast_svg(cb, cb_aged), encoding='utf-8')
+    (HERE / 'public' / 'assets' / 'fp_matrix.svg').write_text(matrix_ring_svg(M), encoding='utf-8')
+    print('wrote public/assets/fp_fingerprint.svg, public/assets/fp_matrix.svg  [Kodak Gold 200]')
 
 
 if __name__ == '__main__':

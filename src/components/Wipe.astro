@@ -1,0 +1,47 @@
+---
+// Drag-to-compare: `before` on the left of the handle, `after` on the right.
+// Keyboard: focus it and use ←/→.
+interface Props { before: string; after: string; beforeLabel: string; afterLabel: string; alt: string }
+const { before, after, beforeLabel, afterLabel, alt } = Astro.props;
+---
+<div class="wipe" data-wipe tabindex="0" role="slider" aria-label={`Compare: ${beforeLabel} and ${afterLabel}`} aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+  <img src={after} alt={`${alt} — ${afterLabel}`} loading="lazy" decoding="async" />
+  <img class="top" src={before} alt={`${alt} — ${beforeLabel}`} loading="lazy" decoding="async" style="clip-path:inset(0 50% 0 0)" />
+  <div class="handle" style="left:50%"><span>‹ ›</span></div>
+  <span class="tag l">{beforeLabel}</span>
+  <span class="tag r">{afterLabel}</span>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-wipe]').forEach((w) => {
+    const top = w.querySelector<HTMLElement>('.top')!;
+    const h = w.querySelector<HTMLElement>('.handle')!;
+    let pct = 50, down = false;
+    const set = (p: number) => {
+      pct = Math.max(0, Math.min(100, p));
+      top.style.clipPath = `inset(0 ${100 - pct}% 0 0)`; h.style.left = pct + '%';
+      w.setAttribute('aria-valuenow', String(Math.round(pct)));
+    };
+    const fromX = (x: number) => { const r = w.getBoundingClientRect(); set(((x - r.left) / r.width) * 100); };
+    w.addEventListener('pointerdown', (e) => { down = true; w.setPointerCapture(e.pointerId); fromX(e.clientX); });
+    w.addEventListener('pointermove', (e) => { if (down) fromX(e.clientX); });
+    w.addEventListener('pointerup', () => (down = false));
+    w.addEventListener('pointercancel', () => (down = false));
+    w.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { set(pct - 5); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { set(pct + 5); e.preventDefault(); }
+    });
+  });
+</script>
+
+<style>
+  .wipe { position: relative; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--line); background: #040507;
+    cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .wipe img { width: 100%; display: block; pointer-events: none; }
+  .wipe .top { position: absolute; inset: 0; height: 100%; object-fit: cover; }
+  .handle { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--text); pointer-events: none; box-shadow: 0 0 12px rgba(0,0,0,.6); }
+  .handle span { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 38px; height: 38px; border-radius: 50%;
+    background: var(--text); color: var(--bg); display: grid; place-items: center; font: 700 14px/1 var(--font); letter-spacing: -1px; box-shadow: 0 4px 16px rgba(0,0,0,.5); }
+  .tag { position: absolute; top: 12px; pointer-events: none; }
+  .tag.l { left: 12px; } .tag.r { right: 12px; }
+</style>

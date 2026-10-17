@@ -1,0 +1,21 @@
+---
+// The split obelisk from the app icon, as a crisp vector: amber face (the negative),
+// cyan face (the positive). Geometry traced from static/icon-n-512.png.
+interface Props { size?: number; class?: string }
+const { size = 28, class: cls = '' } = Astro.props;
+const id = 'm' + Math.random().toString(36).slice(2, 8);
+---
+<svg class={cls} width={size * 0.6} height={size} viewBox="150 66 212 380" aria-hidden="true">
+  <defs>
+    <linearGradient id={`${id}a`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd9a0" /><stop offset=".35" stop-color="#f5a04a" /><stop offset="1" stop-color="#d9692a" />
+    </linearGradient>
+    <linearGradient id={`${id}c`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9f6f6" /><stop offset=".35" stop-color="#6fd8e4" /><stop offset="1" stop-color="#2f8ccf" />
+    </linearGradient>
+  </defs>
+  <path d="M256 72 L213 178 L188 392 L254 392 L254 72 Z" fill={`url(#${id}a)`} />
+  <path d="M258 72 L301 178 L324 392 L258 392 Z" fill={`url(#${id}c)`} />
+  <rect x="156" y="398" width="98" height="42" fill="#c0581f" />
+  <rect x="258" y="398" width="98" height="42" fill="#2a5db0" />
+</svg>

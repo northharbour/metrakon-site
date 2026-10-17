@@ -1,0 +1,361 @@
+---
+import Base from '../layouts/Base.astro';
+import AppWindow from '../components/AppWindow.astro';
+import BracketDemo from '../components/BracketDemo.astro';
+import { SITE } from '../site';
+
+const FEATURES = [
+  { k: 'Overnight conversion', d: 'Outside working hours Obelisk finds the day’s orders by itself, converts every roll whose film stock it knows, and has previews waiting in the morning. Nothing to queue.' },
+  { k: 'Film stock map', d: 'A roll folder named “02 Gold 200” picks its profile from a plain-text map. A stock it does not recognise is left unconverted for a person to decide — never guessed.' },
+  { k: 'Automatic roll base', d: 'The film base is read from the clear film between frames and agreed across the whole roll. When the frames disagree, the roll is flagged ◈ check instead of guessed.' },
+  { k: 'Automatic orientation', d: 'A local model turns frames the right way up while the roll converts. Nothing leaves the machine, and it never overrides an operator’s rotation.' },
+  { k: 'Live grading', d: 'Adjustments render on the GPU as you drag, through the same maths the export uses. Copy, paste, apply to roll, undo — all instant.' },
+  { k: 'Background export', d: 'Exports run on their own queue while you keep reviewing. 16-bit TIFF or JPEG, with sharpening, despeckle and full-width film borders applied at export.' },
+  { k: 'Grading travels with the roll', d: 'Every decision is written beside the scans, not only into the app. Archive a roll, bring it back next year — it opens exactly as it was delivered.' },
+  { k: 'Exposure contact sheets', d: 'A darkroom-style sheet of the roll printed at one fixed grade, each frame marked over or thin — so the customer can see which frames their meter missed.' },
+  { k: 'Black & white and virtual copies', d: 'A dedicated B&W path, and virtual copies when a customer wants a frame two ways.' },
+];
+
+const FLAGS = [
+  { chip: '⚠ 17% clip', c: 'var(--red)', t: 'Scan too bright', d: 'Raw channels are checked for clipping before anything else. Clipped data is gone, so the instruction is simple: rescan darker.' },
+  { chip: '⚠ 42%', c: 'var(--violet)', t: 'Scan too dim', d: 'Scan level against the calibrated target, with how many stops to raise before noise and colour separation pay for it.' },
+  { chip: '▲ +1.4', c: 'var(--yellow)', t: 'Film over- or under-exposed', d: 'Measured in density from the negative itself — kept separate from scan mistakes, and worth telling the customer.' },
+  { chip: '⚠ light', c: 'var(--yellow)', t: 'Wrong scanning light', d: 'Each roll’s base signature is compared with the one recorded at calibration, and flagged at the roll header.' },
+  { chip: 'f/2.8 ≠ f/5.6', c: 'var(--yellow)', t: 'Wrong lens setting', d: 'The calibration aperture is stored with the profile and checked against every scan’s EXIF.' },
+];
+---
+<Base>
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="glow"></div>
+    <div class="wrap hero-in">
+      <p class="eyebrow">Camera scanning software for film labs</p>
+      <h1 class="h-display">Production film scanning,<br /><span class="grad">built on measurement.</span></h1>
+      <p class="lede hero-lede">
+        Obelisk turns a digital camera, a light and a film holder into a lab scanner. Every
+        negative converts through a measured calibration of its film stock on your rig — so a
+        whole roll lands at one density and one colour, without frame-by-frame correction.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href={SITE.stage === 'released' ? '/pricing/' : '/pricing/#early-access'}>
+          {SITE.stage === 'released' ? 'Get Obelisk' : 'Request early access'} <span class="arrow">→</span>
+        </a>
+        <a class="btn btn-ghost" href="#consistency">See it on a real roll</a>
+      </div>
+      <ul class="hero-meta">
+        <li>In daily production at a working film lab</li>
+        <li>Runs entirely on your machine</li>
+        <li>Windows 10 &amp; 11</li>
+      </ul>
+    </div>
+    <div class="wrap hero-app reveal">
+      <AppWindow />
+      <p class="caption">Interface illustration. Every image is an unretouched Obelisk conversion from one roll of Vision3 250D — no per-frame adjustments.</p>
+    </div>
+  </section>
+
+  <!-- ============ PROOF ROW ============ -->
+  <section class="proof">
+    <div class="wrap proof-in">
+      <div class="proof-item reveal"><div class="n data">1<small> level</small></div><p>Brightness spread across a 250D exposure bracket. Per-image converters: 8–29.</p></div>
+      <div class="proof-item reveal"><div class="n data">5<small> min</small></div><p>To calibrate a film stock — once per stock and light, not per roll.</p></div>
+      <div class="proof-item reveal"><div class="n data">1<small> decision</small></div><p>Per roll. Assign the film profile; the frames arrive levelled, cropped and upright.</p></div>
+      <div class="proof-item reveal"><div class="n data">0<small> uploads</small></div><p>Conversion and auto-orientation run locally. Customer images never leave the lab.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ WHY CAMERA SCANNING ============ -->
+  <section class="section">
+    <div class="wrap two">
+      <div class="reveal">
+        <p class="eyebrow">Why camera scanning</p>
+        <h2 class="h-section">The minilab scanners are not coming back.</h2>
+      </div>
+      <div class="reveal prose">
+        <p class="lede">
+          The Frontiers and Noritsus that defined lab scanning have been out of production for
+          about two decades. They run on salvaged parts and discontinued software, and fewer of
+          them run every year.
+        </p>
+        <p class="muted">
+          What replaces them is the camera. A modern high-resolution sensor captures more from a
+          negative than dedicated scanners ever did, at seconds per frame. What has been missing
+          is the software to make a camera rig behave like the instrument those machines were —
+          conversion that is predictable rather than estimated, and a workflow built for volume.
+          Obelisk is that software.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ============ CONSISTENCY DEMO ============ -->
+  <section class="section" id="consistency">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Consistency</p>
+        <h2 class="h-section">Seven exposures. One rendering.</h2>
+        <p class="lede">
+          The same scene shot seven times, from stops under to stops over, scanned once and
+          converted from identical RAW files. A converter that anchors to the film renders them
+          nearly alike. One that estimates from each image drifts — and that drift is what it
+          does across an ordinary roll.
+        </p>
+      </div>
+      <div class="reveal"><BracketDemo /></div>
+      <p class="caption center">Only density was matched by hand, where each tool allows it. <a href="/compare/">Full comparison and method →</a></p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">How it works</p>
+        <h2 class="h-section">Measured once. Applied to every frame.</h2>
+        <p class="lede">
+          Most converters read each frame and estimate a correction from what is in the picture.
+          Obelisk measures how the film behaves instead, and converts through that measurement.
+        </p>
+      </div>
+      <ol class="steps">
+        <li class="card reveal">
+          <span class="step-n data">01</span>
+          <h3>Calibrate the stock</h3>
+          <p>Photograph a colour chart on one roll, bracketed in one-stop steps. Obelisk fits a density fingerprint and a colour matrix for that stock on your light and camera. About five minutes, once.</p>
+        </li>
+        <li class="card reveal">
+          <span class="step-n data">02</span>
+          <h3>Measure the roll</h3>
+          <p>The film base is measured from the clear film between frames and subtracted in density space. The orange mask and the scan light cancel exactly — per roll, not estimated per frame.</p>
+        </li>
+        <li class="card reveal">
+          <span class="step-n data">03</span>
+          <h3>Level by arithmetic</h3>
+          <p>On a negative, an exposure error is a uniform density offset. It is removed with a gain that preserves colour ratios, placing every frame at the same print density.</p>
+        </li>
+        <li class="card reveal">
+          <span class="step-n data">04</span>
+          <h3>Print, don’t edit</h3>
+          <p>Brightness works the way a minilab handles it: one density control through a fixed print curve, blacks anchored. Adjusting a frame feels like printing it.</p>
+        </li>
+      </ol>
+      <div class="fig-row reveal">
+        <figure class="fig card">
+          <img src="/assets/fp_fingerprint.svg" alt="Measured per-channel density fingerprint for Kodak Gold 200" loading="lazy" />
+          <figcaption><span class="data">Fingerprint</span> Each channel’s deviation from neutral at every density, fitted through the calibration points.</figcaption>
+        </figure>
+        <figure class="fig card">
+          <img src="/assets/fp_matrix.svg" alt="Fitted colour correction acting on each hue" loading="lazy" />
+          <figcaption><span class="data">Colour matrix</span> Where the fitted correction moves each hue. A fit that fails its quality gates is refused, not applied.</figcaption>
+        </figure>
+      </div>
+      <p class="center"><a class="btn btn-ghost" href="/how-it-works/">The full method <span class="arrow">→</span></a></p>
+    </div>
+  </section>
+
+  <!-- ============ LAB FEATURES ============ -->
+  <section class="section lab">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Built for the lab bench</p>
+        <h2 class="h-section">A roll is one decision, not thirty-six.</h2>
+        <p class="lede">
+          The workflow is modelled on how a lab runs a day of scanning, not on a photo editor.
+          Scans land in a watched folder, group into rolls and convert in the background. By the
+          time the operator sits down, the roll is rendered, levelled and consistent.
+        </p>
+      </div>
+      <div class="feat-grid">
+        {FEATURES.map((f) => (
+          <div class="feat reveal">
+            <h3>{f.k}</h3>
+            <p>{f.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCAN QC ============ -->
+  <section class="section">
+    <div class="wrap two qc">
+      <div class="reveal">
+        <p class="eyebrow">Scan quality control</p>
+        <h2 class="h-section">It tells you when the scan is wrong.</h2>
+        <p class="lede" style="margin-top:18px">
+          A deterministic conversion is only as good as the scan behind it. Obelisk measures the
+          scans themselves and says so at intake — while it can still be fixed, not after the
+          roll has been delivered.
+        </p>
+        <p class="muted">
+          A live tuning mode measures each new scan as it lands while you set up a rig, in a
+          readout legible from the scanning position.
+        </p>
+      </div>
+      <ul class="flags card reveal">
+        {FLAGS.map((f) => (
+          <li>
+            <span class="chip" style={`color:${f.c}`}>{f.chip}</span>
+            <div><strong>{f.t}</strong><p>{f.d}</p></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ============ AGED FILM ============ -->
+  <section class="section">
+    <div class="wrap two">
+      <div class="reveal">
+        <p class="eyebrow">Aged film</p>
+        <h2 class="h-section">Expired film, corrected by measurement.</h2>
+      </div>
+      <div class="reveal prose">
+        <p class="lede">
+          Aged film doesn’t just fade. Shadows drift magenta while highlights drift teal — a cast
+          that bends with density, which no white balance can remove.
+        </p>
+        <p class="muted">
+          Obelisk calibrates the same stock fresh and deliberately aged, and records how ageing
+          bends each channel. One per-roll control applies that shift in reverse, so shadows and
+          highlights return to neutral together instead of trading one cast for the other.
+        </p>
+        <a href="/how-it-works/#aged">How de-aging works →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHO ============ -->
+  <section class="section who-sec">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Who it’s for</p>
+        <h2 class="h-section">For people who scan a lot of film.</h2>
+      </div>
+      <div class="who">
+        <div class="card who-card reveal">
+          <h3>Film labs</h3>
+          <p>Digitising customer rolls with a camera rig. Consistent output from any operator, scan QC at intake, overnight conversion and roll-level delivery.</p>
+        </div>
+        <div class="card who-card reveal">
+          <h3>Photographers &amp; archives</h3>
+          <p>Scanning your own work or a collection, and caring more about the whole roll being right than about hand-tuning single frames.</p>
+        </div>
+        <div class="card who-card not reveal">
+          <h3>What it isn’t</h3>
+          <p>A general photo editor, or a one-click converter that guesses. Obelisk deliberately won’t convert without a calibration — that constraint is what the consistency is built on.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="cta-band">
+    <div class="grid-bg"></div>
+    <div class="wrap cta-in reveal">
+      <h2 class="h-section">Release is coming.</h2>
+      <p class="lede">
+        Obelisk already runs every day on customer rolls at the lab it is built in. Early access
+        is opening to a small number of labs and photographers first.
+      </p>
+      <div class="hero-cta" style="justify-content:center">
+        <a class="btn btn-primary" href="/pricing/#early-access">Request early access <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/pricing/">Plans</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* hero */
+  .hero { position: relative; padding: clamp(56px, 9vw, 110px) 0 40px; overflow: hidden; }
+  .hero .glow { position: absolute; left: 50%; top: -220px; width: 1100px; height: 700px; transform: translateX(-50%); pointer-events: none;
+    background: radial-gradient(closest-side, rgba(240,151,63,.16), transparent 70%), radial-gradient(closest-side at 70% 50%, rgba(79,200,221,.12), transparent 70%); filter: blur(10px); }
+  .hero-in { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .hero h1 { max-width: 20ch; }
+  .grad { background: linear-gradient(90deg, #ffc37d, var(--amber) 35%, #8fdcea 65%, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero-lede { max-width: 660px; margin: 26px auto 0; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 34px; }
+  @media (max-width: 560px) { .hero-in .eyebrow::before { display: none; } }
+  .hero-meta { list-style: none; padding: 0; margin: 28px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; color: var(--muted); font-size: 14px; }
+  .hero-meta li::before { content: '✓'; color: var(--cyan); margin-right: 7px; font-size: 13px; }
+  .hero-app { position: relative; margin-top: clamp(48px, 7vw, 80px); }
+  .caption { color: var(--dim); font-size: 13.5px; margin-top: 14px; }
+  .center { text-align: center; }
+  .caption.center { margin-top: 20px; }
+
+  /* proof */
+  .proof { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-2); }
+  .proof-in { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .proof-item { padding: 34px 26px; border-left: 1px solid var(--line); }
+  .proof-item:first-child { border-left: 0; padding-left: 0; }
+  .proof-item .n { font-size: 38px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; margin-bottom: 12px; }
+  .proof-item .n small { font-size: 15px; color: var(--muted); letter-spacing: 0; font-weight: 500; }
+  .proof-item p { color: var(--muted); font-size: 14.5px; line-height: 1.5; margin: 0; }
+  @media (max-width: 900px) {
+    .proof-in { grid-template-columns: 1fr 1fr; }
+    .proof-item { padding: 26px 18px; }
+    .proof-item:nth-child(odd) { border-left: 0; padding-left: 0; }
+    .proof-item:nth-child(n+3) { border-top: 1px solid var(--line); }
+  }
+
+  /* two-column */
+  .two { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(28px, 6vw, 96px); align-items: start; }
+  .two .prose .lede { margin-bottom: 18px; }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+
+  /* steps */
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .steps li { padding: 26px 22px; }
+  .step-n { font-size: 13px; display: block; margin-bottom: 26px; }
+  .steps h3 { font-size: 19px; margin-bottom: 10px; }
+  .steps p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+  @media (max-width: 1000px) { .steps { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+  .fig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0 40px; }
+  .fig { margin: 0; padding: 14px; }
+  .fig img { width: 100%; border-radius: 8px; background: #121212; }
+  .fig figcaption { color: var(--muted); font-size: 14px; margin-top: 12px; line-height: 1.5; }
+  .fig figcaption .data { margin-right: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+  @media (max-width: 760px) { .fig-row { grid-template-columns: 1fr; } }
+
+  /* lab features */
+  .lab { background: linear-gradient(180deg, var(--bg-2), var(--bg)); border-top: 1px solid var(--line); }
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .feat { padding: 28px 26px 30px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); position: relative; }
+  .feat::before { content: ''; position: absolute; left: 26px; top: 0; width: 26px; height: 2px; background: var(--split); }
+  .feat h3 { font-size: 18px; margin: 6px 0 10px; }
+  .feat p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+  @media (max-width: 960px) { .feat-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .feat-grid { grid-template-columns: 1fr; } }
+
+  /* QC */
+  .flags { list-style: none; margin: 0; padding: 10px 24px; }
+  .flags li { display: grid; grid-template-columns: 116px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); align-items: start; }
+  .flags li:last-child { border-bottom: 0; }
+  .flags .chip { justify-self: start; }
+  .flags strong { display: block; font-weight: 600; margin-bottom: 4px; }
+  .flags p { color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+  @media (max-width: 520px) { .flags li { grid-template-columns: 1fr; gap: 10px; } .flags { padding: 4px 18px; } }
+
+  /* who */
+  .who { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .who-card { padding: 30px 28px; }
+  .who-card h3 { font-size: 20px; margin-bottom: 12px; }
+  .who-card p { color: var(--muted); font-size: 15.5px; }
+  .who-card.not { background: transparent; border-style: dashed; }
+  @media (max-width: 900px) { .who { grid-template-columns: 1fr; } }
+
+  /* CTA */
+  .cta-band { position: relative; padding: clamp(80px, 12vw, 150px) 0; border-top: 1px solid var(--line); overflow: hidden; text-align: center;
+    background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(240,151,63,.14), transparent 70%), radial-gradient(ellipse 50% 70% at 70% 100%, rgba(79,200,221,.10), transparent 70%); }
+  .cta-in { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .cta-in .lede { max-width: 560px; margin-top: 18px; }
+</style>

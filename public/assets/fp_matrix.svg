@@ -55,6 +55,6 @@
 <text x="162" y="214.0" fill="#8a8a8a">cyan</text>
 <text x="368.0" y="34.0" fill="#8a8a8a">B&#8722;G &#8594; blue</text>
 <text x="368.0" y="420.0" fill="#8a8a8a">yellow</text>
-<text x="156" y="470" fill="#8a8a8a">arrows = how the matrix moves each hue &#183; dashed = input chroma</text>
-<text x="564" y="470" fill="#8a8a8a" text-anchor="end">saturation &#215;1.01 &#183; max hue shift -14&#176; &#183; crosstalk 0.17 (R&#8592;B) &#183; det 0.99</text>
+<text x="360" y="452" fill="#8a8a8a" text-anchor="middle">arrows = how the matrix moves each hue &#183; dashed = input chroma</text>
+<text x="360" y="470" fill="#8a8a8a" text-anchor="middle">saturation &#215;1.01 &#183; max hue shift -14&#176; &#183; crosstalk 0.17 (R&#8592;B) &#183; det 0.99</text>
 </svg>

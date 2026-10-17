@@ -7,8 +7,8 @@ The source root holds one folder per film-stock comparison set (SETS below). Eac
 set is the same 7-frame chart bracket converted by the four tools, plus (optionally)
 a sample set of varied real scenes converted at the same defaults. Writes:
 
-    assets/comp/thumb/{tool}_{frame}.jpg   grid tiles   (520 px wide, q80)
-    assets/comp/large/{tool}_{frame}.jpg   viewer size  (1500 px wide, q82)
+    public/assets/comp/thumb/{tool}_{frame}.jpg   grid tiles   (520 px wide, q80)
+    public/assets/comp/large/{tool}_{frame}.jpg   viewer size  (1500 px wide, q82)
 
 Frame numbers are unique across stocks, so all stocks share the two output dirs.
 Tool keys and frame lists must match the SETS config in index.html's comparison
@@ -124,7 +124,7 @@ def build_images(src: Path, out_root: Path, tools: dict, frames: list) -> int:
 
 def main(src_root: str) -> None:
     root = Path(src_root)
-    out_root = Path(__file__).resolve().parent.parent / 'assets' / 'comp'
+    out_root = Path(__file__).resolve().parent.parent / 'public' / 'assets' / 'comp'
     out_root.mkdir(parents=True, exist_ok=True)
     build_light_pair(root / SETS[LIGHT_SET]['folder'], out_root)
     total = 0

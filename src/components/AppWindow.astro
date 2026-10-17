@@ -1,0 +1,181 @@
+---
+// Hero demo: an illustration of Obelisk's roll review, filled with real Obelisk renders
+// (the Vision3 250D sample set). Labels mirror the app's own UI (menus, adjustment rows,
+// the ◈ auto base chip). Click a frame or use ←/→; it auto-advances until touched.
+const FRAMES = ['06582', '06553', '06555', '06583', '06556', '06563', '06577', '06585', '06559', '06587'];
+const ROLLS = [
+  { n: '01', stock: 'Vision3 250D', frames: 36, state: 'active', chip: '◈ auto' },
+  { n: '02', stock: 'Gold 200', frames: 37, state: 'done', chip: '◈ auto' },
+  { n: '03', stock: 'Portra 400', frames: 36, state: 'done', chip: '◈ check' },
+  { n: '04', stock: 'Ektar 100', frames: 24, state: 'done', chip: '◈ auto' },
+  { n: '05', stock: 'Ultramax 400', frames: 27, state: 'queued', chip: '' },
+];
+const ADJ = [
+  ['Density', 0.46, 'linear-gradient(90deg,#0b0d12,#f2f2f2)'],
+  ['Contrast', 0.5, 'linear-gradient(90deg,#5a5f6b,#e8e8e8)'],
+  ['Temp', 0.5, 'linear-gradient(90deg,#4f8fe0,#e8b45a)'],
+  ['Tint', 0.5, 'linear-gradient(90deg,#4fbf6a,#d06bc4)'],
+  ['Aging', 0, 'linear-gradient(90deg,#2a3349,#c5852d)'],
+] as const;
+---
+<div class="appwin" data-appwin>
+  <div class="aw-title">
+    <span class="aw-ico"></span>
+    <span class="aw-name">Obelisk</span>
+    <span class="aw-menu">
+      {['File', 'Edit', 'View', 'Roll', 'Calibrate', 'Tools', 'Help'].map((m) => <span>{m}</span>)}
+    </span>
+    <span class="aw-ctl" aria-hidden="true"><i>&#x2013;</i><i>&#x25A1;</i><i>&#x2715;</i></span>
+  </div>
+
+  <div class="aw-body">
+    <aside class="aw-rolls">
+      <div class="aw-h">Order 0614</div>
+      {ROLLS.map((r) => (
+        <div class={`aw-roll ${r.state}`}>
+          <span class="dot"></span>
+          <span class="rn">{r.n}</span>
+          <span class="rs">{r.stock}</span>
+          <span class="rc">{r.frames}</span>
+          {r.chip && <span class={`rb ${r.chip.includes('check') ? 'warn' : ''}`}>{r.chip}</span>}
+        </div>
+      ))}
+      <div class="aw-note">
+        <span class="data">Overnight</span> 4 rolls converted 02:10–03:42
+      </div>
+    </aside>
+
+    <section class="aw-main">
+      <div class="aw-stage">
+        <img data-main src={`/assets/comp/large/metrakon_${FRAMES[0]}.jpg`} alt="Obelisk conversion, Vision3 250D" decoding="async" fetchpriority="high" />
+        <span class="aw-fn tag" data-fn>01 / 01 · Vision3 250D</span>
+      </div>
+      <div class="aw-strip" role="listbox" aria-label="Frames in roll">
+        {FRAMES.map((f, i) => (
+          <button role="option" aria-selected={i === 0 ? 'true' : 'false'} data-f={f} aria-label={`Frame ${i + 1}`}>
+            <img src={`/assets/comp/thumb/metrakon_${f}.jpg`} alt="" loading="lazy" decoding="async" />
+            <span class="ok"></span>
+          </button>
+        ))}
+      </div>
+    </section>
+
+    <aside class="aw-panel">
+      <div class="aw-h">Film profile</div>
+      <div class="aw-field">Vision3 250D <span class="muted">· RGB</span></div>
+      <div class="aw-kv"><span>Roll base</span><span class="chip">◈ auto · 34 of 36 agree</span></div>
+      <div class="aw-h" style="margin-top:14px">Adjust</div>
+      {ADJ.map(([l, v, g]) => (
+        <div class="aw-adj">
+          <span>{l}</span>
+          <span class="trk" style={`--g:${g}`}><span class="knob" style={`left:${v * 100}%`}></span></span>
+        </div>
+      ))}
+      <div class="aw-apply">→ Apply to roll</div>
+    </aside>
+  </div>
+
+  <div class="aw-status">
+    <span><i class="g"></i>Ready</span>
+    <span>Roll 01 · 36 frames · levelled</span>
+    <span class="hide-sm">Export queue 0</span>
+    <span class="hide-sm" style="margin-left:auto">Editing 00:04:12</span>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-appwin]').forEach((root) => {
+    const main = root.querySelector<HTMLImageElement>('[data-main]')!;
+    const fn = root.querySelector<HTMLElement>('[data-fn]')!;
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('.aw-strip button')];
+    let idx = 0, timer: number | undefined, touched = false;
+    const big = (f: string) => `/assets/comp/large/metrakon_${f}.jpg`;
+    const show = (i: number) => {
+      idx = (i + btns.length) % btns.length;
+      const f = btns[idx].dataset.f!;
+      const pre = new Image(); pre.src = big(f);
+      pre.decode().catch(() => {}).finally(() => {
+        main.style.opacity = '0';
+        setTimeout(() => { main.src = pre.src; main.style.opacity = '1'; }, 160);
+      });
+      btns.forEach((b, j) => b.setAttribute('aria-selected', String(j === idx)));
+      fn.textContent = `01 / ${String(idx + 1).padStart(2, '0')} · Vision3 250D`;
+      btns[idx].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    };
+    const stop = () => { touched = true; clearInterval(timer); };
+    btns.forEach((b, i) => b.addEventListener('click', () => { stop(); show(i); }));
+    root.tabIndex = 0;
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { stop(); show(idx + 1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { stop(); show(idx - 1); e.preventDefault(); }
+    });
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Auto-advance only while visible and untouched
+    new IntersectionObserver(([e]) => {
+      clearInterval(timer);
+      if (e.isIntersecting && !touched && !reduce) timer = window.setInterval(() => show(idx + 1), 3800);
+    }, { threshold: 0.4 }).observe(root);
+  });
+</script>
+
+<style>
+  .appwin {
+    --aw-bg: #121212; --aw-sf: #1b1b1b; --aw-bd: #2d2d2d; --aw-sub: #9f9fa2; --aw-mut: #626262;
+    background: var(--aw-bg); border: 1px solid #2b2f3a; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 40px 120px -20px rgba(0,0,0,.9), 0 0 80px -30px rgba(79,200,221,.25);
+    font-size: 12px; color: #e6e6e6; user-select: none; outline: none;
+  }
+  .appwin:focus-visible { box-shadow: 0 0 0 2px var(--cyan); }
+  .aw-title { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 0 0 12px; background: #161616; border-bottom: 1px solid var(--aw-bd); }
+  .aw-ico { width: 14px; height: 14px; border-radius: 3px; background: var(--split); }
+  .aw-name { font-weight: 600; letter-spacing: .12em; text-transform: uppercase; font-size: 11px; }
+  .aw-menu { display: flex; gap: 14px; margin-left: 14px; color: var(--aw-sub); }
+  .aw-ctl { margin-left: auto; display: flex; height: 100%; }
+  .aw-ctl i { width: 44px; display: grid; place-items: center; font-style: normal; color: var(--aw-sub); font-size: 12px; }
+
+  .aw-body { display: grid; grid-template-columns: 190px 1fr 210px; min-height: 0; }
+  .aw-h { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--aw-mut); margin: 4px 0 8px; }
+  .aw-rolls { background: var(--aw-sf); border-right: 1px solid var(--aw-bd); padding: 12px 10px; display: flex; flex-direction: column; gap: 3px; }
+  .aw-roll { display: grid; grid-template-columns: 8px 18px 1fr auto; align-items: center; gap: 6px; padding: 6px; border-radius: 4px; color: var(--aw-sub); }
+  .aw-roll.active { background: #262626; color: #fff; }
+  .aw-roll .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .aw-roll.queued .dot { background: transparent; border: 1px solid var(--aw-mut); }
+  .aw-roll .rn { font-family: var(--mono); color: var(--aw-mut); }
+  .aw-roll .rs { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aw-roll .rc { font-family: var(--mono); color: var(--aw-mut); font-size: 11px; }
+  .aw-roll .rb { grid-column: 3 / 5; font-size: 10px; color: var(--aw-sub); font-family: var(--mono); }
+  .aw-roll .rb.warn { color: var(--yellow); }
+  .aw-note { margin-top: auto; padding: 10px 6px 2px; border-top: 1px solid var(--aw-bd); color: var(--aw-sub); font-size: 11px; line-height: 1.45; }
+
+  .aw-main { display: flex; flex-direction: column; min-width: 0; background: #0b0b0b; }
+  .aw-stage { position: relative; aspect-ratio: 3 / 2; display: flex; align-items: center; justify-content: center; padding: 14px; }
+  .aw-stage img { width: 100%; height: 100%; object-fit: contain; transition: opacity .16s ease; }
+  .aw-fn { position: absolute; left: 22px; top: 22px; font-size: 10px; }
+  .aw-strip { display: flex; gap: 6px; padding: 8px 10px 10px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--aw-bd); background: #101010; }
+  .aw-strip::-webkit-scrollbar { display: none; }
+  .aw-strip button { flex: 0 0 auto; position: relative; padding: 0; border: 1px solid transparent; border-radius: 3px; background: #000; cursor: pointer; opacity: .55; transition: opacity .15s, border-color .15s; }
+  .aw-strip button:hover { opacity: .85; }
+  .aw-strip button[aria-selected='true'] { opacity: 1; border-color: var(--amber-2); }
+  .aw-strip img { width: 78px; height: 52px; object-fit: cover; border-radius: 2px; }
+  .aw-strip .ok { position: absolute; right: 4px; bottom: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+  .aw-panel { background: var(--aw-sf); border-left: 1px solid var(--aw-bd); padding: 12px; }
+  .aw-field { background: var(--aw-bg); border: 1px solid var(--aw-bd); border-radius: 4px; padding: 7px 8px; }
+  .aw-kv { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; color: var(--aw-sub); }
+  .aw-kv .chip { font-size: 10.5px; padding: 5px 7px; align-self: flex-start; }
+  .aw-adj { display: grid; grid-template-columns: 56px 1fr; align-items: center; gap: 8px; margin: 9px 0; color: var(--aw-sub); }
+  .aw-adj .trk { position: relative; height: 4px; border-radius: 2px; background: var(--g); opacity: .85; }
+  .aw-adj .knob { position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%; background: #e6e6e6; transform: translate(-50%,-50%); box-shadow: 0 1px 3px rgba(0,0,0,.6); }
+  .aw-apply { margin-top: 14px; text-align: center; padding: 7px; border: 1px solid var(--aw-bd); border-radius: 4px; color: var(--aw-sub); }
+
+  .aw-status { display: flex; gap: 16px; align-items: center; height: 26px; padding: 0 12px; background: var(--aw-sf); border-top: 1px solid var(--aw-bd); color: var(--aw-sub); font-size: 11px; white-space: nowrap; overflow: hidden; }
+  .aw-status i.g { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 6px; vertical-align: 1px; }
+
+  @media (max-width: 1020px) { .aw-body { grid-template-columns: 170px 1fr; } .aw-panel { display: none; } }
+  @media (max-width: 680px) {
+    .aw-body { grid-template-columns: 1fr; } .aw-rolls { display: none; }
+    .aw-menu { display: none; } .hide-sm { display: none; }
+    .aw-stage { padding: 8px; } .aw-fn { left: 14px; top: 14px; }
+    .aw-strip img { width: 64px; height: 43px; }
+  }
+</style>

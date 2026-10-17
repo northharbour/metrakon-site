@@ -1,59 +1,43 @@
-# Obelisk landing site
+# Obelisk website
 
-A single self-contained static page. No build step, no dependencies — GitHub Pages serves
-`index.html` directly.
-
-## Before it goes live
-
-1. **Images.** Drop files into `assets/` and replace the `<div class="ph">…</div>` placeholders
-   with `<img src="assets/…" alt="…">`. Three slots are marked in the HTML:
-   - `roll-consistency.jpg` — contact sheet or bracket strip (the strongest single proof)
-   - `light-before.jpg` / `light-after.jpg` — the scanning light comparison
-2. **Favicon.** `assets/favicon.ico` / `icon-512.png` / `apple-touch-icon.png` are generated from the app's
-   obelisk tile (`static/icon-n-512.png`) — regenerate them after an icon change, or remove the
-   `<link rel="icon">` line.
-3. **Numbers.** The three stats in the light section are from the 2026-07-17 measurements. Check
-   they still reflect the current rig before publishing.
-
-## Email capture
-
-The signup form is written but **commented out** in `index.html`, under the "Status" section. To
-turn it on: remove the comment markers, then set `action=` to a real endpoint — GitHub Pages is
-static and cannot process submissions itself. Formspree and Buttondown both have free tiers and
-take one line. The comment block lists the exact values and the wording to restore alongside it.
-
-## Deploying
+Marketing site for Obelisk, built with [Astro](https://astro.build) and deployed to GitHub Pages
+at `image.northharbourinstruments.com` (see `public/CNAME`).
 
 ```bash
-# in a fresh directory
-git init
-# copy the contents of this folder in (index.html, assets/, this README)
-git add .
-git commit -m "Landing page"
-git remote add origin git@github.com:<user>/<repo>.git
-git push -u origin main
+npm install
+npm run dev       # http://localhost:4321
+npm run build     # static output in dist/
 ```
 
-Then in the repo: **Settings → Pages → Source: deploy from branch → `main` / root**.
+## Layout
 
-### Custom subdomain
+| Path | What |
+|---|---|
+| `src/site.ts` | Name, release stage, form endpoint, contact email, nav — the launch switches |
+| `src/data/comparison.ts` | Comparison tools, bracket frames, stats (used by home + /compare) |
+| `src/data/plans.ts` | Subscription plans (rendered only when `stage = 'released'`) |
+| `src/pages/` | `/`, `/how-it-works/`, `/compare/`, `/pricing/`, 404 |
+| `src/components/` | App-window hero demo, bracket demo, wipe slider, early-access form |
+| `public/assets/` | Images, icons, social card (`og.jpg`) |
+| `tools/` | Python generators for the comparison images and measurement figures |
 
-To serve at `image.northharbourinstruments.com`:
+## Before merging to main
 
-1. Add a file named `CNAME` at the repo root containing exactly:
-   ```
-   image.northharbourinstruments.com
-   ```
-2. At your DNS provider, add a `CNAME` record: `image` → `<user>.github.io`
-3. In Settings → Pages, enter the custom domain and enable **Enforce HTTPS** once the
-   certificate provisions (usually a few minutes, occasionally up to an hour).
+1. **Form endpoint / contact email** in `src/site.ts`. GitHub Pages can't receive a POST; use
+   Formspree, Tally or Buttondown. With neither set the form says sign-up isn't open yet.
+2. **Pages source**: repo Settings → Pages → Source: **GitHub Actions** (the workflow in
+   `.github/workflows/deploy.yml` builds and publishes on every push to `main`).
+3. Trademark clearance for OBELISK is still open.
+
+## Launch
+
+Set `stage: 'released'` in `src/site.ts`, fill prices and checkout links in `src/data/plans.ts`.
+The header CTA, hero button and pricing page switch over automatically.
 
 ## Notes
 
-- The palette matches the application UI (`--accent` amber `#c5852d`, `--cyan` `#4fc8dd`,
-  neutral greys) so the site and product read as one thing. Keep them in sync if the app theme
-  changes.
-- Copy follows the project writing-style rule: plain professional documentation register, no
-  slogans, minimal emphasis.
-- The page names Metrakon throughout. Trademark clearance was still outstanding as of
-  2026-07-19 — worth resolving before promoting the page or buying a matching domain.
+- Palette is taken from the app icon (amber = negative/action, cyan = measured data). Dark only.
+- Fonts are self-hosted (`@fontsource`), so no requests go to Google — matters for EU visitors.
+- Comparison image filenames keep the historical `metrakon_` prefix; only labels say Obelisk.
+- Copy register: plain and specific, claims backed by measurements. Don't add numbers that
+  aren't measured.

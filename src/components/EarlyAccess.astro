@@ -1,0 +1,84 @@
+---
+// Early-access sign-up. Posts to SITE.formEndpoint (a form service — GitHub Pages can't
+// receive a POST). With no endpoint configured it composes an email instead, so the page
+// never ships a dead form.
+import { SITE } from '../site';
+const hasEndpoint = !!SITE.formEndpoint;
+---
+<form class="ea" method="POST" action={hasEndpoint ? SITE.formEndpoint : undefined}
+      data-ea data-mail={SITE.contactEmail}>
+  <div class="ea-row">
+    <label class="fld"><span>Email</span><input type="email" name="email" required autocomplete="email" placeholder="you@yourlab.com" /></label>
+    <label class="fld"><span>Lab or studio <em>(optional)</em></span><input type="text" name="organisation" autocomplete="organization" /></label>
+  </div>
+  <fieldset class="fld">
+    <legend>You scan</legend>
+    <div class="opts">
+      {['Customer rolls (lab)', 'My own work', 'Archive / collection'].map((o, i) => (
+        <label class="opt"><input type="radio" name="use" value={o} checked={i === 0} /><span>{o}</span></label>
+      ))}
+    </div>
+  </fieldset>
+  <label class="fld"><span>Camera, light and rough volume <em>(optional)</em></span>
+    <textarea name="setup" rows="3" placeholder="e.g. A7R IV, RGB light, ~40 rolls a week"></textarea>
+  </label>
+  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+  <div class="ea-foot">
+    <button class="btn btn-primary" type="submit">Request early access <span class="arrow">→</span></button>
+    <p class="muted small" data-ea-msg>Used only to contact you about Obelisk. No newsletter unless you ask.</p>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-ea]').forEach((f) => {
+    const msg = f.querySelector<HTMLElement>('[data-ea-msg]')!;
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(f);
+      if (data.get('_gotcha')) return;
+      if (!f.action || f.getAttribute('action') === null) {
+        const mail = f.dataset.mail;
+        if (!mail) { msg.textContent = 'Sign-up is not open yet — check back soon.'; return; }
+        const body = [...data.entries()].filter(([k]) => k !== '_gotcha').map(([k, v]) => `${k}: ${v}`).join('\n');
+        location.href = `mailto:${mail}?subject=${encodeURIComponent('Obelisk early access')}&body=${encodeURIComponent(body)}`;
+        return;
+      }
+      const btn = f.querySelector('button')!; btn.disabled = true;
+      try {
+        const r = await fetch(f.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error();
+        f.querySelectorAll('input,textarea,button').forEach((el) => ((el as HTMLInputElement).disabled = true));
+        msg.textContent = 'Thanks — you’re on the list. We’ll be in touch before release.';
+        msg.style.color = 'var(--cyan)';
+      } catch {
+        btn.disabled = false;
+        msg.textContent = 'That didn’t go through. Please try again in a moment.';
+        msg.style.color = 'var(--red)';
+      }
+    });
+  });
+</script>
+
+<style>
+  .ea { display: grid; gap: 18px; }
+  .ea-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .ea-row { grid-template-columns: 1fr; } }
+  .fld { display: grid; gap: 7px; border: 0; padding: 0; margin: 0; min-width: 0; }
+  .fld > span, .fld legend { font-size: 14px; color: var(--text-2); font-weight: 500; padding: 0; margin-bottom: 7px; }
+  .fld em { color: var(--dim); font-style: normal; font-weight: 400; }
+  input[type=email], input[type=text], textarea {
+    width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--r-sm);
+    font: 16px/1.4 var(--font); padding: 12px 14px; transition: border-color .15s;
+  }
+  textarea { resize: vertical; }
+  input:focus, textarea:focus { outline: none; border-color: var(--amber); }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt { cursor: pointer; }
+  .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt span { display: inline-block; padding: 9px 14px; border: 1px solid var(--line-2); border-radius: 999px; font-size: 14.5px; color: var(--text-2); transition: all .15s; }
+  .opt input:checked + span { border-color: var(--amber); color: var(--text); background: rgba(240,151,63,.08); }
+  .opt input:focus-visible + span { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .hp { position: absolute; left: -9999px; }
+  .ea-foot { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 4px; }
+  .ea-foot p { margin: 0; flex: 1; min-width: 200px; }
+</style>
