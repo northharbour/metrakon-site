@@ -26,14 +26,14 @@ export const SITE = {
 // Impressum (§ 5 DDG) + privacy-policy controller. Must be REAL details — a production
 // build refuses to run while a required field is empty (see Base.astro).
 export const LEGAL = {
-  name: '',          // full legal name of the person (or company) responsible, e.g. 'Benjamin Hurren'
+  name: 'Benjamin Hurren', // owner (Inhaber) — details from northharbourinstruments.com/policies/legal-notice
   trading: 'North Harbour Instruments', // trading name, shown under the name
-  street: '',        // street + number
-  city: '',          // postcode + city
+  street: 'c/o Blix GbR, Pappenheimstr. 3',
+  city: '80335 München',          // postcode + city
   country: 'Germany',
   email: '',         // must be reachable; defaults the site contact email too
   phone: '',         // optional but recommended (§ 5 DDG wants a second fast channel)
-  vatId: '',         // USt-IdNr., only if you have one (Kleinunternehmer: leave empty)
+  vatId: 'DE453709438',         // USt-IdNr., only if you have one (Kleinunternehmer: leave empty)
   register: '',      // only for a registered company, e.g. 'Amtsgericht München, HRB 12345'
   updated: '2026-10-17',
 };
