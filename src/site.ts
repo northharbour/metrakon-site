@@ -18,8 +18,8 @@ export const SITE = {
   // Left empty on purpose: a third-party form service is a data processor that would need
   // its own section in the privacy policy (see formProvider below). With no endpoint the
   // form opens the visitor's email app addressed to contactEmail — no third party involved.
-  formEndpoint: '',
-  formProvider: { name: '', privacyUrl: '' }, // e.g. { name: 'Formspree, Inc. (USA)', privacyUrl: 'https://formspree.io/legal/privacy-policy' }
+  formEndpoint: 'https://formspree.io/f/xqpenvqy',
+  formProvider: { name: 'Formspree, Inc. (USA)', privacyUrl: 'https://formspree.io/legal/privacy-policy' },
   contactEmail: '', // empty = LEGAL.email
 };
 

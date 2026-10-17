@@ -37,16 +37,23 @@ const fp = SITE.formEndpoint && SITE.formProvider.name ? SITE.formProvider : nul
     {' '}<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub General Privacy Statement</a>.
   </p>
 
-  <h2>4. Contacting us and early-access requests</h2>
+  <h2 id="early-access">4. Contacting us and early-access requests</h2>
   {fp ? (
     <>
       <p>
-        If you use the early-access form, the details you enter (email address, and optionally
-        organisation, how you scan and your setup) are sent to our form service provider,
-        {' '}{fp.name}, which stores them on our behalf and forwards them to us. We use them only
-        to contact you about Obelisk. The legal basis is your consent (Art. 6(1)(a) GDPR), which
-        you can withdraw at any time by emailing us; we then delete your details. See the
-        provider’s <a href={fp.privacyUrl} rel="noopener">privacy policy</a>.
+        If you use the early-access form, the details you enter — your email address and, if
+        you provide them, your organisation, how you scan and your setup — are sent to our form
+        service, {fp.name}, which receives the submission and forwards it to us by email. We use
+        these details only to contact you about Obelisk.
+      </p>
+      <p>
+        The legal basis is your consent (Art. 6(1)(a) GDPR), given with the checkbox on the form.
+        The provider processes the data in the USA. There is no adequacy decision of the European
+        Commission covering this provider, and US authorities may be able to access the data
+        without the remedies available in the EU. By ticking the checkbox you explicitly consent to
+        this transfer (Art. 49(1)(a) GDPR). You can withdraw your consent at any time with effect
+        for the future by emailing us; we then delete your details and ask the provider to delete
+        the submission. See the provider’s <a href={fp.privacyUrl} rel="noopener">privacy policy</a>.
       </p>
     </>
   ) : (

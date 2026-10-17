@@ -4,6 +4,7 @@
 // never ships a dead form.
 import { SITE, contactEmail } from '../site';
 const hasEndpoint = !!SITE.formEndpoint;
+const provider = SITE.formProvider.name;
 ---
 <form class="ea" method="POST" action={hasEndpoint ? SITE.formEndpoint : undefined}
       data-ea data-mail={contactEmail()}>
@@ -22,10 +23,18 @@ const hasEndpoint = !!SITE.formEndpoint;
   <label class="fld"><span>Camera, light and rough volume <em>(optional)</em></span>
     <textarea name="setup" rows="3" placeholder="e.g. A7R IV, RGB light, ~40 rolls a week"></textarea>
   </label>
+  {hasEndpoint && provider && (
+    <label class="consent">
+      <input type="checkbox" name="consent" value="yes" required />
+      <span>I agree that my details are sent to {provider} to process this request, and may be stored
+      in the USA. See the <a href="/privacy/#early-access">privacy policy</a>; I can withdraw this at any time.</span>
+    </label>
+  )}
+  <input type="hidden" name="_subject" value="Obelisk early access" />
   <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
   <div class="ea-foot">
     <button class="btn btn-primary" type="submit">Request early access <span class="arrow">→</span></button>
-    <p class="muted small" data-ea-msg>Used only to contact you about Obelisk. No newsletter unless you ask. <a href="/privacy/">Privacy</a></p>
+    <p class="muted small" data-ea-msg>Used only to contact you about Obelisk. No newsletter unless you ask.</p>
   </div>
 </form>
 
@@ -52,7 +61,7 @@ const hasEndpoint = !!SITE.formEndpoint;
         msg.style.color = 'var(--cyan)';
       } catch {
         btn.disabled = false;
-        msg.textContent = 'That didn’t go through. Please try again in a moment.';
+        msg.textContent = `That didn’t go through. Please try again, or email ${f.dataset.mail}.`;
         msg.style.color = 'var(--red)';
       }
     });
@@ -79,6 +88,8 @@ const hasEndpoint = !!SITE.formEndpoint;
   .opt input:checked + span { border-color: var(--amber); color: var(--text); background: rgba(240,151,63,.08); }
   .opt input:focus-visible + span { outline: 2px solid var(--cyan); outline-offset: 2px; }
   .hp { position: absolute; left: -9999px; }
+  .consent { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; font-size: 13.5px; color: var(--muted); line-height: 1.5; cursor: pointer; }
+  .consent input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--amber); }
   .ea-foot { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 4px; }
   .ea-foot p { margin: 0; flex: 1; min-width: 200px; }
 </style>
