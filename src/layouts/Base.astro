@@ -3,7 +3,12 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Mark from '../components/Mark.astro';
-import { SITE, NAV } from '../site';
+import { SITE, NAV, contactEmail, legalMissing } from '../site';
+
+// Never publish without a complete Impressum (§ 5 DDG): fail the production build.
+if (import.meta.env.PROD && legalMissing().length) {
+  throw new Error(`Impressum details missing in src/site.ts LEGAL: ${legalMissing().join(', ')}`);
+}
 
 interface Props { title?: string; description?: string; image?: string }
 const { title, description = SITE.description, image = '/assets/og.jpg' } = Astro.props;
@@ -77,7 +82,12 @@ const cta = SITE.stage === 'released'
         <div>
           <h4>Company</h4>
           <a href="/pricing/#early-access">Early access</a>
-          {SITE.contactEmail && <a href={`mailto:${SITE.contactEmail}`}>Contact</a>}
+          {contactEmail() && <a href={`mailto:${contactEmail()}`}>Contact</a>}
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <a href="/impressum/">Impressum</a>
+          <a href="/privacy/">Privacy</a>
         </div>
       </div>
     </div>

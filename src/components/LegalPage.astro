@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+interface Props { title: string; heading: string; updated?: string }
+const { title, heading, updated } = Astro.props;
+---
+<Base title={title} description={`${heading} — Obelisk`}>
+  <article class="wrap legal">
+    <h1 class="h-section">{heading}</h1>
+    {updated && <p class="muted small">Last updated {updated}</p>}
+    <slot />
+  </article>
+</Base>
+
+<style>
+  .legal { max-width: 820px; padding-top: clamp(56px, 8vw, 96px); padding-bottom: 110px; }
+  .legal h1 { margin-bottom: 10px; }
+  .legal :global(h2) { font-size: 21px; margin: 40px 0 12px; }
+  .legal :global(h3) { font-size: 17px; margin: 24px 0 8px; }
+  .legal :global(p), .legal :global(li) { color: var(--text-2); font-size: 16px; }
+  .legal :global(ul) { padding-left: 20px; }
+  .legal :global(li) { margin-bottom: 6px; }
+  .legal :global(address) { font-style: normal; color: var(--text); line-height: 1.7; }
+</style>

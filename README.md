@@ -23,11 +23,14 @@ npm run build     # static output in dist/
 
 ## Before merging to main
 
-1. **Form endpoint / contact email** in `src/site.ts`. GitHub Pages can't receive a POST; use
-   Formspree, Tally or Buttondown. With neither set the form says sign-up isn't open yet.
+1. **Impressum details** in `LEGAL` in `src/site.ts` (name, street, city, email; phone/VAT ID
+   if you have them). A production build refuses to run while any required field is empty.
 2. **Pages source**: repo Settings → Pages → Source: **GitHub Actions** (the workflow in
    `.github/workflows/deploy.yml` builds and publishes on every push to `main`).
-3. Trademark clearance for OBELISK is still open.
+3. **Form**: left without a service on purpose — it opens the visitor's email app addressed to
+   the Impressum email, so no third party processes data. If you add Formspree/Tally later, also
+   set `formProvider` so the privacy policy names it.
+4. Trademark clearance for OBELISK is still open.
 
 ## Launch
 

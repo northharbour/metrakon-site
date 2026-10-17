@@ -2,11 +2,11 @@
 // Early-access sign-up. Posts to SITE.formEndpoint (a form service — GitHub Pages can't
 // receive a POST). With no endpoint configured it composes an email instead, so the page
 // never ships a dead form.
-import { SITE } from '../site';
+import { SITE, contactEmail } from '../site';
 const hasEndpoint = !!SITE.formEndpoint;
 ---
 <form class="ea" method="POST" action={hasEndpoint ? SITE.formEndpoint : undefined}
-      data-ea data-mail={SITE.contactEmail}>
+      data-ea data-mail={contactEmail()}>
   <div class="ea-row">
     <label class="fld"><span>Email</span><input type="email" name="email" required autocomplete="email" placeholder="you@yourlab.com" /></label>
     <label class="fld"><span>Lab or studio <em>(optional)</em></span><input type="text" name="organisation" autocomplete="organization" /></label>
@@ -25,7 +25,7 @@ const hasEndpoint = !!SITE.formEndpoint;
   <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
   <div class="ea-foot">
     <button class="btn btn-primary" type="submit">Request early access <span class="arrow">→</span></button>
-    <p class="muted small" data-ea-msg>Used only to contact you about Obelisk. No newsletter unless you ask.</p>
+    <p class="muted small" data-ea-msg>Used only to contact you about Obelisk. No newsletter unless you ask. <a href="/privacy/">Privacy</a></p>
   </div>
 </form>
 

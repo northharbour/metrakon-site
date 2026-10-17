@@ -1,0 +1,40 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { LEGAL } from '../site';
+const L = LEGAL;
+---
+<LegalPage title="Impressum" heading="Impressum">
+  <p class="muted">Legal notice under German law. Angaben gemäß § 5 DDG.</p>
+
+  <h2>Anbieter / Provider</h2>
+  <address>
+    {L.name || '[Name]'}<br />
+    {L.trading && <>{L.trading}<br /></>}
+    {L.street || '[Straße und Hausnummer]'}<br />
+    {L.city || '[PLZ Ort]'}<br />
+    {L.country}
+  </address>
+
+  <h2>Kontakt / Contact</h2>
+  <p>
+    E-Mail: {L.email ? <a href={`mailto:${L.email}`}>{L.email}</a> : '[E-Mail]'}
+    {L.phone && <><br />Telefon: {L.phone}</>}
+  </p>
+
+  {L.vatId && (<>
+    <h2>Umsatzsteuer-ID / VAT ID</h2>
+    <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG: {L.vatId}</p>
+  </>)}
+
+  {L.register && (<>
+    <h2>Registereintrag / Register entry</h2>
+    <p>{L.register}</p>
+  </>)}
+
+  <h2>Verbraucherstreitbeilegung / Consumer dispute resolution</h2>
+  <p>
+    Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer
+    Verbraucherschlichtungsstelle teilzunehmen.
+  </p>
+  <p class="muted">We are neither willing nor obliged to take part in dispute resolution proceedings before a consumer arbitration board.</p>
+</LegalPage>
