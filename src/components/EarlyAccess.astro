@@ -26,8 +26,7 @@ const provider = SITE.formProvider.name;
   {hasEndpoint && provider && (
     <label class="consent">
       <input type="checkbox" name="consent" value="yes" required />
-      <span>I agree that my details are sent to {provider} to process this request, and may be stored
-      in the USA. See the <a href="/privacy/#early-access">privacy policy</a>; I can withdraw this at any time.</span>
+      <span>I agree to my details being processed as described in the <a href="/privacy/#early-access">privacy policy</a>.</span>
     </label>
   )}
   <input type="hidden" name="_subject" value="Obelisk early access" />
