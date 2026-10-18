@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import AppWindow from '../components/AppWindow.astro';
 import BracketDemo from '../components/BracketDemo.astro';
 import FrontierComp from '../components/FrontierComp.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
 import { SITE } from '../site';
 
 const FEATURES = [
@@ -65,6 +66,23 @@ const FLAGS = [
       <div class="proof-item reveal"><div class="n data">0<small> uploads</small></div><p>Conversion and auto-orientation run locally. Customer images never leave the lab.</p></div>
     </div>
   </section>
+
+  <!-- ============ VIDEO ============ -->
+  <section class="section" id="intro">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Introduction</p>
+        <h2 class="h-section">See it in use.</h2>
+        <p class="lede">A six-minute introduction to Obelisk and how it is used.</p>
+      </div>
+      <div class="reveal">
+        <VideoEmbed id="qeYuUDmC2Go" title="An Introduction to Obelisk - A Film Conversion Tool For Labs"
+          poster="/assets/video/intro.jpg" duration="6:21" />
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
 
   <!-- ============ WHY CAMERA SCANNING ============ -->
   <section class="section">

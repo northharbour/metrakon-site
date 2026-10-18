@@ -35,7 +35,7 @@ export const LEGAL = {
   phone: '',         // optional but recommended (§ 5 DDG wants a second fast channel)
   vatId: 'DE453709438',         // USt-IdNr., only if you have one (Kleinunternehmer: leave empty)
   register: '',      // only for a registered company, e.g. 'Amtsgericht München, HRB 12345'
-  updated: '2026-10-17',
+  updated: '2026-10-18',
 };
 
 export const legalMissing = () =>

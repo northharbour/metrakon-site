@@ -1,0 +1,55 @@
+---
+// Click-to-load YouTube ("2-Klick-Lösung"): until the visitor clicks, the page shows a
+// self-hosted poster and makes NO request to YouTube/Google. The click — with the notice
+// right under it — loads the player from youtube-nocookie.com. Privacy policy §5 covers it;
+// keep the two in step (see the workspace CLAUDE.md, Legal).
+interface Props { id: string; title: string; poster: string; duration: string }
+const { id, title, poster, duration } = Astro.props;
+---
+<div class="yt" data-yt={id} data-title={title}>
+  <button class="yt-face" type="button" aria-label={`Play “${title}” — loads the YouTube player`}>
+    <img src={poster} alt="" loading="lazy" decoding="async" />
+    <span class="yt-play" aria-hidden="true">
+      <svg width="30" height="34" viewBox="0 0 30 34"><path d="M3 2 L28 17 L3 32 Z" fill="currentColor" /></svg>
+    </span>
+    <span class="tag yt-dur">{duration}</span>
+  </button>
+  <p class="yt-note">
+    Plays from YouTube: clicking loads the player from Google’s servers, which receive your IP
+    address and may store cookies. <a href="/privacy/#video">Privacy policy</a>&nbsp;·&nbsp;<a
+    href={`https://www.youtube.com/watch?v=${id}`} rel="noopener">Watch on YouTube</a>
+  </p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-yt]').forEach((root) => {
+    const face = root.querySelector<HTMLButtonElement>('.yt-face')!;
+    face.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube-nocookie.com/embed/${root.dataset.yt}?autoplay=1&rel=0`;
+      f.title = root.dataset.title!;
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      f.allowFullscreen = true;
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      f.className = 'yt-frame';
+      face.replaceWith(f);
+      f.focus();
+    }, { once: true });
+  });
+</script>
+
+<style>
+  .yt-face, .yt :global(.yt-frame) { display: block; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: #000; }
+  .yt-face { position: relative; padding: 0; cursor: pointer; }
+  .yt-face img { width: 100%; height: 100%; object-fit: cover; transition: filter .2s; }
+  .yt-face:hover img { filter: brightness(1.06); }
+  /* right of centre: the poster's title sits in the left half */
+  .yt-play { position: absolute; left: 63%; top: 52%; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 50%;
+    display: grid; place-items: center; padding-left: 6px; background: var(--amber); color: var(--amber-ink);
+    box-shadow: 0 10px 40px rgba(0,0,0,.55); transition: transform .15s; }
+  .yt-face:hover .yt-play, .yt-face:focus-visible .yt-play { transform: scale(1.07); }
+  .yt-dur { position: absolute; right: 14px; bottom: 14px; }
+  .yt-note { margin: 12px 0 0; font-size: 13.5px; color: var(--dim); text-align: center; }
+  .yt-note a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 560px) { .yt-play { width: 68px; height: 68px; margin: -34px 0 0 -34px; } .yt-play svg { width: 22px; height: 26px; } }
+</style>
