@@ -201,8 +201,12 @@ const payload = JSON.stringify({
   .aw-note .data { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 
   .aw-main { display: flex; flex-direction: column; min-width: 0; background: #0b0b0b; }
-  .aw-stage { position: relative; aspect-ratio: 3 / 2; display: flex; align-items: center; justify-content: center; padding: 14px; }
-  .aw-stage img { width: 100%; height: 100%; object-fit: contain; transition: opacity .16s ease; }
+  /* The image is out of flow: a portrait frame's intrinsic height would otherwise override
+     aspect-ratio (only a preferred size) and stretch the whole window. Fixed 3:2 box,
+     every frame contained in it — portraits just appear smaller, as in the app. */
+  .aw-stage { --pad: 14px; position: relative; aspect-ratio: 3 / 2; overflow: hidden; }
+  .aw-stage img { position: absolute; left: var(--pad); top: var(--pad); width: calc(100% - 2 * var(--pad)); height: calc(100% - 2 * var(--pad));
+    object-fit: contain; transition: opacity .16s ease; }
   .aw-fn { position: absolute; left: 22px; top: 22px; font-size: 10px; }
   .aw-strip { display: flex; gap: 14px; padding: 6px 10px 10px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--aw-bd); background: #101010; }
   .aw-strip::-webkit-scrollbar { display: none; }
@@ -230,7 +234,7 @@ const payload = JSON.stringify({
   @media (max-width: 680px) {
     .aw-body { grid-template-columns: 1fr; } .aw-rolls { display: none; }
     .aw-menu { display: none; } .hide-sm { display: none; }
-    .aw-stage { padding: 8px; } .aw-fn { left: 14px; top: 14px; }
+    .aw-stage { --pad: 8px; } .aw-fn { left: 14px; top: 14px; }
     .aw-strip button { height: 43px; }
   }
 </style>
