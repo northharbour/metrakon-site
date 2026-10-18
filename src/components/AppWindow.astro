@@ -1,24 +1,37 @@
 ---
-// Hero demo: an illustration of Obelisk's roll review, filled with real Obelisk renders
-// (the Vision3 250D sample set). Labels mirror the app's own UI (menus, adjustment rows,
-// the ◈ auto base chip). Click a frame or use ←/→; it auto-advances until touched.
-const FRAMES = ['06582', '06553', '06555', '06583', '06556', '06563', '06577', '06585', '06559', '06587'];
-const ROLLS = [
-  { n: '01', stock: 'Vision3 250D', frames: 36, state: 'active', chip: '◈ auto' },
-  { n: '02', stock: 'Gold 200', frames: 37, state: 'done', chip: '◈ auto' },
-  { n: '03', stock: 'Portra 400', frames: 36, state: 'done', chip: '◈ check' },
-  { n: '04', stock: 'Ektar 100', frames: 24, state: 'done', chip: '◈ auto' },
-  { n: '05', stock: 'Ultramax 400', frames: 27, state: 'queued', chip: '' },
-];
-const ADJ = [
-  ['Density', 0.46, 'linear-gradient(90deg,#0b0d12,#f2f2f2)'],
-  ['Contrast', 0.5, 'linear-gradient(90deg,#5a5f6b,#e8e8e8)'],
-  ['Temp', 0.5, 'linear-gradient(90deg,#4f8fe0,#e8b45a)'],
-  ['Tint', 0.5, 'linear-gradient(90deg,#4fbf6a,#d06bc4)'],
-  ['Aging', 0, 'linear-gradient(90deg,#2a3349,#c5852d)'],
+// Hero demo: an illustration of Obelisk's roll review, filled with real Obelisk exports
+// (tools/make_roll_images.py → src/data/rolls.json). The roll list is the source folders,
+// named the way a lab names roll folders; the film stock map turns each folder name into
+// its profile. The panel shows each frame's actual grade, with the app's own slider order,
+// ranges and track colours. Click a roll or a frame, or use ←/→; it auto-advances until touched.
+import DATA from '../data/rolls.json';
+
+const { rolls } = DATA;
+const frames = rolls.flatMap((r, ri) =>
+  r.frames.map((f, fi) => ({ ...f, roll: ri, n: fi + 1 })));
+const startIdx = Math.max(0, frames.findIndex((f) => f.id === DATA.start));
+const first = frames[startIdx];
+const firstRoll = rolls[first.roll];
+
+// [key, label, min, max, track] — as static/index.html adjSliders() draws them
+const SLIDERS = [
+  ['temp', 'Temp', -100, 100, 'linear-gradient(90deg,#4466dd,#aaaaaa,#ff8833)'],
+  ['tint', 'Tint', -100, 100, 'linear-gradient(90deg,#cc44aa,#888888,#44aa44)'],
+  ['density', 'Density', -3, 2, 'linear-gradient(90deg,#111111,#666666,#dddddd)'],
+  ['contrast', 'Contrast', -1, 2, 'linear-gradient(90deg,#888888,#333333)'],
 ] as const;
+const pos = (v: number, lo: number, hi: number) => `${((v - lo) / (hi - lo)) * 100}%`;
+const fmt = (k: string, v: number) =>
+  k === 'temp' || k === 'tint' ? (v > 0 ? `+${v}` : `${v}`) : (v > 0 ? '+' : '') + v.toFixed(2);
+const tag = (f: typeof first) => `${rolls[f.roll].folder} · ${f.n} / ${rolls[f.roll].frames.length}`;
+const payload = JSON.stringify({
+  rolls: rolls.map((r) => ({ folder: r.folder, profile: r.profile, count: r.frames.length })),
+  frames: frames.map(({ id, roll, n, temp, tint, density, contrast }) => ({ id, roll, n, temp, tint, density, contrast })),
+  sliders: SLIDERS.map(([k, , lo, hi]) => [k, lo, hi]),
+  start: startIdx,
+});
 ---
-<div class="appwin" data-appwin>
+<div class="appwin" data-appwin={payload}>
   <div class="aw-title">
     <span class="aw-ico"></span>
     <span class="aw-name">Obelisk</span>
@@ -30,45 +43,55 @@ const ADJ = [
 
   <div class="aw-body">
     <aside class="aw-rolls">
-      <div class="aw-h">Order 0614</div>
-      {ROLLS.map((r) => (
-        <div class={`aw-roll ${r.state}`}>
+      <div class="aw-h">Rolls · {rolls.length}</div>
+      {rolls.map((r, i) => (
+        <button class="aw-roll" aria-pressed={i === first.roll ? 'true' : 'false'} data-roll={i}>
           <span class="dot"></span>
-          <span class="rn">{r.n}</span>
-          <span class="rs">{r.stock}</span>
-          <span class="rc">{r.frames}</span>
-          {r.chip && <span class={`rb ${r.chip.includes('check') ? 'warn' : ''}`}>{r.chip}</span>}
-        </div>
+          <span class="rs">{r.folder}</span>
+          <span class="rc">{r.frames.length}</span>
+          <span class="rp">{r.profile}</span>
+        </button>
       ))}
       <div class="aw-note">
-        <span class="data">Overnight</span> 4 rolls converted 02:10–03:42
+        <span class="data">Film stock map</span>
+        <span data-map>“{firstRoll.folder}” → {firstRoll.profile}</span>
       </div>
     </aside>
 
     <section class="aw-main">
       <div class="aw-stage">
-        <img data-main src={`/assets/comp/large/metrakon_${FRAMES[0]}.jpg`} alt="Obelisk conversion, Vision3 250D" decoding="async" fetchpriority="high" />
-        <span class="aw-fn tag" data-fn>01 / 01 · Vision3 250D</span>
+        <img data-main src={`/assets/roll/${first.id}.jpg`} alt={`Obelisk export, ${firstRoll.profile}`} decoding="async" fetchpriority="high" />
+        <span class="aw-fn tag" data-fn>{tag(first)}</span>
       </div>
-      <div class="aw-strip" role="listbox" aria-label="Frames in roll">
-        {FRAMES.map((f, i) => (
-          <button role="option" aria-selected={i === 0 ? 'true' : 'false'} data-f={f} aria-label={`Frame ${i + 1}`}>
-            <img src={`/assets/comp/thumb/metrakon_${f}.jpg`} alt="" loading="lazy" decoding="async" />
-            <span class="ok"></span>
-          </button>
+      <div class="aw-strip" role="listbox" aria-label="Frames, grouped by roll">
+        {rolls.map((r) => (
+          <div class="aw-grp">
+            <span class="aw-gl">{r.folder}</span>
+            <div class="aw-gf">
+              {r.frames.map((f) => {
+                const i = frames.findIndex((x) => x.id === f.id);
+                return (
+                  <button role="option" aria-selected={i === startIdx ? 'true' : 'false'} data-i={i}
+                    aria-label={`${r.folder}, frame ${frames[i].n}`} style={`--ar:${f.w / f.h}`}>
+                    <img src={`/assets/roll/${f.id}_t.jpg`} alt="" loading="lazy" decoding="async" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </div>
     </section>
 
     <aside class="aw-panel">
       <div class="aw-h">Film profile</div>
-      <div class="aw-field">Vision3 250D <span class="muted">· RGB</span></div>
-      <div class="aw-kv"><span>Roll base</span><span class="chip">◈ auto · 34 of 36 agree</span></div>
-      <div class="aw-h" style="margin-top:14px">Adjust</div>
-      {ADJ.map(([l, v, g]) => (
-        <div class="aw-adj">
+      <div class="aw-field" data-prof>{firstRoll.profile}</div>
+      <div class="aw-h" style="margin-top:16px">Adjust</div>
+      {SLIDERS.map(([k, l, lo, hi, g]) => (
+        <div class="aw-adj" data-k={k}>
           <span>{l}</span>
-          <span class="trk" style={`--g:${g}`}><span class="knob" style={`left:${v * 100}%`}></span></span>
+          <span class="trk" style={`--g:${g}`}><span class="knob" style={`left:${pos(first[k], lo, hi)}`}></span></span>
+          <span class="val data">{fmt(k, first[k])}</span>
         </div>
       ))}
       <div class="aw-apply">→ Apply to roll</div>
@@ -77,33 +100,62 @@ const ADJ = [
 
   <div class="aw-status">
     <span><i class="g"></i>Ready</span>
-    <span>Roll 01 · 36 frames · levelled</span>
-    <span class="hide-sm">Export queue 0</span>
-    <span class="hide-sm" style="margin-left:auto">Editing 00:04:12</span>
+    <span data-st>Roll {firstRoll.folder} · {firstRoll.frames.length} frames</span>
+    <span class="hide-sm">{rolls.length} rolls · {frames.length} frames</span>
+    <span class="hide-sm" style="margin-left:auto">Export queue 0</span>
   </div>
 </div>
 
 <script>
+  type Data = {
+    rolls: { folder: string; profile: string; count: number }[];
+    frames: ({ id: string; roll: number; n: number } & Record<string, number>)[];
+    sliders: [string, number, number][];
+    start: number;
+  };
+  const fmt = (k: string, v: number) =>
+    k === 'temp' || k === 'tint' ? (v > 0 ? `+${v}` : `${v}`) : (v > 0 ? '+' : '') + v.toFixed(2);
+
   document.querySelectorAll<HTMLElement>('[data-appwin]').forEach((root) => {
-    const main = root.querySelector<HTMLImageElement>('[data-main]')!;
-    const fn = root.querySelector<HTMLElement>('[data-fn]')!;
-    const btns = [...root.querySelectorAll<HTMLButtonElement>('.aw-strip button')];
-    let idx = 0, timer: number | undefined, touched = false;
-    const big = (f: string) => `/assets/comp/large/metrakon_${f}.jpg`;
+    const D = JSON.parse(root.dataset.appwin!) as Data;
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const main = $<HTMLImageElement>('[data-main]');
+    const thumbs = [...root.querySelectorAll<HTMLButtonElement>('.aw-strip button')];
+    const rollBtns = [...root.querySelectorAll<HTMLButtonElement>('[data-roll]')];
+    const adj = new Map([...root.querySelectorAll<HTMLElement>('.aw-adj')].map((e) => [e.dataset.k!, e]));
+    let idx = D.start, timer: number | undefined, touched = false;
+
     const show = (i: number) => {
-      idx = (i + btns.length) % btns.length;
-      const f = btns[idx].dataset.f!;
-      const pre = new Image(); pre.src = big(f);
+      idx = (i + D.frames.length) % D.frames.length;
+      const f = D.frames[idx], r = D.rolls[f.roll];
+      const pre = new Image(); pre.src = `/assets/roll/${f.id}.jpg`;
       pre.decode().catch(() => {}).finally(() => {
         main.style.opacity = '0';
-        setTimeout(() => { main.src = pre.src; main.style.opacity = '1'; }, 160);
+        setTimeout(() => { main.src = pre.src; main.alt = `Obelisk export, ${r.profile}`; main.style.opacity = '1'; }, 160);
       });
-      btns.forEach((b, j) => b.setAttribute('aria-selected', String(j === idx)));
-      fn.textContent = `01 / ${String(idx + 1).padStart(2, '0')} · Vision3 250D`;
-      btns[idx].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      thumbs.forEach((b) => b.setAttribute('aria-selected', String(+b.dataset.i! === idx)));
+      rollBtns.forEach((b, j) => b.setAttribute('aria-pressed', String(j === f.roll)));
+      $('[data-fn]').textContent = `${r.folder} · ${f.n} / ${r.count}`;
+      $('[data-prof]').textContent = r.profile;
+      $('[data-map]').textContent = `“${r.folder}” → ${r.profile}`;
+      $('[data-st]').textContent = `Roll ${r.folder} · ${r.count} frames`;
+      D.sliders.forEach(([k, lo, hi]) => {
+        const row = adj.get(k)!;
+        row.querySelector<HTMLElement>('.knob')!.style.left = `${((f[k] - lo) / (hi - lo)) * 100}%`;
+        row.querySelector<HTMLElement>('.val')!.textContent = fmt(k, f[k]);
+      });
+      const t = thumbs.find((b) => +b.dataset.i! === idx);
+      const strip = t?.closest<HTMLElement>('.aw-strip');
+      if (t && strip) {   // scroll the strip only, never the page
+        const left = t.offsetLeft - strip.offsetLeft - (strip.clientWidth - t.offsetWidth) / 2;
+        strip.scrollTo({ left, behavior: 'smooth' });
+      }
     };
     const stop = () => { touched = true; clearInterval(timer); };
-    btns.forEach((b, i) => b.addEventListener('click', () => { stop(); show(i); }));
+    thumbs.forEach((b) => b.addEventListener('click', () => { stop(); show(+b.dataset.i!); }));
+    rollBtns.forEach((b, j) => b.addEventListener('click', () => {
+      stop(); show(D.frames.findIndex((f) => f.roll === j));
+    }));
     root.tabIndex = 0;
     root.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') { stop(); show(idx + 1); e.preventDefault(); }
@@ -135,47 +187,50 @@ const ADJ = [
 
   .aw-body { display: grid; grid-template-columns: 190px 1fr 210px; min-height: 0; }
   .aw-h { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--aw-mut); margin: 4px 0 8px; }
-  .aw-rolls { background: var(--aw-sf); border-right: 1px solid var(--aw-bd); padding: 12px 10px; display: flex; flex-direction: column; gap: 3px; }
-  .aw-roll { display: grid; grid-template-columns: 8px 18px 1fr auto; align-items: center; gap: 6px; padding: 6px; border-radius: 4px; color: var(--aw-sub); }
-  .aw-roll.active { background: #262626; color: #fff; }
+  .aw-rolls { background: var(--aw-sf); border-right: 1px solid var(--aw-bd); padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .aw-roll { display: grid; grid-template-columns: 8px 1fr auto; align-items: center; column-gap: 8px; row-gap: 1px; padding: 6px 7px; border: 0; border-radius: 4px;
+    background: transparent; color: var(--aw-sub); font: inherit; text-align: left; cursor: pointer; transition: background .15s, color .15s; }
+  .aw-roll:hover { background: #222; }
+  .aw-roll[aria-pressed='true'] { background: #262626; color: #fff; }
   .aw-roll .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-  .aw-roll.queued .dot { background: transparent; border: 1px solid var(--aw-mut); }
-  .aw-roll .rn { font-family: var(--mono); color: var(--aw-mut); }
-  .aw-roll .rs { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aw-roll .rs { font-family: var(--mono); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .aw-roll .rc { font-family: var(--mono); color: var(--aw-mut); font-size: 11px; }
-  .aw-roll .rb { grid-column: 3 / 5; font-size: 10px; color: var(--aw-sub); font-family: var(--mono); }
-  .aw-roll .rb.warn { color: var(--yellow); }
-  .aw-note { margin-top: auto; padding: 10px 6px 2px; border-top: 1px solid var(--aw-bd); color: var(--aw-sub); font-size: 11px; line-height: 1.45; }
+  .aw-roll .rp { grid-column: 2 / 4; font-size: 10.5px; color: var(--aw-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aw-roll[aria-pressed='true'] .rp { color: var(--aw-sub); }
+  .aw-note { margin-top: auto; padding: 10px 6px 2px; border-top: 1px solid var(--aw-bd); color: var(--aw-sub); font-size: 11px; line-height: 1.5; display: flex; flex-direction: column; gap: 2px; }
+  .aw-note .data { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 
   .aw-main { display: flex; flex-direction: column; min-width: 0; background: #0b0b0b; }
   .aw-stage { position: relative; aspect-ratio: 3 / 2; display: flex; align-items: center; justify-content: center; padding: 14px; }
   .aw-stage img { width: 100%; height: 100%; object-fit: contain; transition: opacity .16s ease; }
   .aw-fn { position: absolute; left: 22px; top: 22px; font-size: 10px; }
-  .aw-strip { display: flex; gap: 6px; padding: 8px 10px 10px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--aw-bd); background: #101010; }
+  .aw-strip { display: flex; gap: 14px; padding: 6px 10px 10px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--aw-bd); background: #101010; }
   .aw-strip::-webkit-scrollbar { display: none; }
-  .aw-strip button { flex: 0 0 auto; position: relative; padding: 0; border: 1px solid transparent; border-radius: 3px; background: #000; cursor: pointer; opacity: .55; transition: opacity .15s, border-color .15s; }
+  .aw-grp { flex: 0 0 auto; display: flex; flex-direction: column; gap: 4px; }
+  .aw-gl { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--aw-mut); padding-left: 1px; }
+  .aw-gf { display: flex; gap: 5px; }
+  .aw-strip button { flex: 0 0 auto; height: 52px; aspect-ratio: var(--ar); padding: 0; border: 1px solid transparent; border-radius: 3px; background: #000; cursor: pointer; opacity: .55; transition: opacity .15s, border-color .15s; }
   .aw-strip button:hover { opacity: .85; }
   .aw-strip button[aria-selected='true'] { opacity: 1; border-color: var(--amber-2); }
-  .aw-strip img { width: 78px; height: 52px; object-fit: cover; border-radius: 2px; }
-  .aw-strip .ok { position: absolute; right: 4px; bottom: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  .aw-strip img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
 
   .aw-panel { background: var(--aw-sf); border-left: 1px solid var(--aw-bd); padding: 12px; }
   .aw-field { background: var(--aw-bg); border: 1px solid var(--aw-bd); border-radius: 4px; padding: 7px 8px; }
-  .aw-kv { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; color: var(--aw-sub); }
-  .aw-kv .chip { font-size: 10.5px; padding: 5px 7px; align-self: flex-start; }
-  .aw-adj { display: grid; grid-template-columns: 56px 1fr; align-items: center; gap: 8px; margin: 9px 0; color: var(--aw-sub); }
+  .aw-adj { display: grid; grid-template-columns: 52px 1fr 38px; align-items: center; gap: 8px; margin: 10px 0; color: var(--aw-sub); }
   .aw-adj .trk { position: relative; height: 4px; border-radius: 2px; background: var(--g); opacity: .85; }
-  .aw-adj .knob { position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%; background: #e6e6e6; transform: translate(-50%,-50%); box-shadow: 0 1px 3px rgba(0,0,0,.6); }
+  .aw-adj .knob { position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%; background: #e6e6e6; transform: translate(-50%,-50%); box-shadow: 0 1px 3px rgba(0,0,0,.6); transition: left .35s ease; }
+  .aw-adj .val { font-size: 10.5px; text-align: right; color: var(--aw-sub); }
   .aw-apply { margin-top: 14px; text-align: center; padding: 7px; border: 1px solid var(--aw-bd); border-radius: 4px; color: var(--aw-sub); }
 
   .aw-status { display: flex; gap: 16px; align-items: center; height: 26px; padding: 0 12px; background: var(--aw-sf); border-top: 1px solid var(--aw-bd); color: var(--aw-sub); font-size: 11px; white-space: nowrap; overflow: hidden; }
   .aw-status i.g { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 6px; vertical-align: 1px; }
 
+  @media (prefers-reduced-motion: reduce) { .aw-adj .knob { transition: none; } }
   @media (max-width: 1020px) { .aw-body { grid-template-columns: 170px 1fr; } .aw-panel { display: none; } }
   @media (max-width: 680px) {
     .aw-body { grid-template-columns: 1fr; } .aw-rolls { display: none; }
     .aw-menu { display: none; } .hide-sm { display: none; }
     .aw-stage { padding: 8px; } .aw-fn { left: 14px; top: 14px; }
-    .aw-strip img { width: 64px; height: 43px; }
+    .aw-strip button { height: 43px; }
   }
 </style>

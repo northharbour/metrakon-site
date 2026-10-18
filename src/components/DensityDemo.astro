@@ -1,0 +1,122 @@
+---
+// How it works → Density: one frame exported from Obelisk at nine Density settings
+// (tools/make_roll_images.py SWEEPS), nothing else changed. The slider snaps to the real
+// exported steps — no CSS brightness fakes. Values are the app's own Density numbers.
+import DATA from '../data/rolls.json';
+
+const { sweeps } = DATA;
+const s0 = sweeps[0];
+const sign = (v: number) => (v > 0 ? '+' : '') + v.toFixed(2);
+const big = (id: string, i: number) => `/assets/density/${id}_${i}.jpg`;
+const sm = (id: string, i: number) => `/assets/density/${id}_${i}_t.jpg`;
+---
+<div class="dd" data-dd={JSON.stringify(sweeps)}>
+  {sweeps.length > 1 && (
+    <div class="seg dd-pick" role="group" aria-label="Frame">
+      {sweeps.map((s, i) => <button aria-pressed={i === 0 ? 'true' : 'false'} data-s={i}>{s.profile}</button>)}
+    </div>
+  )}
+
+  <figure class="dd-stage" style={`--ar:${s0.w / s0.h}`}>
+    <img data-big src={big(s0.id, s0.start)} alt={`Obelisk export, ${s0.profile}, Density ${sign(s0.values[s0.start])}`} decoding="async" loading="lazy" />
+    <span class="tag dd-val" data-val>Density <b>{sign(s0.values[s0.start])}</b></span>
+    <span class="tag dd-as" data-as>As graded</span>
+  </figure>
+
+  <div class="dd-scrub">
+    <span class="muted small">Darker</span>
+    <input type="range" min="0" max={s0.values.length - 1} step="1" value={s0.start}
+      aria-label="Density" aria-valuetext={`Density ${sign(s0.values[s0.start])}`} data-range />
+    <span class="muted small">Lighter</span>
+  </div>
+
+  <div class="dd-steps" data-steps>
+    {s0.values.map((v, i) => (
+      <button class={i === s0.start ? 'on' : ''} data-i={i} aria-label={`Density ${sign(v)}`}>
+        <img src={sm(s0.id, i)} alt="" loading="lazy" decoding="async" />
+        <span class="data">{sign(v)}</span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<script>
+  type Sweep = { id: string; profile: string; values: number[]; start: number; w: number; h: number };
+  const sign = (v: number) => (v > 0 ? '+' : '') + v.toFixed(2);
+
+  document.querySelectorAll<HTMLElement>('[data-dd]').forEach((root) => {
+    const sweeps = JSON.parse(root.dataset.dd!) as Sweep[];
+    const img = root.querySelector<HTMLImageElement>('[data-big]')!;
+    const stage = root.querySelector<HTMLElement>('.dd-stage')!;
+    const val = root.querySelector<HTMLElement>('[data-val] b')!;
+    const as = root.querySelector<HTMLElement>('[data-as]')!;
+    const range = root.querySelector<HTMLInputElement>('[data-range]')!;
+    const steps = root.querySelector<HTMLElement>('[data-steps]')!;
+    let s = 0, i = sweeps[0].start;
+    const big = (k: number) => `/assets/density/${sweeps[s].id}_${k}.jpg`;
+    const sm = (k: number) => `/assets/density/${sweeps[s].id}_${k}_t.jpg`;
+    const preload = () => sweeps[s].values.forEach((_, k) => { new Image().src = big(k); });
+
+    function paint() {
+      const sw = sweeps[s], v = sw.values[i];
+      img.src = big(i);
+      img.alt = `Obelisk export, ${sw.profile}, Density ${sign(v)}`;
+      val.textContent = sign(v);
+      as.hidden = i !== sw.start;
+      range.value = String(i);
+      range.setAttribute('aria-valuetext', `Density ${sign(v)}`);
+      steps.querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', k === i));
+    }
+    function build() {
+      const sw = sweeps[s];
+      stage.style.setProperty('--ar', String(sw.w / sw.h));
+      range.max = String(sw.values.length - 1);
+      steps.innerHTML = '';
+      sw.values.forEach((v, k) => {
+        const b = document.createElement('button');
+        b.dataset.i = String(k);
+        b.setAttribute('aria-label', `Density ${sign(v)}`);
+        b.innerHTML = `<img src="${sm(k)}" alt="" decoding="async"><span class="data">${sign(v)}</span>`;
+        steps.appendChild(b);
+      });
+    }
+    steps.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
+      if (b) { i = +b.dataset.i!; paint(); }
+    });
+    range.addEventListener('input', () => { i = +range.value; paint(); });
+    root.querySelectorAll<HTMLButtonElement>('[data-s]').forEach((b) => b.addEventListener('click', () => {
+      root.querySelectorAll('[data-s]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      s = +b.dataset.s!; i = sweeps[s].start;
+      build(); paint(); preload();
+    }));
+    // Fetch the full-size steps once the demo is near the viewport, not on page load
+    new IntersectionObserver(([e], o) => { if (e.isIntersecting) { preload(); o.disconnect(); } },
+      { rootMargin: '300px' }).observe(root);
+  });
+</script>
+
+<style>
+  .dd { margin: 30px 0 0; }
+  .dd-pick { margin-bottom: 14px; }
+  .dd-stage { position: relative; margin: 0; aspect-ratio: var(--ar); background: #040507; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+  .dd-stage img { width: 100%; height: 100%; object-fit: cover; }
+  .dd-val { position: absolute; left: 10px; top: 10px; }
+  .dd-val b { font-weight: 500; color: var(--cyan); }
+  .dd-as { position: absolute; right: 10px; top: 10px; color: var(--muted); }
+  .dd-scrub { display: flex; align-items: center; gap: 14px; margin: 18px 0 0; }
+  .dd-scrub input { flex: 1; accent-color: var(--amber); height: 28px; min-width: 0; }
+  .dd-steps { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; margin-top: 10px; }
+  /* :global — build() recreates these buttons without Astro's scope attribute */
+  /* thumbs stay at full brightness — dimming them would hide the very steps they show */
+  .dd-steps :global(button) { padding: 0; border: 0; background: none; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; color: var(--dim); }
+  .dd-steps :global(button:hover img) { outline-color: var(--line-2); }
+  .dd-steps :global(button.on .data) { color: var(--cyan); }
+  .dd-steps :global(img) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 3px; outline: 1px solid transparent; }
+  .dd-steps :global(button.on img) { outline-color: var(--amber); }
+  .dd-steps :global(.data) { font-size: 10.5px; color: var(--dim); }
+  @media (max-width: 560px) {
+    .dd-steps :global(.data) { display: none; }
+    .dd-scrub .small { font-size: 13px; }
+  }
+</style>

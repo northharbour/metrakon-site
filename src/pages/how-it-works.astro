@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Wipe from '../components/Wipe.astro';
+import DensityDemo from '../components/DensityDemo.astro';
 
 const TOC = [
   ['problem', 'The problem with estimating'],
@@ -82,6 +83,11 @@ const TOC = [
           stretching, no re-fitted histogram. A density change on screen behaves like an exposure
           change at the enlarger, so contrast and colour hold while the frame gets lighter or
           darker.
+        </p>
+        <DensityDemo />
+        <p class="dd-cap">
+          Each frame exported from Obelisk at nine Density settings, 0.25 apart and centred on
+          the frame’s own grade. Nothing else changes between the steps.
         </p>
         <p>
           The same maths runs in two places: on the GPU for live grading as you drag, and in the
@@ -206,6 +212,7 @@ const TOC = [
   .figure .pair img { border-radius: var(--r); border: 1px solid var(--line); width: 100%; }
   @media (max-width: 640px) { .figure .pair { grid-template-columns: 1fr; } }
   .figure figcaption { font-size: 14px; color: var(--muted); margin-top: 12px; }
+  .doc .dd-cap { font-size: 14px; color: var(--muted); margin: 14px 0 28px; }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 26px 0 0; }
   .stats > div { padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
   .stats .data { font-size: 20px; }

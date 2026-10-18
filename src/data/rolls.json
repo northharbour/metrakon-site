@@ -1,0 +1,262 @@
+{
+ "start": "gold-6",
+ "rolls": [
+  {
+   "key": "gold",
+   "folder": "Gold",
+   "profile": "Kodak Gold 200",
+   "frames": [
+    {
+     "id": "gold-1",
+     "w": 1066,
+     "h": 1600,
+     "temp": 11,
+     "tint": 0,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    },
+    {
+     "id": "gold-2",
+     "w": 1066,
+     "h": 1600,
+     "temp": 0,
+     "tint": 3,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    },
+    {
+     "id": "gold-3",
+     "w": 1066,
+     "h": 1600,
+     "temp": 7,
+     "tint": 0,
+     "density": 0.45,
+     "contrast": 0.1,
+     "aging": 0.0
+    },
+    {
+     "id": "gold-4",
+     "w": 1067,
+     "h": 1600,
+     "temp": 5,
+     "tint": 0,
+     "density": 0.0,
+     "contrast": 0.25,
+     "aging": 0.0
+    },
+    {
+     "id": "gold-5",
+     "w": 1066,
+     "h": 1600,
+     "temp": 5,
+     "tint": 0,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    },
+    {
+     "id": "gold-6",
+     "w": 1600,
+     "h": 1067,
+     "temp": 0,
+     "tint": 0,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    },
+    {
+     "id": "gold-7",
+     "w": 1066,
+     "h": 1600,
+     "temp": 0,
+     "tint": 0,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    },
+    {
+     "id": "gold-8",
+     "w": 1600,
+     "h": 1067,
+     "temp": 17,
+     "tint": -2,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    }
+   ]
+  },
+  {
+   "key": "250d",
+   "folder": "250D",
+   "profile": "Vision 250D",
+   "frames": [
+    {
+     "id": "250d-1",
+     "w": 1600,
+     "h": 1067,
+     "temp": 0,
+     "tint": 0,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    },
+    {
+     "id": "250d-2",
+     "w": 1600,
+     "h": 1067,
+     "temp": 17,
+     "tint": -3,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    },
+    {
+     "id": "250d-3",
+     "w": 1600,
+     "h": 1066,
+     "temp": 0,
+     "tint": 0,
+     "density": 0.0,
+     "contrast": 0.0,
+     "aging": 0.0
+    }
+   ]
+  },
+  {
+   "key": "p160",
+   "folder": "P160",
+   "profile": "Portra 160",
+   "frames": [
+    {
+     "id": "p160-1",
+     "w": 1600,
+     "h": 1063,
+     "temp": 6,
+     "tint": 4,
+     "density": 0.65,
+     "contrast": -0.05,
+     "aging": 0.0
+    },
+    {
+     "id": "p160-2",
+     "w": 1067,
+     "h": 1600,
+     "temp": 6,
+     "tint": 4,
+     "density": -0.4,
+     "contrast": -0.3,
+     "aging": 0.0
+    }
+   ]
+  },
+  {
+   "key": "portra400",
+   "folder": "Portra400",
+   "profile": "Portra 400",
+   "frames": [
+    {
+     "id": "portra400-1",
+     "w": 1600,
+     "h": 1066,
+     "temp": 0,
+     "tint": 10,
+     "density": 0.0,
+     "contrast": 0.2,
+     "aging": 0.0
+    }
+   ]
+  },
+  {
+   "key": "umax",
+   "folder": "Umax",
+   "profile": "Ultramax 400",
+   "frames": [
+    {
+     "id": "umax-1",
+     "w": 1067,
+     "h": 1600,
+     "temp": 25,
+     "tint": -30,
+     "density": -0.2,
+     "contrast": 0.05,
+     "aging": 0.0
+    }
+   ]
+  },
+  {
+   "key": "800t",
+   "folder": "800T",
+   "profile": "Cinestill 800T",
+   "frames": [
+    {
+     "id": "800t-1",
+     "w": 1600,
+     "h": 1067,
+     "temp": -14,
+     "tint": 5,
+     "density": -0.25,
+     "contrast": 0.0,
+     "aging": 0.0
+    }
+   ]
+  },
+  {
+   "key": "500t",
+   "folder": "500T",
+   "profile": "Vision 500T",
+   "frames": [
+    {
+     "id": "500t-1",
+     "w": 1064,
+     "h": 1600,
+     "temp": -26,
+     "tint": 8,
+     "density": 0.0,
+     "contrast": -0.2,
+     "aging": 0.0
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "id": "gold-6",
+   "profile": "Kodak Gold 200",
+   "values": [
+    -1.0,
+    -0.75,
+    -0.5,
+    -0.25,
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+   ],
+   "start": 4,
+   "w": 1600,
+   "h": 1067
+  },
+  {
+   "id": "p160-1",
+   "profile": "Portra 160",
+   "values": [
+    -0.35,
+    -0.1,
+    0.15,
+    0.4,
+    0.65,
+    0.9,
+    1.15,
+    1.4,
+    1.65
+   ],
+   "start": 4,
+   "w": 1600,
+   "h": 1063
+  }
+ ]
+}

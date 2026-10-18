@@ -3,3 +3,6 @@ __pycache__/
 node_modules/
 dist/
 .astro/
+
+# full-size renders cached by tools/make_roll_images.py
+tools/.renders/
