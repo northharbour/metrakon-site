@@ -23,7 +23,8 @@ DEFAULT_SRC = 'C:/Users/Blix/Pictures/Private/Ben'
 SETS = {
     'gold': {
         'folder': 'Conversion Comp Gold',
-        'frames': ['09519', '09520', '09521', '09522', '09523', '09524', '09525'],
+        # under → over, as src/data/comparison.ts shows them (shot order was 0, −1…−3, +1…+3)
+        'frames': ['09522', '09521', '09520', '09519', '09523', '09524', '09525'],
         'tools': {
             'metrakon':     'Metrakon White/Gold_0003_Easy35 Gold Ref{f}.jpg',
             'filmlab':      'Filmlab/Easy35 Gold Ref{f}.ARW.jpg',
@@ -35,7 +36,7 @@ SETS = {
     },
     '250d': {
         'folder': 'Conversion Comp 250D',
-        'frames': ['06570', '06571', '06572', '06573', '06574', '06575', '06576'],
+        'frames': ['06573', '06572', '06571', '06570', '06574', '06575', '06576'],
         'tools': {
             'metrakon':     'Metrakon/Easy35Scans{f}.jpg',
             'filmlab':      'Filmlab/Easy35Scans{f}.ARW.jpg',

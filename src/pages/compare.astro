@@ -88,13 +88,13 @@ const payload = JSON.stringify({ TOOLS, SETS, STOCK_ORDER });
     const setFrame = (f: string) => { frame = f; preload(f); paint(); };
     return {
       box, img,
-      setFrames(list: string[]) {
+      setFrames(list: string[], start = 0) {
         frames = list; strip.innerHTML = '';
         list.forEach((f) => {
           const i = el('img'); i.src = thumb('metrakon', f); i.dataset.f = f; i.loading = 'lazy'; i.alt = `Frame ${f}`;
           i.addEventListener('click', () => setFrame(f)); strip.appendChild(i);
         });
-        if (!list.includes(frame)) frame = list[0];
+        if (!list.includes(frame)) frame = list[start];
         preload(frame); paint();
       },
       setFrame, setTool(k: string) { tool = k; paint(); },
@@ -129,7 +129,7 @@ const payload = JSON.stringify({ TOOLS, SETS, STOCK_ORDER });
     });
     stats.innerHTML = '';
     s.stats.forEach(([n, l]) => { const d = el('div', 'cstat'); const a = el('span', 'data'); a.textContent = n; const p = el('p'); p.textContent = l; d.append(a, p); stats.appendChild(d); });
-    bracket.setFrames(s.frames);
+    bracket.setFrames(s.frames, Math.floor(s.frames.length / 2));   // open on the 0 EV frame
     const has = !!s.samples?.length;
     root.querySelector<HTMLElement>('[data-samples-sec]')!.hidden = !has;
     root.querySelector<HTMLElement>('[data-samples-none]')!.hidden = has;

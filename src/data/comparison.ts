@@ -19,7 +19,9 @@ export const SETS: Record<StockKey, {
 }> = {
   '250d': {
     label: 'Vision3 250D',
-    frames: ['06570', '06571', '06572', '06573', '06574', '06575', '06576'],
+    // Under → over (−3 … +3). Shot order was 0, −1, −2, −3, +1, +2, +3 — measured from
+    // the raw scans (2026-10-18: a thinner negative reads brighter): 06573 thinnest, 06576 densest.
+    frames: ['06573', '06572', '06571', '06570', '06574', '06575', '06576'],
     samples: ['06553', '06555', '06556', '06559', '06563', '06577', '06582', '06583', '06585', '06587'],
     stats: [
       ['1', 'Obelisk median brightness spread (8-bit levels) over the normal and over-exposed frames of this bracket. The levelling is automatic.'],
@@ -29,7 +31,10 @@ export const SETS: Record<StockKey, {
   },
   gold: {
     label: 'Kodak Gold 200',
-    frames: ['09519', '09520', '09521', '09522', '09523', '09524', '09525'],
+    // Under → over (−3 … +3); shot order 0, −1, −2, −3, +1, +2, +3 like the 250D set
+    // (RAWs not on this PC — read from the exports: Obelisk leaves 09521/09522 dark as unders,
+    // NLP renders 09523–09525 bright as overs, and the stats below assume that split).
+    frames: ['09522', '09521', '09520', '09519', '09523', '09524', '09525'],
     samples: null,
     stats: [
       ['13', 'Obelisk median brightness spread (8-bit levels) over the normal and over-exposed frames. The levelling is automatic.'],
