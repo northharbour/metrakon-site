@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import AppWindow from '../components/AppWindow.astro';
 import BracketDemo from '../components/BracketDemo.astro';
+import FrontierComp from '../components/FrontierComp.astro';
 import { SITE } from '../site';
 
 const FEATURES = [
@@ -86,6 +87,27 @@ const FLAGS = [
           Obelisk is that software.
         </p>
       </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ============ FRONTIER COMPARISON ============ -->
+  <section class="section" id="frontier">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Next to a Frontier</p>
+        <h2 class="h-section">The same negatives, scanned both ways.</h2>
+        <p class="lede">
+          Four frames from one roll of Kodak Gold 200 — scanned on a Fujifilm Frontier, and
+          camera-scanned and converted in Obelisk.
+        </p>
+      </div>
+      <div class="reveal"><FrontierComp /></div>
+      <p class="caption center fc-cap">
+        White balance and density were matched to the Frontier scans. The Frontier files are the
+        scanner’s own, only resized for the web.
+      </p>
     </div>
   </section>
 
@@ -290,6 +312,7 @@ const FLAGS = [
   .caption { color: var(--dim); font-size: 13.5px; margin-top: 14px; }
   .center { text-align: center; }
   .caption.center { margin-top: 20px; }
+  .fc-cap { max-width: 680px; margin-left: auto; margin-right: auto; }
 
   /* proof */
   .proof { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-2); }

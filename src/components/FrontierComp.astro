@@ -1,0 +1,75 @@
+---
+// Home page: the same negatives scanned on a Fujifilm Frontier and through Obelisk, side by
+// side (tools/make_frontier_comp.py — both images only resized, nothing aligned or
+// retouched). Fixed 3:2 stages: a portrait pair sits smaller instead of resizing the section.
+import DATA from '../data/frontier.json';
+
+const { pairs } = DATA;
+const n0 = pairs[0].n;
+const src = (n: number, side: 'ob' | 'fr') => `/assets/frontier/${n}_${side}.jpg`;
+const SIDES = [
+  { side: 'ob', label: 'Obelisk', alt: 'Camera scan converted in Obelisk' },
+  { side: 'fr', label: 'Fujifilm Frontier', alt: 'Frontier scan of the same negative' },
+] as const;
+---
+<div class="fc" data-fc={JSON.stringify(pairs.map((p) => p.n))}>
+  <div class="fc-panes">
+    {SIDES.map((s) => (
+      <figure class={`fc-pane ${s.side}`}>
+        <div class="fc-stage">
+          <img data-side={s.side} src={src(n0, s.side)} alt={s.alt} loading="lazy" decoding="async" />
+        </div>
+        <span class={`tag fc-label ${s.side}`}>{s.label}</span>
+      </figure>
+    ))}
+  </div>
+  <div class="fc-pick" role="group" aria-label="Frame">
+    {pairs.map((p, i) => (
+      <button aria-pressed={i === 0 ? 'true' : 'false'} data-i={i} aria-label={`Frame ${i + 1}`} style={`--ar:${p.ob[0] / p.ob[1]}`}>
+        <img src={`/assets/frontier/${p.n}_t.jpg`} alt="" loading="lazy" decoding="async" />
+      </button>
+    ))}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-fc]').forEach((root) => {
+    const ns = JSON.parse(root.dataset.fc!) as number[];
+    const imgs = [...root.querySelectorAll<HTMLImageElement>('[data-side]')];
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('.fc-pick button')];
+    const src = (n: number, side: string) => `/assets/frontier/${n}_${side}.jpg`;
+    // Swap both panes together, once both are decoded, so they never show different frames
+    const show = (i: number) => {
+      const next = imgs.map((im) => { const x = new Image(); x.src = src(ns[i], im.dataset.side!); return x; });
+      Promise.all(next.map((x) => x.decode())).catch(() => {}).finally(() => {
+        imgs.forEach((im, k) => { im.src = next[k].src; });
+      });
+      btns.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    };
+    btns.forEach((b, i) => b.addEventListener('click', () => show(i)));
+    // Warm the other pairs once the section is near
+    new IntersectionObserver(([e], o) => {
+      if (!e.isIntersecting) return;
+      ns.forEach((n) => { new Image().src = src(n, 'ob'); new Image().src = src(n, 'fr'); });
+      o.disconnect();
+    }, { rootMargin: '400px' }).observe(root);
+  });
+</script>
+
+<style>
+  .fc-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .fc-pane { position: relative; margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 10px; }
+  .fc-pane.ob { border-color: rgba(79,200,221,.35); box-shadow: 0 0 60px -30px rgba(79,200,221,.5); }
+  .fc-stage { position: relative; aspect-ratio: 3 / 2; background: #040507; border-radius: 8px; overflow: hidden; }
+  .fc-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .fc-label { position: absolute; left: 20px; top: 20px; }
+  .fc-label.ob { color: var(--cyan); }
+  .fc-pick { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+  .fc-pick button { height: 64px; aspect-ratio: var(--ar); padding: 0; border: 0; border-radius: 4px; background: none; cursor: pointer;
+    outline: 1px solid transparent; opacity: .55; transition: opacity .15s; }
+  .fc-pick button:hover { opacity: .9; }
+  .fc-pick button[aria-pressed='true'] { opacity: 1; outline-color: var(--amber); }
+  .fc-pick img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+  @media (max-width: 720px) { .fc-panes { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .fc-pick button { height: 48px; } }
+</style>
