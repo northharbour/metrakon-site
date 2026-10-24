@@ -6,6 +6,13 @@ import FrontierComp from '../components/FrontierComp.astro';
 import LabAutoComp from '../components/LabAutoComp.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
 import { SITE } from '../site';
+import { trialAvailable } from '../data/release';
+
+// Primary call to action: Get Obelisk once released, the free trial while one is out,
+// otherwise the early-access form.
+const primary = SITE.stage === 'released' ? { href: '/pricing/', label: 'Get Obelisk' }
+  : trialAvailable ? { href: '/download/', label: 'Download free trial' }
+  : { href: '/pricing/#early-access', label: 'Request early access' };
 
 const FEATURES = [
   { k: 'Overnight conversion', d: 'Outside working hours Obelisk finds the day’s orders by itself, converts every roll whose film stock it knows, and has previews waiting in the morning. Nothing to queue.' },
@@ -48,9 +55,7 @@ const LAB_POINTS = [
         whole roll lands at one density and one colour, without frame-by-frame correction.
       </p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href={SITE.stage === 'released' ? '/pricing/' : '/pricing/#early-access'}>
-          {SITE.stage === 'released' ? 'Get Obelisk' : 'Request early access'} <span class="arrow">→</span>
-        </a>
+        <a class="btn btn-primary" href={primary.href}>{primary.label} <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="#consistency">See it on a real roll</a>
       </div>
       <ul class="hero-meta">
@@ -342,15 +347,31 @@ const LAB_POINTS = [
   <section class="cta-band">
     <div class="grid-bg"></div>
     <div class="wrap cta-in reveal">
-      <h2 class="h-section">Release is coming.</h2>
-      <p class="lede">
-        Obelisk already runs every day on customer rolls at the lab it is built in. Early access
-        is opening to a small number of labs and photographers first.
-      </p>
-      <div class="hero-cta" style="justify-content:center">
-        <a class="btn btn-primary" href="/pricing/#early-access">Request early access <span class="arrow">→</span></a>
-        <a class="btn btn-ghost" href="/pricing/">Plans</a>
-      </div>
+      {trialAvailable ? (
+        <>
+          <h2 class="h-section">Try it on your own rolls.</h2>
+          <p class="lede">
+            Obelisk runs free for {SITE.trialDays} days on macOS and Windows, with every feature
+            except export. It already converts customer rolls every day at the lab it is built in.
+          </p>
+          <div class="hero-cta" style="justify-content:center">
+            <a class="btn btn-primary" href="/download/">Download free trial <span class="arrow">→</span></a>
+            <a class="btn btn-ghost" href="/pricing/#early-access">Request early access</a>
+          </div>
+        </>
+      ) : (
+        <>
+          <h2 class="h-section">Release is coming.</h2>
+          <p class="lede">
+            Obelisk already runs every day on customer rolls at the lab it is built in. Early access
+            is opening to a small number of labs and photographers first.
+          </p>
+          <div class="hero-cta" style="justify-content:center">
+            <a class="btn btn-primary" href="/pricing/#early-access">Request early access <span class="arrow">→</span></a>
+            <a class="btn btn-ghost" href="/pricing/">Plans</a>
+          </div>
+        </>
+      )}
     </div>
   </section>
 </Base>

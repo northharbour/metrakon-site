@@ -1,10 +1,15 @@
 # Build the Astro site and publish it to GitHub Pages on every push to main.
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
+# The download page is filled from the latest app release at build time
+# (src/data/release.ts): the daily run picks up a new release; run it by hand to show one
+# at once.
 name: Deploy site
 
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '17 5 * * *'
   workflow_dispatch:
 
 permissions:
@@ -27,6 +32,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # GitHub API rate limit for the release lookup
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

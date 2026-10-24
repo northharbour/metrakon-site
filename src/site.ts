@@ -21,6 +21,13 @@ export const SITE = {
   formEndpoint: 'https://formspree.io/f/xqpenvqy',
   formProvider: { name: 'Formspree, Inc. (USA)', privacyUrl: 'https://formspree.io/legal/privacy-policy' },
   contactEmail: '', // empty = LEGAL.email
+
+  // Free trial download (/download/). The installers are GitHub Releases on `releasesRepo`;
+  // src/data/release.ts reads the latest one when the site builds. The trial buttons
+  // (header, hero, closing band) appear only once a release exists — false hides them all.
+  trial: true,
+  trialDays: 10,
+  releasesRepo: 'northharbour/obelisk-releases',
 };
 
 // Impressum (§ 5 DDG) + privacy-policy controller. Must be REAL details — a production
@@ -35,7 +42,7 @@ export const LEGAL = {
   phone: '',         // optional but recommended (§ 5 DDG wants a second fast channel)
   vatId: 'DE453709438',         // USt-IdNr., only if you have one (Kleinunternehmer: leave empty)
   register: '',      // only for a registered company, e.g. 'Amtsgericht München, HRB 12345'
-  updated: '2026-10-18',
+  updated: '2026-10-24',
 };
 
 export const legalMissing = () =>

@@ -33,6 +33,21 @@ npm run build     # static output in dist/
    set `formProvider` so the privacy policy names it.
 4. Trademark clearance for OBELISK is still open.
 
+## Free trial download
+
+`/download/` offers the trial installers. They are GitHub Releases on
+[northharbour/obelisk-releases](https://github.com/northharbour/obelisk-releases) (public);
+`src/data/release.ts` reads the latest release when the site builds, so the page shows its
+version and file names and visitors' browsers contact GitHub only when they click a
+download. Until a release exists the page says the first build is on its way, and the
+trial buttons (header, hero, closing band, pricing FAQ, footer) stay hidden; they appear
+on the first build after a release is published. The deploy workflow runs daily for
+that; to show a new release at once, run Actions → Deploy site → Run workflow.
+`trial: false` in `src/site.ts` hides everything again.
+
+Publish releases without "Set as a pre-release": the latest-release lookup skips
+pre-releases.
+
 ## Launch
 
 Set `stage: 'released'` in `src/site.ts`, fill prices and checkout links in `src/data/plans.ts`.

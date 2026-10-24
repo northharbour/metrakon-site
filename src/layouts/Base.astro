@@ -4,6 +4,7 @@ import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Mark from '../components/Mark.astro';
 import { SITE, NAV, contactEmail, legalMissing } from '../site';
+import { trialAvailable } from '../data/release';
 
 // Never publish without a complete Impressum (§ 5 DDG): fail the production build.
 if (import.meta.env.PROD && legalMissing().length) {
@@ -18,7 +19,9 @@ const canonical = new URL(path, SITE.url).href;
 const ogImage = new URL(image, SITE.url).href;
 const cta = SITE.stage === 'released'
   ? { href: '/pricing/', label: 'Get Obelisk' }
-  : { href: '/pricing/#early-access', label: 'Request early access' };
+  : trialAvailable
+    ? { href: '/download/', label: 'Download trial' }
+    : { href: '/pricing/#early-access', label: 'Request early access' };
 ---
 <!doctype html>
 <html lang="en">
@@ -78,6 +81,7 @@ const cta = SITE.stage === 'released'
           <a href="/how-it-works/">How it works</a>
           <a href="/compare/">Comparison</a>
           <a href="/pricing/">Pricing</a>
+          {trialAvailable && <a href="/download/">Download</a>}
         </div>
         <div>
           <h4>Company</h4>
