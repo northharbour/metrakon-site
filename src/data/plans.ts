@@ -47,6 +47,7 @@ export const PLANS: Plan[] = [
 export const INCLUDED = [
   'Calibrated conversion for colour negative (C-41, ECN-2) and black & white',
   'Calibration tools — build profiles for your own stocks and light',
+  'Lab auto — lab-printer conversion for colour film without a profile',
   'Overnight conversion, film stock map and automatic roll base',
   'Scan quality control and exposure contact sheets',
   'Local automatic orientation',

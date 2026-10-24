@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import AppWindow from '../components/AppWindow.astro';
 import BracketDemo from '../components/BracketDemo.astro';
 import FrontierComp from '../components/FrontierComp.astro';
+import LabAutoComp from '../components/LabAutoComp.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
 import { SITE } from '../site';
 
@@ -24,6 +25,13 @@ const FLAGS = [
   { chip: '▲ +1.4', c: 'var(--yellow)', t: 'Film over- or under-exposed', d: 'Measured in density from the negative itself — kept separate from scan mistakes, and worth telling the customer.' },
   { chip: '⚠ light', c: 'var(--yellow)', t: 'Wrong scanning light', d: 'Each roll’s base signature is compared with the one recorded at calibration, and flagged at the roll header.' },
   { chip: 'f/2.8 ≠ f/5.6', c: 'var(--yellow)', t: 'Wrong lens setting', d: 'The calibration aperture is stored with the profile and checked against every scan’s EXIF.' },
+];
+
+const LAB_POINTS = [
+  { k: 'Every frame read', d: 'The film’s grey axis is found in each frame’s near-neutral areas. A frame filled with one colour keeps it.' },
+  { k: 'One print density', d: 'Each scene is estimated and printed at one aim: thin frames lifted, dense ones brought down.' },
+  { k: 'Smoothed across the roll', d: 'Decisions are averaged with similar neighbouring frames, so a run of similar shots prints alike.' },
+  { k: 'No profile needed', d: 'A generic film for RGB and for white light ships with Obelisk. One switch in the roll header.' },
 ];
 ---
 <Base>
@@ -62,7 +70,7 @@ const FLAGS = [
     <div class="wrap proof-in">
       <div class="proof-item reveal"><div class="n data">1<small> level</small></div><p>Brightness spread across a 250D exposure bracket. Per-image converters: 8–29.</p></div>
       <div class="proof-item reveal"><div class="n data">5<small> min</small></div><p>To calibrate a film stock — once per stock and light, not per roll.</p></div>
-      <div class="proof-item reveal"><div class="n data">1<small> decision</small></div><p>Per roll. Assign the film profile; the frames arrive levelled, cropped and upright.</p></div>
+      <div class="proof-item reveal"><div class="n data">1<small> decision</small></div><p>Per roll. Assign the film profile, or Lab auto; the frames arrive levelled, cropped and upright.</p></div>
       <div class="proof-item reveal"><div class="n data">0<small> uploads</small></div><p>Conversion and auto-orientation run locally. Customer images never leave the lab.</p></div>
     </div>
   </section>
@@ -181,6 +189,40 @@ const FLAGS = [
     </div>
   </section>
 
+  <hr class="rule" />
+
+  <!-- ============ LAB AUTO ============ -->
+  <section class="section" id="lab-auto">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Lab auto</p>
+        <h2 class="h-section">No profile for the film? Print it like a minilab.</h2>
+        <p class="lede">
+          Calibration is what makes a roll land at one density and one colour. For film you
+          haven’t calibrated, switch the roll to Lab auto: a second, separate engine modelled on
+          how a Frontier or a Noritsu sets up a negative. It needs no profile at all.
+        </p>
+      </div>
+      <div class="reveal"><LabAutoComp /></div>
+      <p class="caption center la-cap">
+        Drag to compare. The same RAW files converted twice with no adjustments: through the
+        stock’s own calibrated profile, and in Lab auto with the generic film for RGB light,
+        which is not made from Vision 250D, Cinestill 800T or Vision 500T. Lab auto prints like a
+        minilab, with brighter whites and softer blacks; on the night frame it lifts the black
+        sky that the calibrated profile holds.
+      </p>
+      <div class="la-points">
+        {LAB_POINTS.map((p) => (
+          <div class="reveal">
+            <h3>{p.k}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+      <p class="center"><a class="btn btn-ghost" href="/how-it-works/#lab-auto">How Lab auto works <span class="arrow">→</span></a></p>
+    </div>
+  </section>
+
   <!-- ============ LAB FEATURES ============ -->
   <section class="section lab">
     <div class="wrap">
@@ -273,7 +315,7 @@ const FLAGS = [
         </div>
         <div class="card who-card not reveal">
           <h3>What it isn’t</h3>
-          <p>A general photo editor, or a one-click converter that guesses. Obelisk deliberately won’t convert without a calibration — that constraint is what the consistency is built on.</p>
+          <p>A general photo editor. The consistency shown here comes from calibration. Lab auto covers film without a profile, but it decides frame by frame like any lab printer, so the stocks you scan most are worth five minutes of calibration.</p>
         </div>
       </div>
     </div>
@@ -366,6 +408,16 @@ const FLAGS = [
   .fig figcaption { color: var(--muted); font-size: 14px; margin-top: 12px; line-height: 1.5; }
   .fig figcaption .data { margin-right: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
   @media (max-width: 760px) { .fig-row { grid-template-columns: 1fr; } }
+
+  /* lab auto */
+  .la-cap { max-width: 720px; margin-left: auto; margin-right: auto; }
+  .la-points { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 44px 0 40px; }
+  .la-points > div { padding-top: 16px; border-top: 1px solid var(--line); position: relative; }
+  .la-points > div::before { content: ''; position: absolute; left: 0; top: -1px; width: 26px; height: 2px; background: var(--amber); }
+  .la-points h3 { font-size: 17px; margin-bottom: 8px; }
+  .la-points p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+  @media (max-width: 1000px) { .la-points { grid-template-columns: 1fr 1fr; gap: 26px 14px; } }
+  @media (max-width: 560px) { .la-points { grid-template-columns: 1fr; } }
 
   /* lab features */
   .lab { background: linear-gradient(180deg, var(--bg-2), var(--bg)); border-top: 1px solid var(--line); }

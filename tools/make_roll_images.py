@@ -113,7 +113,7 @@ class Renderer:
     def render(self, raw: Path, out: Path, density: float | None = None) -> None:
         m = self.main
         with m.get_db() as conn:
-            settings, _ = m._load_settings_and_profile(conn)
+            settings = m._load_settings(conn)
             job = conn.execute('SELECT * FROM jobs WHERE file_path=?', (str(raw),)).fetchone()
             if job is None:
                 sys.exit(f'{raw} is not in the Obelisk session — open its folder in Obelisk first')

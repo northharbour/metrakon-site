@@ -1,0 +1,104 @@
+---
+// Home page: the same RAW files through the stock's calibrated profile and through Lab auto
+// with no profile, both with no adjustments (tools/make_labauto_images.py). The two renders
+// share one crop, so they are pixel-aligned: a drag wipe on a fixed 3:2 stage, so a
+// portrait pair sits smaller instead of resizing the section.
+import DATA from '../data/labauto.json';
+
+const { pairs } = DATA;
+const p0 = pairs[0];
+const src = (n: number, side: 'cal' | 'lab') => `/assets/labauto/${n}_${side}.jpg`;
+---
+<div class="la" data-la={JSON.stringify(pairs.map((p) => ({ n: p.n, stock: p.stock })))}>
+  <div class="la-stage" tabindex="0" role="slider" aria-label="Compare: Calibrated and Lab auto"
+       aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+    <img data-side="lab" src={src(p0.n, 'lab')} alt={`Lab auto, no profile: ${p0.stock} negative`} loading="lazy" decoding="async" />
+    <img data-side="cal" class="top" src={src(p0.n, 'cal')} alt={`Calibrated: ${p0.stock} profile`} loading="lazy" decoding="async"
+         style="clip-path:inset(0 50% 0 0)" />
+    <div class="handle" style="left:50%"><span>‹ ›</span></div>
+    <span class="tag l">Calibrated · <span data-stock>{p0.stock}</span></span>
+    <span class="tag r">Lab auto · no profile</span>
+  </div>
+  <div class="la-pick" role="group" aria-label="Frame">
+    {pairs.map((p, i) => (
+      <button aria-pressed={i === 0 ? 'true' : 'false'} data-i={i} aria-label={`Frame ${i + 1}, ${p.stock}`} style={`--ar:${p.lab[0] / p.lab[1]}`}>
+        <img src={`/assets/labauto/${p.n}_t.jpg`} alt="" loading="lazy" decoding="async" />
+      </button>
+    ))}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-la]').forEach((root) => {
+    const pairs = JSON.parse(root.dataset.la!) as { n: number; stock: string }[];
+    const stage = root.querySelector<HTMLElement>('.la-stage')!;
+    const imgs = [...stage.querySelectorAll<HTMLImageElement>('[data-side]')];
+    const top = stage.querySelector<HTMLElement>('.top')!;
+    const h = stage.querySelector<HTMLElement>('.handle')!;
+    const stock = stage.querySelector<HTMLElement>('[data-stock]')!;
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('.la-pick button')];
+    const src = (n: number, side: string) => `/assets/labauto/${n}_${side}.jpg`;
+
+    let pct = 50, down = false;
+    const set = (p: number) => {
+      pct = Math.max(0, Math.min(100, p));
+      top.style.clipPath = `inset(0 ${100 - pct}% 0 0)`; h.style.left = pct + '%';
+      stage.setAttribute('aria-valuenow', String(Math.round(pct)));
+    };
+    const fromX = (x: number) => { const r = stage.getBoundingClientRect(); set(((x - r.left) / r.width) * 100); };
+    stage.addEventListener('pointerdown', (e) => { down = true; stage.setPointerCapture(e.pointerId); fromX(e.clientX); });
+    stage.addEventListener('pointermove', (e) => { if (down) fromX(e.clientX); });
+    stage.addEventListener('pointerup', () => (down = false));
+    stage.addEventListener('pointercancel', () => (down = false));
+    stage.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { set(pct - 5); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { set(pct + 5); e.preventDefault(); }
+    });
+
+    // Swap both sides together, once both are decoded, so they never show different frames
+    const show = (i: number) => {
+      const { n, stock: name } = pairs[i];
+      const next = imgs.map((im) => { const x = new Image(); x.src = src(n, im.dataset.side!); return x; });
+      Promise.all(next.map((x) => x.decode())).catch(() => {}).finally(() => {
+        imgs.forEach((im, k) => {
+          im.src = next[k].src;
+          im.alt = im.dataset.side === 'cal' ? `Calibrated: ${name} profile` : `Lab auto, no profile: ${name} negative`;
+        });
+        stock.textContent = name;
+      });
+      btns.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    };
+    btns.forEach((b, i) => b.addEventListener('click', () => show(i)));
+    // Warm the other pairs once the section is near
+    new IntersectionObserver(([e], o) => {
+      if (!e.isIntersecting) return;
+      pairs.forEach(({ n }) => { new Image().src = src(n, 'cal'); new Image().src = src(n, 'lab'); });
+      o.disconnect();
+    }, { rootMargin: '400px' }).observe(root);
+  });
+</script>
+
+<style>
+  .la-stage { position: relative; aspect-ratio: 3 / 2; background: #040507; border: 1px solid var(--line); border-radius: var(--r-lg);
+    overflow: hidden; cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .la-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+  .handle { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--text); pointer-events: none; box-shadow: 0 0 12px rgba(0,0,0,.6); }
+  .handle span { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 38px; height: 38px; border-radius: 50%;
+    background: var(--text); color: var(--bg); display: grid; place-items: center; font: 700 14px/1 var(--font); letter-spacing: -1px; box-shadow: 0 4px 16px rgba(0,0,0,.5); }
+  .tag { position: absolute; top: 12px; pointer-events: none; }
+  .tag.l { left: 12px; color: var(--cyan); }
+  .tag.r { right: 12px; color: var(--amber); }
+  .la-pick { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .la-pick button { height: 64px; aspect-ratio: var(--ar); padding: 0; border: 0; border-radius: 4px; background: none; cursor: pointer;
+    outline: 1px solid transparent; opacity: .55; transition: opacity .15s; }
+  .la-pick button:hover { opacity: .9; }
+  .la-pick button[aria-pressed='true'] { opacity: 1; outline-color: var(--amber); }
+  .la-pick img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+  @media (max-width: 560px) {
+    .la-pick { gap: 6px; }
+    .la-pick button { height: 40px; }
+    .tag { font-size: 10px; letter-spacing: .06em; }
+    .tag.l { top: 8px; left: 8px; }
+    .tag.r { top: auto; bottom: 8px; right: 8px; }
+  }
+</style>

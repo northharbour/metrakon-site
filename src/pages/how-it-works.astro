@@ -11,6 +11,17 @@ const TOC = [
   ['aged', 'Aged film'],
   ['light', 'Scanning light'],
   ['calibration', 'Calibration in practice'],
+  ['lab-auto', 'Lab auto: no profile'],
+];
+
+// Lab auto's stages, in the order a lab printer runs them (labauto.py in the app)
+const LAB_STAGES = [
+  ['Grey axis', 'Per frame, from the near-grey parts of the picture. Strong colours are removed first in three passes, the last growing out from each coloured area so a whole red car goes, not just its most saturated middle. Similar frames of the roll pool their evidence.'],
+  ['Colour failure', 'A small final grey balance, held back when one colour fills the frame. A sunset or a tungsten-lit room keeps its colour instead of being corrected to grey.'],
+  ['Density', 'An estimate of the scene, weighted toward the busy parts of the frame and its centre, printed at one aim. Thin frames are lifted and dense ones brought down. Flat frames get a little automatic contrast.'],
+  ['Roll averaging', 'Each frame’s density, contrast and grey balance are averaged with up to three similar neighbours either side, stopping at the first frame that looks different. A run of similar shots prints alike.'],
+  ['Local tone', 'Large bright areas such as skies are pulled down by their surroundings and dark ones lifted slightly; small highlights are left alone.'],
+  ['Print', 'Saturation and a print curve to the output file.'],
 ];
 ---
 <Base title="How it works" description="Obelisk converts colour negatives through a measured calibration of the film stock on your rig: a density fingerprint, a gated colour matrix, a per-roll film base and exposure as arithmetic.">
@@ -40,9 +51,10 @@ const TOC = [
           <li><strong>Frame-by-frame analysis drifts frame by frame.</strong> Two photos taken seconds apart render differently because something in the scene changed the histogram.</li>
         </ul>
         <p>
-          Obelisk has no per-image auto-balance. Every frame converts through a fixed, measured
-          calibration, so a result can be reproduced exactly — frame to frame, roll to roll,
-          operator to operator.
+          A calibrated roll has no per-image auto-balance. Every frame converts through a fixed,
+          measured calibration, so a result can be reproduced exactly — frame to frame, roll to
+          roll, operator to operator. For film with no calibration, Obelisk has a separate
+          engine that does estimate, the way a lab printer does: <a href="#lab-auto">Lab auto</a>.
         </p>
       </section>
 
@@ -164,6 +176,47 @@ const TOC = [
         </p>
       </section>
 
+      <section id="lab-auto">
+        <h2>Lab auto: when there is no profile</h2>
+        <p>
+          Not every roll is a stock you have calibrated: a customer’s one-off film, an
+          off-brand respool, a stock you scan twice a year. For those, a roll can be switched
+          from <em>Calibrated</em> to <em>Lab auto</em> in its header. Lab auto is a second,
+          separate engine, modelled on how minilab printers such as the Fuji Frontier and the
+          Noritsu set up a negative: it measures every frame, decides, and then smooths its
+          decisions across the roll.
+        </p>
+        <p>
+          It shares only the scanning side with the calibrated engine — RAW decoding, crop, film
+          base, rotation, dust removal, rig calibration and export. None of the calibrated
+          conversion runs on a Lab auto roll.
+        </p>
+        <ol class="howto stages">
+          {LAB_STAGES.map(([k, d]) => <li><strong>{k}.</strong> {d}</li>)}
+        </ol>
+        <h3>No profile needed</h3>
+        <p>
+          Obelisk ships with a generic film for each type of scanning light, RGB and white,
+          made from our own calibrations of Kodak Gold, Ultramax and Portra. A Lab auto roll
+          needs nothing else, so it works on an installation with no profiles at all, and from a
+          single frame. Frames are adjusted with the same Density, Temp, Tint and Contrast
+          controls, live on the GPU like a calibrated frame.
+        </p>
+        <p>
+          There is one generic per light rather than one per stock because the light matters
+          more. Measured on six white-light rolls, a generic film made from other stocks under
+          the same light left about half the colour cast of the right stock’s profile made under
+          RGB light.
+        </p>
+        <p class="note">
+          Lab auto is not an emulation of a Frontier or a Noritsu. Their colour lives in the
+          manufacturers’ own data files, which Obelisk does not use; every setting in Lab auto is
+          our own, tuned on our own rolls. And because it decides frame by frame, the scene can
+          still sway it. For a stock you scan every week, a five-minute calibration is the way to
+          a roll that converts identically every time.
+        </p>
+      </section>
+
       <div class="doc-cta card">
         <div>
           <h3>See the results on real frames</h3>
@@ -223,6 +276,7 @@ const TOC = [
   .howto li { counter-increment: s; position: relative; padding: 2px 0 2px 46px; color: var(--muted); }
   .howto li::before { content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-family: var(--mono); font-size: 13px; color: var(--cyan); border: 1px solid var(--line-2); border-radius: 6px; padding: 3px 6px; }
   .howto strong { color: var(--text); }
+  .howto.stages { margin: 28px 0 8px; }
   .doc-cta { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding: 28px; flex-wrap: wrap; }
   .doc-cta h3 { margin: 0 0 6px; }
 </style>
