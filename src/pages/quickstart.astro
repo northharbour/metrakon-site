@@ -14,6 +14,7 @@ const TOC = [
   ['base', 'Pick the film base'],
   ['adjust', 'Review and adjust'],
   ['export', 'Export'],
+  ['bw', 'Black & white film'],
   ['tips', 'Scanning tips'],
   ['calibrate', 'Calibrate a film stock'],
 ];
@@ -69,6 +70,10 @@ const KEYS: [string[], string, string][] = [
             your own camera and light, so every frame of the roll lands at one density and one
             colour. See <a href="#calibrate">Calibrate a film stock</a>.</li>
         </ul>
+        <p class="note">
+          <strong>Black and white film?</strong> Lab auto is for colour film. For black and white,
+          use a B&amp;W profile instead: see <a href="#bw">Black &amp; white film</a>.
+        </p>
         <p>
           If the header also shows <span class="ui">RGB | White</span>, choose the light you
           scanned with: <em>White</em> for an LED panel or light table, <em>RGB</em> for a light
@@ -179,6 +184,24 @@ const KEYS: [string[], string, string][] = [
         <p>
           Your work is saved beside the scans, in an <span class="ui">Obelisk</span> folder inside
           each roll folder, so a roll opens again exactly as you left it.
+        </p>
+      </section>
+
+      <section id="bw">
+        <h2>Black &amp; white film</h2>
+        <p>
+          Lab auto is made for colour negatives. On black and white film it leaves a sepia or pink
+          tint, so use a B&amp;W profile instead. It needs no calibration: Obelisk merges the three
+          colour channels of the scan into one, so the print comes out neutral grey.
+        </p>
+        <ol class="howto">
+          <li><strong>Make the profile.</strong> Open <span class="ui">View → Film profiles</span> and click <span class="ui">New B&amp;W…</span> Name it after the film, for example HP5 400.</li>
+          <li><strong>Set its light.</strong> In the editor that opens, set <span class="ui">Light source</span> to the light you scan with, <em>White</em> or <em>RGB</em>. It saves by itself.</li>
+          <li><strong>Use it on the roll.</strong> Switch the roll header to <span class="ui">Calibrated</span>, pick the profile and press <span class="ui">▶</span>. The base pick works as it does for colour film.</li>
+        </ol>
+        <p>
+          Make one profile per film, or one for all of them. To change how contrasty a film prints,
+          adjust <span class="ui">Print range</span> and <span class="ui">Base contrast</span> in its profile, the way you would choose a paper grade.
         </p>
       </section>
 
