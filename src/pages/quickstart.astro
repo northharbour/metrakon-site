@@ -1,0 +1,279 @@
+---
+// Quickstart for people trying the app: the five steps of a first roll, and what the base
+// pick (on by default, Settings → Rebate detection) is for. Lives on the site so it can be
+// updated without rebuilding the app.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { SITE, contactEmail } from '../site';
+
+const days = SITE.trialDays;
+const email = contactEmail();
+const TOC = [
+  ['open', 'Open your scans'],
+  ['convert', 'Lab auto or Calibrated'],
+  ['base', 'Pick the film base'],
+  ['adjust', 'Review and adjust'],
+  ['export', 'Export'],
+  ['tips', 'Scanning tips'],
+  ['calibrate', 'Calibrate a film stock'],
+];
+// [keys, joiner, what they do] — '/' = either key, '+' = held together. The app's standard
+// keys (Help → Keyboard shortcuts, or ?)
+const KEYS: [string[], string, string][] = [
+  [['W', 'S'], '/', 'Lighter / darker'],
+  [['Q', 'E'], '/', 'Cooler / warmer'],
+  [['Z', 'C'], '/', 'Magenta / green'],
+  [['A', 'D'], '/', 'Less / more contrast'],
+  [['R'], '', 'Rotate 90°'],
+  [['Shift', 'C'], '+', 'Crop'],
+  [['F'], '', 'Dust removal: click each speck'],
+  [['Shift', 'A'], '+', 'Previous frame (Shift + D: next)'],
+  [['Ctrl', 'C'], '+', 'Copy this frame’s settings (Ctrl + V pastes)'],
+  [['Ctrl', 'Z'], '+', 'Undo'],
+  [['?'], '', 'Every shortcut'],
+];
+---
+<Base title="Quickstart" description="Your first roll in Obelisk: open your scans, choose Lab auto or a calibrated profile, pick the film base, adjust and export.">
+  <PageHero
+    eyebrow="Quickstart"
+    title="Your first roll, start to finish."
+    lede="Five steps from a folder of camera scans to finished files, and what the base pick is for."
+  />
+  <div class="wrap doc-grid">
+    <nav class="toc" aria-label="On this page">
+      <p class="toc-h">On this page</p>
+      {TOC.map(([id, l]) => <a href={`#${id}`} data-toc={id}>{l}</a>)}
+    </nav>
+    <article class="doc">
+      <section id="open">
+        <p class="step-n">01</p>
+        <h2>Open your scans</h2>
+        <p>
+          Obelisk works on the RAW files from your camera, one folder per roll. Click <span class="ui">…</span> at the top of the sidebar, or <span class="ui">File → Browse
+          for folder…</span>, and choose the folder. Choose a folder that holds several roll
+          folders to open them all at once.
+        </p>
+        <p>
+          Obelisk keeps watching the folder, so frames you scan into it appear on their own. <span class="ui">Recent…</span> reopens a folder you have used before.
+        </p>
+      </section>
+
+      <section id="convert">
+        <p class="step-n">02</p>
+        <h2>Lab auto or Calibrated</h2>
+        <p>Each roll in the sidebar has a header with a switch:</p>
+        <ul class="points">
+          <li><strong>Lab auto</strong>Converts any colour negative with no setup, the way a lab
+            printer sets up a negative: every frame balanced and exposed on its own. Start here.</li>
+          <li><strong>Calibrated</strong>Converts through a profile you have made for that film on
+            your own camera and light, so every frame of the roll lands at one density and one
+            colour. See <a href="#calibrate">Calibrate a film stock</a>.</li>
+        </ul>
+        <p>
+          If the header also shows <span class="ui">RGB | White</span>, choose the light you
+          scanned with: <em>White</em> for an LED panel or light table, <em>RGB</em> for a light
+          made of separate red, green and blue LEDs. To set it once for every roll, use <span class="ui">Settings → Active scan light</span>.
+        </p>
+        <p>Then press <span class="ui">▶</span> on the roll header. The number beside it is how many frames will convert.</p>
+      </section>
+
+      <section id="base">
+        <p class="step-n">03</p>
+        <h2>Pick the film base</h2>
+        <p>
+          Before a roll converts for the first time, Obelisk shows a whole scan, uncropped and
+          still negative, and asks for one click on clear film.
+        </p>
+        <p class="note">
+          <strong>Why it matters.</strong> Clear film is film with no picture on it: the orange
+          mask of the film, seen through your light and your camera. Obelisk subtracts it from
+          every frame of the roll, so this one click sets the colour of the whole roll, and
+          measuring it once keeps every frame consistent.
+        </p>
+
+        <figure class="bp-fig">
+          <div class="bp-img">
+            <img src="/assets/quickstart/base-pick.jpg" width="1360" height="850"
+                 alt="An uncropped Kodak Gold 200 negative scan in grey: a light-grey strip of clear film runs down each side of the picture, with printed edge numbers, and the black film holder around it." />
+            <svg viewBox="0 0 1360 850" aria-hidden="true">
+              <g class="ok">
+                <circle cx="221" cy="480" r="19" />
+                <circle cx="1261" cy="470" r="13" />
+              </g>
+              <g class="no">
+                <path d="M207 266 L235 294 M235 266 L207 294" />
+                <path d="M61 586 L89 614 M89 586 L61 614" />
+                <path d="M686 586 L714 614 M714 586 L686 614" />
+              </g>
+              <g class="lbl">
+                <rect x="252" y="459" width="306" height="42" rx="8" /><text x="268" y="488">Click here: clear film</text>
+                <rect x="1124" y="449" width="112" height="42" rx="8" /><text x="1140" y="478">or here</text>
+                <rect x="252" y="259" width="318" height="42" rx="8" /><text x="268" y="288">Not on printed numbers</text>
+                <rect x="20" y="632" width="206" height="42" rx="8" /><text x="36" y="661">Not the holder</text>
+                <rect x="730" y="579" width="218" height="42" rx="8" /><text x="746" y="608">Not the picture</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="lg ok">○</span> Click on plain clear film: the light-grey strip along the
+            film’s edge, or the gap between two frames.
+            <span class="lg no">✕</span> Not on printed edge numbers, sprocket holes, the holder
+            or bare light, or the picture itself. The example is a Kodak Gold 200 scan, shown the
+            way the picker shows it.
+          </figcaption>
+        </figure>
+
+        <ol class="howto">
+          <li><strong>Choose a normally exposed frame.</strong> On a heavily over-exposed frame,
+            light can spread into the film’s edge and fog it. Step through the roll with <kbd>←</kbd> <kbd>→</kbd> or by clicking thumbnails in the sidebar.</li>
+          <li><strong>Size the circle</strong> with the scroll wheel, so it fits on clear film.</li>
+          <li><strong>Click a plain light-grey spot</strong> of clear film.</li>
+          <li><strong>Obelisk checks the spot.</strong> If it is not clear film, it says so: click
+            somewhere else. Then the roll converts.</li>
+        </ol>
+        <p>
+          Not sure? <span class="ui">Skip — use auto base</span> converts straight away. Obelisk
+          then reads the clear film between frames itself and agrees on one base for the roll
+          once it has converted. If it could not be sure, the roll header shows <span class="ui">◈ check</span>.
+        </p>
+        <p>
+          To change the base later, right-click the roll → <span class="ui">Pick roll base…</span> A roll with a hand-picked base is not asked again. To skip the question for every roll,
+          untick <span class="ui">Settings → Rebate detection → Pick the film base before
+          converting a roll</span>.
+        </p>
+      </section>
+
+      <section id="adjust">
+        <p class="step-n">04</p>
+        <h2>Review and adjust</h2>
+        <p>
+          Click a frame in the sidebar to open it. Adjust it with the sliders under the image,
+          or faster with the keyboard:
+        </p>
+        <div class="keys">
+          {KEYS.map(([k, j, d]) => (
+            <div class="key-row">
+              <span class="key-k">{k.map((x, i) => <>{i > 0 && <span class="plus">{j}</span>}<kbd>{x}</kbd></>)}</span>
+              <span class="key-d">{d}</span>
+            </div>
+          ))}
+        </div>
+        <p class="small muted">On a Mac, ⌘ works wherever Ctrl is listed.</p>
+        <p>
+          <span class="ui">→ Apply to roll</span> copies the open frame’s settings to every frame
+          of the roll: useful when the whole roll shares a cast or sits a little dark.
+        </p>
+      </section>
+
+      <section id="export">
+        <p class="step-n">05</p>
+        <h2>Export</h2>
+        <p>
+          <span class="ui">Export…</span> in the toolbar saves the open frame; <span class="ui">Export all…</span> at the top of the sidebar saves every converted
+          frame. Choose TIFF or JPEG, the size and the sharpening in the export dialog.
+        </p>
+        <p class="note">
+          In the free trial, export is the one thing that needs a licence. Everything else works
+          for {days} days from the first launch.{email && <> To get a licence, write to <a href={`mailto:${email}`}>{email}</a> and load it under <span class="ui">Help → Licence…</span></>}
+        </p>
+        <p>
+          Your work is saved beside the scans, in an <span class="ui">Obelisk</span> folder inside
+          each roll folder, so a roll opens again exactly as you left it.
+        </p>
+      </section>
+
+      <section id="tips">
+        <h2>Scanning tips</h2>
+        <ul class="points">
+          <li><strong>Leave some clear film in every scan.</strong>A little of the film’s edge, or
+            of the gap between frames. The base pick and the automatic crop both need it.</li>
+          <li><strong>Bright, but not clipped.</strong>Clear film should be the brightest part of
+            the film without reaching the camera’s limit. The sidebar marks frames that are
+            clipped or too dim.</li>
+          <li><strong>One setup per roll.</strong>Keep the light, aperture and shutter speed the
+            same for the whole roll.</li>
+          <li><strong>Shoot RAW.</strong>Obelisk reads the RAW files of most current cameras.</li>
+        </ul>
+      </section>
+
+      <section id="calibrate">
+        <h2>Calibrate a film stock</h2>
+        <p>
+          Lab auto works on any colour negative. For a stock you scan often, a calibration makes
+          every roll of it convert the same way. You need a standard colour chart, one roll of the
+          stock with the chart photographed in one-stop steps, and about five minutes at the
+          scanning station once it is developed. Start it from the <span class="ui">Calibrate</span> menu. <a href="/how-it-works/#calibration">How calibration works →</a>
+        </p>
+      </section>
+
+      <div class="doc-cta card">
+        <div>
+          <h3>Stuck, or something looks wrong?</h3>
+          <p class="muted">Tell us your camera, light and film holder, and send a RAW file if you can.</p>
+        </div>
+        {email && <a class="btn btn-ghost" href={`mailto:${email}`}>Write to us <span class="arrow">→</span></a>}
+      </div>
+    </article>
+  </div>
+</Base>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) links.forEach((l) => l.classList.toggle('on', l.dataset.toc === e.target.id));
+  }), { rootMargin: '-30% 0px -60% 0px' });
+  document.querySelectorAll('.doc > section[id]').forEach((s) => io.observe(s));
+</script>
+
+<style>
+  .doc-grid { display: grid; grid-template-columns: 220px 1fr; gap: clamp(32px, 6vw, 88px); padding-top: 56px; padding-bottom: 96px; }
+  .toc { position: sticky; top: 96px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
+  .toc-h { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+  .toc a { color: var(--muted); font-size: 14.5px; padding: 6px 0 6px 14px; border-left: 2px solid var(--line); text-decoration: none; transition: color .15s, border-color .15s; }
+  .toc a:hover { color: var(--text); }
+  .toc a.on { color: var(--text); border-left-color: var(--amber); }
+  @media (max-width: 900px) { .doc-grid { grid-template-columns: 1fr; padding-top: 36px; } .toc { display: none; } }
+
+  .doc { max-width: 760px; min-width: 0; }
+  .doc section { padding-bottom: 56px; margin-bottom: 56px; border-bottom: 1px solid var(--line); scroll-margin-top: 96px; }
+  .doc h2 { font-size: clamp(26px, 3vw, 34px); margin-bottom: 20px; }
+  .doc h3 { font-size: 19px; margin: 32px 0 10px; }
+  .doc p { color: var(--text-2); }
+  .doc em { color: var(--text); font-style: normal; }
+  .step-n { font-family: var(--mono); font-size: 13px; color: var(--cyan); margin-bottom: 10px; }
+  .ui { font-family: var(--mono); font-size: .86em; color: var(--text); background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 5px; padding: 1px 6px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .points { list-style: none; padding: 0; margin: 24px 0; display: grid; gap: 14px; }
+  .points li { padding: 16px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); color: var(--muted); font-size: 15.5px; }
+  .points strong { color: var(--text); display: block; margin-bottom: 2px; }
+  .note { font-size: 15.5px; padding: 14px 18px; border-left: 2px solid var(--amber); background: rgba(240,151,63,.05); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+  .note strong { color: var(--text); }
+  .howto { padding: 0; margin: 26px 0; list-style: none; counter-reset: s; display: grid; gap: 12px; }
+  .howto li { counter-increment: s; position: relative; padding: 2px 0 2px 46px; color: var(--muted); }
+  .howto li::before { content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-family: var(--mono); font-size: 13px; color: var(--cyan); border: 1px solid var(--line-2); border-radius: 6px; padding: 3px 6px; }
+  .howto strong { color: var(--text); }
+  kbd { display: inline-block; min-width: 26px; text-align: center; font-family: var(--mono); font-size: 13px; color: var(--text); background: var(--surface-2); border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 6px; padding: 2px 7px; }
+
+  .bp-fig { margin: 30px 0; }
+  .bp-img { position: relative; border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); }
+  .bp-img img { width: 100%; height: auto; }
+  .bp-img svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .bp-img .ok circle { fill: none; stroke: var(--green); stroke-width: 5; }
+  .bp-img .no path { stroke: var(--red); stroke-width: 6; stroke-linecap: round; }
+  .bp-img .lbl rect { fill: rgba(7,10,18,.86); }
+  .bp-img .lbl text { fill: var(--text); font-family: var(--font); font-size: 25px; font-weight: 600; }
+  @media (max-width: 640px) { .bp-img .lbl { display: none; } }
+  .bp-fig figcaption { font-size: 14.5px; color: var(--muted); margin-top: 12px; }
+  .lg { font-weight: 700; margin-right: 2px; }
+  .lg.ok { color: var(--green); }
+  .lg.no { color: var(--red); margin-left: 6px; }
+
+  .keys { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 28px; margin: 24px 0 10px; }
+  .key-row { display: flex; align-items: baseline; gap: 14px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .key-k { flex: none; min-width: 112px; }
+  .plus { color: var(--dim); margin: 0 4px; font-size: 13px; }
+  .key-d { color: var(--text-2); font-size: 15px; }
+  @media (max-width: 640px) { .keys { grid-template-columns: 1fr; } }
+
+  .doc-cta { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding: 28px; flex-wrap: wrap; }
+  .doc-cta h3 { margin: 0 0 6px; }
+</style>

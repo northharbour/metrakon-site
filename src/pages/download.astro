@@ -46,6 +46,13 @@ const PLATFORMS = [
           {rel && <>Version <span class="data">{rel.version}</span>{rel.date && <>, released {rel.date}</>}. </>}
           <a href={releasesPage}>All versions and release notes</a>. Downloads are served from GitHub.
         </p>
+        <a class="card qs-link" href="/quickstart/">
+          <span>
+            <strong>New to Obelisk?</strong>
+            <span class="muted">The quickstart takes you through your first roll, including the film base pick.</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
       </section>
 
       <section class="wrap info">
@@ -88,6 +95,12 @@ const PLATFORMS = [
   .file { font-size: 12.5px; margin: 12px 0 0; overflow-wrap: anywhere; }
   .soon-line { margin-top: 18px; }
   .rel-line { margin-top: 18px; }
+  .qs-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; padding: 20px 24px; color: var(--text); text-decoration: none !important; transition: border-color .15s; }
+  .qs-link:hover { border-color: var(--line-2); }
+  .qs-link strong { display: block; margin-bottom: 2px; }
+  .qs-link .muted { font-size: 15px; }
+  .qs-link .arrow { color: var(--amber); font-size: 20px; transition: transform .15s; }
+  .qs-link:hover .arrow { transform: translateX(3px); }
   .soon-wrap { padding-bottom: 110px; }
   .soon { padding: clamp(26px, 4vw, 44px); display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
   .soon .btn { margin-top: 8px; }
