@@ -7,6 +7,9 @@ import LabAutoComp from '../components/LabAutoComp.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
 import { SITE } from '../site';
 import { trialAvailable } from '../data/release';
+import { video } from '../data/videos';
+
+const intro = video('introduction');
 
 // Primary call to action: Get Obelisk once released, the free trial while one is out,
 // otherwise the early-access form.
@@ -337,9 +340,9 @@ const LAB_POINTS = [
         <p class="lede">A six-minute introduction to Obelisk and how it is used.</p>
       </div>
       <div class="reveal">
-        <VideoEmbed id="qeYuUDmC2Go" title="An Introduction to Obelisk - A Film Conversion Tool For Labs"
-          poster="/assets/video/intro.jpg" duration="6:21" />
+        <VideoEmbed id={intro.id} title={intro.title} poster={intro.poster} duration={intro.duration} />
       </div>
+      <p class="more-vids reveal"><a href="/guides/">More videos and guides <span class="arrow">→</span></a></p>
     </div>
   </section>
 
@@ -466,6 +469,11 @@ const LAB_POINTS = [
   .who-card p { color: var(--muted); font-size: 15.5px; }
   .who-card.not { background: transparent; border-style: dashed; }
   @media (max-width: 900px) { .who { grid-template-columns: 1fr; } }
+
+  /* video */
+  .more-vids { margin-top: 22px; text-align: center; font-weight: 600; font-size: 15.5px; }
+  .more-vids a { color: var(--text); }
+  .more-vids .arrow { color: var(--amber); }
 
   /* CTA */
   .cta-band { position: relative; padding: clamp(80px, 12vw, 150px) 0; border-top: 1px solid var(--line); overflow: hidden; text-align: center;

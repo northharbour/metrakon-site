@@ -51,6 +51,7 @@ export const legalMissing = () =>
 export const NAV = [
   { href: '/how-it-works/', label: 'How it works' },
   { href: '/compare/', label: 'Compare' },
+  { href: '/guides/', label: 'Guides' },
   { href: '/pricing/', label: 'Pricing' },
 ];
 

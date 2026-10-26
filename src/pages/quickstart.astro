@@ -4,10 +4,13 @@
 // updated without rebuilding the app.
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
 import { SITE, contactEmail } from '../site';
+import { video } from '../data/videos';
 
 const days = SITE.trialDays;
 const email = contactEmail();
+const cal = video('calibration');
 const TOC = [
   ['open', 'Open your scans'],
   ['convert', 'Lab auto or Calibrated'],
@@ -227,6 +230,11 @@ const KEYS: [string[], string, string][] = [
           stock with the chart photographed in one-stop steps, and about five minutes at the
           scanning station once it is developed. Start it from the <span class="ui">Calibrate</span> menu. <a href="/how-it-works/#calibration">How calibration works →</a>
         </p>
+        <p>The video goes through a whole calibration, then converts a roll of the same film with the new profile.</p>
+        <div class="qs-video">
+          <VideoEmbed id={cal.id} title={cal.title} poster={cal.poster} duration={cal.duration} />
+        </div>
+        <p class="small muted">More videos: <a href="/guides/">Guides →</a></p>
       </section>
 
       <div class="doc-cta card">
@@ -296,6 +304,8 @@ const KEYS: [string[], string, string][] = [
   .plus { color: var(--dim); margin: 0 4px; font-size: 13px; }
   .key-d { color: var(--text-2); font-size: 15px; }
   @media (max-width: 640px) { .keys { grid-template-columns: 1fr; } }
+
+  .qs-video { margin: 24px 0 12px; }
 
   .doc-cta { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding: 28px; flex-wrap: wrap; }
   .doc-cta h3 { margin: 0 0 6px; }

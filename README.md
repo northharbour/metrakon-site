@@ -17,7 +17,8 @@ npm run build     # static output in dist/
 | `src/data/comparison.ts` | Comparison tools, bracket frames, stats (used by home + /compare) |
 | `src/data/labauto.json` | Calibrated vs Lab auto pairs on the home page (`tools/make_labauto_images.py`) |
 | `src/data/plans.ts` | Subscription plans (rendered only when `stage = 'released'`) |
-| `src/pages/` | `/`, `/how-it-works/`, `/compare/`, `/pricing/`, 404 |
+| `src/data/videos.ts` | The YouTube videos: listed on `/guides/`, embedded on home and quickstart. Poster stills in `public/assets/video/` |
+| `src/pages/` | `/`, `/how-it-works/`, `/compare/`, `/guides/`, `/quickstart/`, `/download/`, `/pricing/`, 404 |
 | `src/components/` | App-window hero demo, bracket demo, wipe slider, early-access form |
 | `public/assets/` | Images, icons, social card (`og.jpg`) |
 | `tools/` | Python generators for the comparison images and measurement figures |

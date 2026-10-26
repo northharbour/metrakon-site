@@ -1,0 +1,81 @@
+---
+// Guides: the written quickstart and every video, in one place. Add a video in
+// src/data/videos.ts and it appears here.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import { contactEmail } from '../site';
+import { VIDEOS } from '../data/videos';
+
+const email = contactEmail();
+---
+<Base title="Guides" description="How to use Obelisk: the quickstart for your first roll, and video walkthroughs from the introduction to calibrating your own film stock.">
+  <PageHero
+    eyebrow="Guides"
+    title="Learn Obelisk."
+    lede="A written quickstart for your first roll, and videos of the whole process, from opening the scans to calibrating a film stock."
+  />
+
+  <section class="wrap g-start">
+    <a class="card qs" href="/quickstart/">
+      <span class="qs-k">Start here · written</span>
+      <span class="qs-t">Quickstart: your first roll, start to finish</span>
+      <span class="muted">Open your scans, choose Lab auto or a calibrated profile, pick the film base, adjust and export. Includes black &amp; white film and scanning tips.</span>
+      <span class="qs-go">Read the quickstart <span class="arrow">→</span></span>
+    </a>
+  </section>
+
+  <section class="wrap g-videos">
+    <h2 class="h-sub g-h">Videos</h2>
+    {VIDEOS.map((v) => (
+      <article class="vid" id={v.slug}>
+        <div class="vid-player">
+          <VideoEmbed id={v.id} title={v.title} poster={v.poster} duration={v.duration} />
+        </div>
+        <div class="vid-text">
+          <p class="vid-dur data">{v.duration}</p>
+          <h3>{v.heading}</h3>
+          <p class="vid-sum">{v.summary}</p>
+          {v.setup && <p class="vid-setup">{v.setup}</p>}
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="wrap g-end">
+    <div class="card g-cta">
+      <div>
+        <h3>Something you want explained?</h3>
+        <p class="muted">Tell us what you would like a guide or video on next.</p>
+      </div>
+      {email && <a class="btn btn-ghost" href={`mailto:${email}`}>Write to us <span class="arrow">→</span></a>}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .g-start { padding-top: 56px; }
+  .qs { display: flex; flex-direction: column; gap: 8px; padding: clamp(24px, 3vw, 34px); color: var(--text); text-decoration: none !important;
+    transition: border-color .15s; }
+  .qs:hover { border-color: var(--line-2); }
+  .qs-k { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+  .qs-t { font-size: clamp(21px, 2.2vw, 26px); font-weight: 650; letter-spacing: -0.02em; }
+  .qs .muted { max-width: 680px; font-size: 15.5px; }
+  .qs-go { margin-top: 8px; font-weight: 600; font-size: 15px; }
+  .qs-go .arrow { color: var(--amber); display: inline-block; transition: transform .15s; }
+  .qs:hover .qs-go .arrow { transform: translateX(3px); }
+
+  .g-videos { padding-top: clamp(56px, 7vw, 88px); }
+  .g-h { margin-bottom: 28px; }
+  .vid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); align-items: start;
+    padding: clamp(28px, 4vw, 44px) 0; border-top: 1px solid var(--line); scroll-margin-top: 90px; }
+  .vid-dur { font-size: 13px; margin-bottom: 6px; }
+  .vid h3 { font-size: clamp(21px, 2.2vw, 26px); margin-bottom: 10px; }
+  .vid-sum { color: var(--text-2); }
+  .vid-setup { color: var(--muted); font-size: 14.5px; margin-top: 10px; }
+  @media (max-width: 900px) { .vid { grid-template-columns: 1fr; } }
+
+  .g-end { padding-top: 24px; padding-bottom: 110px; }
+  .g-cta { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding: 28px; flex-wrap: wrap; }
+  .g-cta h3 { margin: 0 0 6px; font-size: 19px; }
+</style>
