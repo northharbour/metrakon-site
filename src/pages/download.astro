@@ -11,6 +11,13 @@ const PLATFORMS = [
   { os: 'macOS', req: 'macOS 14 or later, Apple silicon (M1 and later)', asset: rel?.mac },
   { os: 'Windows', req: 'Windows 10 and 11, 64-bit', asset: rel?.win },
 ];
+// Each platform comes from the newest release that has its file (data/release.ts), so the
+// two can differ; then the versions line names both.
+const available = PLATFORMS.filter((p) => p.asset);
+const split = new Set(available.map((p) => p.asset!.version)).size > 1;
+const one = available[0]?.asset;
+const version = one?.version ?? rel?.version;
+const released = one?.date ?? rel?.date;
 ---
 <Base title="Download" description={`Download Obelisk for macOS and Windows and use it free for ${days} days.`}>
   <PageHero
@@ -43,7 +50,9 @@ const PLATFORMS = [
           ))}
         </div>
         <p class="muted small rel-line">
-          {rel && <>Version <span class="data">{rel.version}</span>{rel.date && <>, released {rel.date}</>}. </>}
+          {rel && (split
+            ? <>Versions: {available.map((p, i) => <>{i > 0 && ', '}{p.os} <span class="data">{p.asset!.version}</span></>)}. </>
+            : <>Version <span class="data">{version}</span>{released && <>, released {released}</>}. </>)}
           <a href={releasesPage}>All versions and release notes</a>. Downloads are served from GitHub.
         </p>
         <a class="card qs-link" href="/quickstart/">

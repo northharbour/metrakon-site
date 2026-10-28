@@ -1,8 +1,8 @@
 # Build the Astro site and publish it to GitHub Pages on every push to main.
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
-# The download page is filled from the latest app release at build time
-# (src/data/release.ts): the daily run picks up a new release; run it by hand to show one
-# at once.
+# The download page is filled from the app releases at build time (src/data/release.ts:
+# per platform, the newest release that has its file): the daily run picks up a new
+# release; run it by hand to show one at once.
 name: Deploy site
 
 on:
