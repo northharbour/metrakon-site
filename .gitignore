@@ -6,3 +6,8 @@ dist/
 
 # full-size renders cached by tools/make_roll_images.py
 tools/.renders/
+
+# light-comparison intermediates (pixel crops, unused figures) — rebuilt by the scripts
+tools/light_comparison/results/patch_crops/
+tools/light_comparison/results/figures_extra/
+tools/light_comparison/results/*.png

@@ -1,0 +1,113 @@
+moved	/Users/ben/Pictures/Light Comparison/Charts	/Users/ben/Pictures/Light Comparison Source/Charts
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome	/Users/ben/Pictures/Light Comparison Source/RGB Trichrome
+copied	/Users/ben/Pictures/Light Comparison Source/Charts/CS-Lite White/Light Comparison06972.ARW	/Users/ben/Pictures/Light Comparison/CSLite/Light Comparison06972.ARW
+copied	/Users/ben/Pictures/Light Comparison Source/Charts/RGB Camera-balanced/Light Comparison06943.ARW	/Users/ben/Pictures/Light Comparison/CameraBalanced/Light Comparison06943.ARW
+copied	/Users/ben/Pictures/Light Comparison Source/Charts/RGB Sensor-balanced/Light Comparison06917.ARW	/Users/ben/Pictures/Light Comparison/SensorBalanced/Light Comparison06917.ARW
+copied	/Users/ben/Pictures/Light Comparison Source/Charts/RGB Sensor Unmixed/Light Comparison06917_unmixed.dng	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/Light Comparison06917_unmixed.dng
+copied	/Users/ben/Pictures/Light Comparison Source/Charts/RGB Trichrome/Light Comparison07006_trichrome.dng	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/Light Comparison07006_trichrome.dng
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06987.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06987.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06993.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06993.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06979.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06979.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06992.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06992.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06986.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06986.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06990.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06990.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06984.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06984.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06985.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06985.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06991.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06991.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06981.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06981.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06980.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06980.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06982.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06982.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06969.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06969.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06968.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06968.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06983.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06983.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06971.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06971.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06970.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06970.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06972.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06972.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06988.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06988.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06989.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/White CS-Lite/Light Comparison06989.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06950.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06950.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06951.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06951.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06953.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06953.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06952.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06952.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06956.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06956.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06942.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06942.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06943.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06943.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06957.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06957.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06941.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06941.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06955.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06955.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06954.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06954.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06940.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06940.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06959.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06959.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06958.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06958.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06964.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06964.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06963.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06963.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06962.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06962.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06960.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06960.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06961.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06961.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06939.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Camera-balanced/Light Comparison06939.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06927.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06927.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06933.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06933.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06932.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06932.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06926.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06926.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06930.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06930.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06924.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06924.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06925.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06925.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06931.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06931.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06935.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06935.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06934.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06934.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06936.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06936.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06937.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06937.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06913.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06913.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06938.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06938.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06928.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06928.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06914.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06914.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06915.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06915.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06929.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06929.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06917.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06917.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06916.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Sensor-balanced/Light Comparison06916.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06928_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06928_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06934_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06934_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06913_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06913_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06924_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06924_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06938_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06938_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06916_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06916_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06931_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06931_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06932_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06932_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06915_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06915_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06927_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06927_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06937_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06937_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06930_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06930_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06917_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06917_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06925_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06925_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06935_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06935_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06929_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06929_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06936_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06936_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06926_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06926_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06914_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06914_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06933_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Unmixed/Light Comparison06933_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07033_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07033_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07054_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07054_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07069_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07069_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07057_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07057_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07027_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07027_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07030_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07030_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07003_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07003_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison06994_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison06994_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07060_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07060_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07063_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07063_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07039_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07039_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison06997_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison06997_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07000_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07000_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07066_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07066_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07048_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07048_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07006_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07006_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07045_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07045_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07036_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07036_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07051_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07051_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07042_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/1 Same look/RGB Trichrome/Light Comparison07042_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06972.jpg	/Users/ben/Pictures/Light Comparison Exports/2 Matched colour/White CS-Lite/Light Comparison06972.jpg
+moved	/Users/ben/Pictures/Light Comparison/CameraBalanced/converted/Light Comparison06943.jpg	/Users/ben/Pictures/Light Comparison Exports/2 Matched colour/RGB Camera-balanced/Light Comparison06943.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced/converted/Light Comparison06917.jpg	/Users/ben/Pictures/Light Comparison Exports/2 Matched colour/RGB Sensor-balanced/Light Comparison06917.jpg
+moved	/Users/ben/Pictures/Light Comparison/SensorBalanced Unmixed/converted/Light Comparison06917_unmixed.jpg	/Users/ben/Pictures/Light Comparison Exports/2 Matched colour/RGB Unmixed/Light Comparison06917_unmixed.jpg
+moved	/Users/ben/Pictures/Light Comparison/RGB Trichrome Merged/converted/Light Comparison07006_trichrome.jpg	/Users/ben/Pictures/Light Comparison Exports/2 Matched colour/RGB Trichrome/Light Comparison07006_trichrome.jpg
+moved	/Users/ben/Pictures/Light Comparison/CSLite/converted/Light Comparison06980.jpg	/Users/ben/Pictures/Light Comparison Exports/4 Portrait saturation 2.54/White CS-Lite/Light Comparison06980.jpg
