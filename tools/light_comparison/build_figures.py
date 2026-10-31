@@ -141,3 +141,12 @@ for arm, (sub, n) in EV0.items():
         rgb = to_srgb(np.clip(xyz @ M_RGB.T, 0, 1))
         Image.fromarray((rgb * 255 + 0.5).astype(np.uint8)).save(f'{EXTRA}/patch_{p}_{arm}.png')
 print('patch tiles done')
+
+# 5. link-preview image (og:image, 1200×630): white-light and separate-exposure charts side by side
+og = Image.new('RGB', (1200, 630), (7, 10, 18))
+for i, arm in enumerate(['white', 'trichrome']):
+    c = Image.open(f'{OUT}/chart_{arm}.jpg').convert('RGB')
+    c = c.resize((568, round(568 * c.height / c.width)), Image.LANCZOS)
+    og.paste(c, (24 + i * 584, (630 - c.height) // 2))
+og.save(f'{OUT}/og-chart.jpg', quality=86)
+print('og-chart.jpg', og.size)

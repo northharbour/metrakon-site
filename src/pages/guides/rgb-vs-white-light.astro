@@ -75,7 +75,7 @@ const ld = {
       datePublished: PUBLISHED,
       dateModified: UPDATED,
       mainEntityOfPage: url,
-      image: new URL(`${A}/street_trichrome.jpg`, SITE.url).href,
+      image: new URL(`${A}/og-chart.jpg`, SITE.url).href,
     },
     {
       '@type': 'FAQPage',
@@ -84,7 +84,7 @@ const ld = {
   ],
 };
 ---
-<Base title={TITLE} description={DESCRIPTION} image={`${A}/street_trichrome.jpg`} noindex={DRAFT}>
+<Base title={TITLE} description={DESCRIPTION} image={`${A}/og-chart.jpg`} noindex={DRAFT}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
   <PageHero
     eyebrow="Guide · Scanning light"
