@@ -23,3 +23,26 @@ Fifth arm: `RGB Sensor Unmixed` — the sensor-balanced frames with the LED leak
 `negacon-converter/tools/leak_unmix.py` (matrix in `results/leak_matrix.json`), profile COMP RGB Unmixed (111).
 
 Results of the 2026-10-31 run are in `results/`.
+
+## Decode fix (2026-10-31, after publishing)
+
+Every result above was measured before Obelisk's full-scale decode fix (negacon-converter
+CLAUDE.md decision log 2026-10-31: LibRaw's `adjust_maximum` rescaled frames whose brightest
+pixel was above 75% of full scale, so a base picked on one frame was off for others). The
+COMP calibrations carried that: camera-balanced 6 of 7 bracket frames +0.37, white and
+trichrome the strip-end frames +0.30 / +0.23, sensor-balanced ≤ 0.12.
+
+`results/scores_fullscale.json` = `score_arms.py` on a DB copy after "Rebuild calibration"
+corrected the stored samples (no rescans). Against `scores.json`:
+
+| | separation vs white | held-out ΔE | hue | drift |
+|---|---|---|---|---|
+| White (CS-Lite) | 1.00× | 12.9 → 13.2 | 9.3° → 9.4° | 7.9 → 7.4 |
+| RGB camera-balanced | 1.12× → 1.15× | 12.1 → 12.4 | 8.7° → 8.6° | 6.6 → 7.4 |
+| RGB sensor-balanced | 1.25× → 1.26× | 11.9 → 12.4 | 7.7° → 7.8° | 7.1 → 7.5 |
+| RGB trichrome | 1.65× → 1.64× | 11.5 → 11.7 | 8.0° → 7.8° | 6.0 → 6.1 |
+
+Separation and hue error hold. Drift no longer favours single-exposure RGB over white light
+(only trichrome is steadier), so the article's drift row needs updating. Still to do: rebuild
+the COMP profiles in the app (their chart raws moved to `Light Comparison Source/Charts/`, so
+repoint the profiles or move the raws back first), rerun the noise scripts, update the article.

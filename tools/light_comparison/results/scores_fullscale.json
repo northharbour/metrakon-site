@@ -1,0 +1,487 @@
+{
+ "White (CS-Lite)": {
+  "pid": 99,
+  "rebuild_matches_stored": true,
+  "matrix": [
+   [
+    0.989989,
+    -0.016134,
+    0.026145
+   ],
+   [
+    -0.013284,
+    1.043998,
+    -0.030714
+   ],
+   [
+    0.023295,
+    -0.027864,
+    1.004569
+   ]
+  ],
+  "row_norms": [
+   0.99,
+   1.045,
+   1.005
+  ],
+  "sat_suggest": 2.46,
+  "n_samples": 120,
+  "insample": {
+   "dE_struct": 12.76,
+   "dE00": 15.95,
+   "hue": 9.39,
+   "dE_struct_identity": 13.43,
+   "hue_identity": 10.33
+  },
+  "bracket_spread": 7.42,
+  "holdout": {
+   "dE_struct": 13.19,
+   "hue": 9.39,
+   "frames": [
+    [
+     "Light Comparison06972.ARW",
+     18,
+     13.3
+    ],
+    [
+     "Light Comparison06973.ARW",
+     18,
+     11.22
+    ],
+    [
+     "Light Comparison06974.ARW",
+     18,
+     14.43
+    ],
+    [
+     "Light Comparison06975.ARW",
+     16,
+     9.17
+    ],
+    [
+     "Light Comparison06976.ARW",
+     18,
+     14.2
+    ],
+    [
+     "Light Comparison06977.ARW",
+     18,
+     14.31
+    ],
+    [
+     "Light Comparison06978.ARW",
+     14,
+     15.86
+    ]
+   ]
+  },
+  "per_patch_insample": {
+   "dark skin": 8.28,
+   "light skin": 6.14,
+   "blue sky": 6.65,
+   "foliage": 15.18,
+   "blue flower": 12.16,
+   "bluish green": 16.61,
+   "orange": 13.32,
+   "purplish blue": 16.0,
+   "moderate red": 10.82,
+   "purple": 4.91,
+   "yellow green": 17.4,
+   "orange yellow": 11.26,
+   "blue": 21.73,
+   "green": 16.77,
+   "red": 17.2,
+   "yellow": 8.21,
+   "magenta": 15.59,
+   "cyan": 9.01
+  }
+ },
+ "RGB, camera-balanced": {
+  "pid": 105,
+  "rebuild_matches_stored": true,
+  "matrix": [
+   [
+    0.987765,
+    -0.078039,
+    0.090274
+   ],
+   [
+    0.016016,
+    1.089212,
+    -0.105228
+   ],
+   [
+    -0.003781,
+    -0.011173,
+    1.014954
+   ]
+  ],
+  "row_norms": [
+   0.995,
+   1.094,
+   1.015
+  ],
+  "sat_suggest": 2.14,
+  "n_samples": 113,
+  "insample": {
+   "dE_struct": 12.0,
+   "dE00": 14.86,
+   "hue": 8.49,
+   "dE_struct_identity": 13.78,
+   "hue_identity": 11.15
+  },
+  "bracket_spread": 7.36,
+  "holdout": {
+   "dE_struct": 12.45,
+   "hue": 8.59,
+   "frames": [
+    [
+     "Light Comparison06943.ARW",
+     18,
+     12.79
+    ],
+    [
+     "Light Comparison06944.ARW",
+     18,
+     10.09
+    ],
+    [
+     "Light Comparison06945.ARW",
+     18,
+     9.19
+    ],
+    [
+     "Light Comparison06946.ARW",
+     9,
+     14.5
+    ],
+    [
+     "Light Comparison06947.ARW",
+     18,
+     13.93
+    ],
+    [
+     "Light Comparison06948.ARW",
+     18,
+     13.8
+    ],
+    [
+     "Light Comparison06949.ARW",
+     14,
+     14.29
+    ]
+   ]
+  },
+  "per_patch_insample": {
+   "dark skin": 8.98,
+   "light skin": 6.83,
+   "blue sky": 8.08,
+   "foliage": 12.32,
+   "blue flower": 13.68,
+   "bluish green": 12.41,
+   "orange": 12.26,
+   "purplish blue": 18.1,
+   "moderate red": 9.65,
+   "purple": 7.93,
+   "yellow green": 17.28,
+   "orange yellow": 12.14,
+   "blue": 23.43,
+   "green": 11.01,
+   "red": 14.72,
+   "yellow": 11.26,
+   "magenta": 11.65,
+   "cyan": 4.93
+  }
+ },
+ "RGB, sensor-balanced": {
+  "pid": 102,
+  "rebuild_matches_stored": true,
+  "matrix": [
+   [
+    1.041446,
+    -0.314994,
+    0.273548
+   ],
+   [
+    -0.034062,
+    1.290456,
+    -0.256394
+   ],
+   [
+    -0.007384,
+    0.024538,
+    0.982846
+   ]
+  ],
+  "row_norms": [
+   1.122,
+   1.316,
+   0.983
+  ],
+  "sat_suggest": 1.96,
+  "n_samples": 111,
+  "insample": {
+   "dE_struct": 11.72,
+   "dE00": 14.89,
+   "hue": 7.66,
+   "dE_struct_identity": 15.54,
+   "hue_identity": 13.16
+  },
+  "bracket_spread": 7.47,
+  "holdout": {
+   "dE_struct": 12.43,
+   "hue": 7.78,
+   "frames": [
+    [
+     "Light Comparison06917.ARW",
+     18,
+     12.11
+    ],
+    [
+     "Light Comparison06918.ARW",
+     18,
+     9.5
+    ],
+    [
+     "Light Comparison06919.ARW",
+     18,
+     14.25
+    ],
+    [
+     "Light Comparison06920.ARW",
+     8,
+     9.66
+    ],
+    [
+     "Light Comparison06921.ARW",
+     18,
+     13.52
+    ],
+    [
+     "Light Comparison06922.ARW",
+     18,
+     13.7
+    ],
+    [
+     "Light Comparison06923.ARW",
+     13,
+     12.81
+    ]
+   ]
+  },
+  "per_patch_insample": {
+   "dark skin": 9.69,
+   "light skin": 6.08,
+   "blue sky": 7.41,
+   "foliage": 14.39,
+   "blue flower": 13.18,
+   "bluish green": 12.91,
+   "orange": 10.8,
+   "purplish blue": 14.15,
+   "moderate red": 8.58,
+   "purple": 9.45,
+   "yellow green": 18.75,
+   "orange yellow": 12.86,
+   "blue": 16.73,
+   "green": 12.15,
+   "red": 15.11,
+   "yellow": 13.05,
+   "magenta": 9.38,
+   "cyan": 7.05
+  }
+ },
+ "RGB, trichrome": {
+  "pid": 108,
+  "rebuild_matches_stored": true,
+  "matrix": [
+   [
+    0.998571,
+    -0.073233,
+    0.074662
+   ],
+   [
+    0.028495,
+    1.023142,
+    -0.051637
+   ],
+   [
+    -0.027066,
+    0.050091,
+    0.976975
+   ]
+  ],
+  "row_norms": [
+   1.004,
+   1.025,
+   0.979
+  ],
+  "sat_suggest": 1.5,
+  "n_samples": 100,
+  "insample": {
+   "dE_struct": 11.33,
+   "dE00": 11.96,
+   "hue": 7.69,
+   "dE_struct_identity": 11.75,
+   "hue_identity": 8.92
+  },
+  "bracket_spread": 6.13,
+  "holdout": {
+   "dE_struct": 11.69,
+   "hue": 7.83,
+   "frames": [
+    [
+     "arison07006_trichrome.dng",
+     18,
+     12.3
+    ],
+    [
+     "arison07009_trichrome.dng",
+     18,
+     11.62
+    ],
+    [
+     "arison07012_trichrome.dng",
+     12,
+     8.84
+    ],
+    [
+     "arison07015_trichrome.dng",
+     5,
+     7.9
+    ],
+    [
+     "arison07018_trichrome.dng",
+     18,
+     12.96
+    ],
+    [
+     "arison07021_trichrome.dng",
+     18,
+     12.59
+    ],
+    [
+     "arison07024_trichrome.dng",
+     11,
+     12.09
+    ]
+   ]
+  },
+  "per_patch_insample": {
+   "dark skin": 7.86,
+   "light skin": 6.52,
+   "blue sky": 7.27,
+   "foliage": 16.95,
+   "blue flower": 11.6,
+   "bluish green": 12.22,
+   "orange": 15.69,
+   "purplish blue": 13.88,
+   "moderate red": 9.27,
+   "purple": 11.0,
+   "yellow green": 12.49,
+   "orange yellow": 16.98,
+   "blue": 17.13,
+   "green": 10.74,
+   "red": 11.82,
+   "yellow": 12.33,
+   "magenta": 7.38,
+   "cyan": 7.92
+  }
+ },
+ "RGB, unmixed": {
+  "pid": 111,
+  "rebuild_matches_stored": true,
+  "matrix": [
+   [
+    1.000435,
+    -0.020984,
+    0.020549
+   ],
+   [
+    0.013297,
+    0.9982,
+    -0.011497
+   ],
+   [
+    -0.013732,
+    0.022784,
+    0.990948
+   ]
+  ],
+  "row_norms": [
+   1.001,
+   0.998,
+   0.991
+  ],
+  "sat_suggest": 1.4,
+  "n_samples": 99,
+  "insample": {
+   "dE_struct": 11.84,
+   "dE00": 11.68,
+   "hue": 8.25,
+   "dE_struct_identity": 12.07,
+   "hue_identity": 8.86
+  },
+  "bracket_spread": 6.82,
+  "holdout": {
+   "dE_struct": 12.22,
+   "hue": 8.29,
+   "frames": [
+    [
+     "mparison06917_unmixed.dng",
+     18,
+     12.71
+    ],
+    [
+     "mparison06918_unmixed.dng",
+     18,
+     12.78
+    ],
+    [
+     "mparison06919_unmixed.dng",
+     12,
+     9.44
+    ],
+    [
+     "mparison06920_unmixed.dng",
+     5,
+     8.46
+    ],
+    [
+     "mparison06921_unmixed.dng",
+     18,
+     13.35
+    ],
+    [
+     "mparison06922_unmixed.dng",
+     18,
+     13.17
+    ],
+    [
+     "mparison06923_unmixed.dng",
+     10,
+     11.83
+    ]
+   ]
+  },
+  "per_patch_insample": {
+   "dark skin": 7.47,
+   "light skin": 6.97,
+   "blue sky": 7.78,
+   "foliage": 18.22,
+   "blue flower": 11.47,
+   "bluish green": 12.75,
+   "orange": 15.63,
+   "purplish blue": 14.43,
+   "moderate red": 11.38,
+   "purple": 10.55,
+   "yellow green": 13.23,
+   "orange yellow": 17.17,
+   "blue": 18.94,
+   "green": 13.56,
+   "red": 9.38,
+   "yellow": 12.89,
+   "magenta": 8.92,
+   "cyan": 8.46
+  }
+ }
+}
