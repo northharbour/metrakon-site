@@ -142,11 +142,69 @@ for arm, (sub, n) in EV0.items():
         Image.fromarray((rgb * 255 + 0.5).astype(np.uint8)).save(f'{EXTRA}/patch_{p}_{arm}.png')
 print('patch tiles done')
 
-# 5. link-preview image (og:image, 1200×630): white-light and separate-exposure charts side by side
-og = Image.new('RGB', (1200, 630), (7, 10, 18))
-for i, arm in enumerate(['white', 'trichrome']):
-    c = Image.open(f'{OUT}/chart_{arm}.jpg').convert('RGB')
-    c = c.resize((568, round(568 * c.height / c.width)), Image.LANCZOS)
-    og.paste(c, (24 + i * 584, (630 - c.height) // 2))
-og.save(f'{OUT}/og-chart.jpg', quality=86)
-print('og-chart.jpg', og.size)
+# 5. link-preview images (og:image, 1200×630): one picture split down the middle — white light
+#    on the left half, separate R, G, B on the right — like the article's wipe stopped halfway
+from PIL import ImageDraw
+
+
+def chart_bbox(img):
+    """(cx, cy, w, h) of the ColorChecker in a full-size export, located as in section 1."""
+    lin = to_lin(np.asarray(img, np.float64) / 255); k = 4; h, w = lin.shape[0] // k, lin.shape[1] // k
+    small = lin[:h * k, :w * k].reshape(h, k, w, k, 3).mean(axis=(1, 3))
+    best = None
+    for seed in ([(0.25, 0.25), (0.75, 0.25), (0.75, 0.75), (0.25, 0.75)], [(0.3, 0.3), (0.7, 0.3), (0.7, 0.7), (0.3, 0.7)]):
+        c = CF.locate_chart(small, seed, refine=True, search=True)
+        if c and (best is None or c['score'] > best['score']):
+            best = c
+    pts = (best['corners_px'] + 0.5) * k - 0.5
+    (x0, y0), (x1, y1) = pts.min(axis=0), pts.max(axis=0)
+    return (x0 + x1) / 2, (y0 + y1) / 2, x1 - x0, y1 - y0, CF._homography(np.array(best['unit']), pts)
+
+
+def split_preview(k, framing, out, on_chart=False, where=None):
+    a = Image.open(path('white', k)).convert('RGB')
+    b = Image.open(path('trichrome', k)).convert('RGB')
+    if on_chart:      # the film sat slightly differently: match scale and shift on the chart region
+        cx, cy, cw, ch = chart_bbox(a)[:4]
+        hw, hh = 0.65 * cw, 0.65 * ch
+        ra = a.crop((round(cx - hw), round(cy - hh), round(cx + hw), round(cy + hh))).reduce(2)
+
+        def peak(sc):
+            rb = b.crop((round(cx - hw / sc), round(cy - hh / sc), round(cx + hw / sc), round(cy + hh / sc))).resize(ra.size, Image.BICUBIC)
+            x = np.asarray(ra.convert('L'), np.float64); y = np.asarray(rb.convert('L'), np.float64)
+            R = np.fft.fft2(x - x.mean()) * np.conj(np.fft.fft2(y - y.mean()))
+            return np.fft.ifft2(R / (np.abs(R) + 1e-9)).real.max()
+        sc = max(np.arange(0.97, 1.0301, 0.0025), key=peak)
+        # scale b about the chart centre, then measure the remaining shift on the chart region
+        b = b.transform(a.size, Image.AFFINE, (1 / sc, 0, cx - cx / sc, 0, 1 / sc, cy - cy / sc), Image.BICUBIC)
+        q = 2
+        box_r = (round(cx - hw), round(cy - hh), round(cx + hw), round(cy + hh))
+        dy, dx = shift(a.crop(box_r).reduce(q), b.crop(box_r).reduce(q)); dy, dx = dy * q, dx * q
+        print(f'  chart scale x{sc:.4f}')
+    else:
+        q = 4
+        dy, dx = shift(a.reduce(q), b.reduce(q)); dy, dx = dy * q, dx * q
+    # b pixel = a pixel − (dy, dx)
+    cx, cy, bw = framing(a)
+    inset = max(abs(dx), abs(dy)) + 8
+    bw = min(bw, 2 * min(cx, a.width - cx) - 2 * inset)                   # stay inside both images
+    bh = bw * 630 / 1200
+    cy = min(max(cy, bh / 2 + inset), a.height - bh / 2 - inset)
+    box = (round(cx - bw / 2), round(cy - bh / 2), round(cx + bw / 2), round(cy + bh / 2))
+    left = a.crop(box).resize((1200, 630), Image.LANCZOS)
+    right = b.crop((box[0] - dx, box[1] - dy, box[2] - dx, box[3] - dy)).resize((1200, 630), Image.LANCZOS)
+    og = left.copy(); og.paste(right.crop((600, 0, 1200, 630)), (600, 0))
+    d = ImageDraw.Draw(og)
+    d.rectangle((599, 0, 600, 630), fill=(233, 236, 243))                 # the wipe's divider + handle
+    d.ellipse((581, 296, 619, 334), fill=(233, 236, 243))
+    d.polygon([(593, 315), (599, 309), (599, 321)], fill=(7, 10, 18))
+    d.polygon([(607, 315), (601, 309), (601, 321)], fill=(7, 10, 18))
+    og.save(f'{where or OUT}/{out}', quality=86)
+    print(out, 'registered by', (dy, dx), 'box', box)
+
+
+# portrait: full frame width, centred on the face (about 40% down the frame)
+split_preview(12, lambda im: (im.width / 2, 0.40 * im.height, im.width), 'og-portrait-split.jpg')
+# chart: the chart plus some of the scene around it, filling the frame
+split_preview(CHART_K, lambda im: (lambda c: (c[0], c[1], 1.3 * c[3] * 1200 / 630))(chart_bbox(im)),
+              'og-chart-split.jpg', on_chart=True, where=EXTRA)        # the alternative, not used
