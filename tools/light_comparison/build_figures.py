@@ -161,29 +161,39 @@ def chart_bbox(img):
     return (x0 + x1) / 2, (y0 + y1) / 2, x1 - x0, y1 - y0, CF._homography(np.array(best['unit']), pts)
 
 
+def _edges(im):
+    x = np.asarray(im.convert('L'), np.float64); gy, gx = np.gradient(x); return np.hypot(gx, gy)
+
+
+def _phase(A, B):
+    h, w = min(A.shape[0], B.shape[0]), min(A.shape[1], B.shape[1])
+    win = np.outer(np.hanning(h), np.hanning(w))
+    A, B = (A[:h, :w] - A[:h, :w].mean()) * win, (B[:h, :w] - B[:h, :w].mean()) * win
+    R = np.fft.fft2(A) * np.conj(np.fft.fft2(B)); cc = np.fft.ifft2(R / (np.abs(R) + 1e-9)).real
+    y, x = np.unravel_index(np.argmax(cc), cc.shape)
+    return cc.max(), int(y if y < h / 2 else y - h), int(x if x < w / 2 else x - w)
+
+
+def register(a, b, q=4):
+    """Scale and shift mapping b onto a: (sc, dy, dx) with b resized by sc, then
+    b pixel = a pixel − (dy, dx). The two exports cover slightly different areas of film and
+    the white-light scans were made at ~3% higher magnification, so the scale is searched
+    (edge maps, Hann window, phase correlation on a q× reduction)."""
+    A = _edges(a.reduce(q)); bq = b.reduce(q)
+    best = None
+    for sc in np.arange(0.95, 1.0501, 0.0025):
+        pk, dy, dx = _phase(A, _edges(bq.resize((round(bq.width * sc), round(bq.height * sc)), Image.BILINEAR)))
+        if best is None or pk > best[0]:
+            best = (pk, sc, dy, dx)
+    return best[1], best[2] * q, best[3] * q
+
+
 def split_preview(k, framing, out, on_chart=False, where=None):
     a = Image.open(path('white', k)).convert('RGB')
     b = Image.open(path('trichrome', k)).convert('RGB')
-    if on_chart:      # the film sat slightly differently: match scale and shift on the chart region
-        cx, cy, cw, ch = chart_bbox(a)[:4]
-        hw, hh = 0.65 * cw, 0.65 * ch
-        ra = a.crop((round(cx - hw), round(cy - hh), round(cx + hw), round(cy + hh))).reduce(2)
-
-        def peak(sc):
-            rb = b.crop((round(cx - hw / sc), round(cy - hh / sc), round(cx + hw / sc), round(cy + hh / sc))).resize(ra.size, Image.BICUBIC)
-            x = np.asarray(ra.convert('L'), np.float64); y = np.asarray(rb.convert('L'), np.float64)
-            R = np.fft.fft2(x - x.mean()) * np.conj(np.fft.fft2(y - y.mean()))
-            return np.fft.ifft2(R / (np.abs(R) + 1e-9)).real.max()
-        sc = max(np.arange(0.97, 1.0301, 0.0025), key=peak)
-        # scale b about the chart centre, then measure the remaining shift on the chart region
-        b = b.transform(a.size, Image.AFFINE, (1 / sc, 0, cx - cx / sc, 0, 1 / sc, cy - cy / sc), Image.BICUBIC)
-        q = 2
-        box_r = (round(cx - hw), round(cy - hh), round(cx + hw), round(cy + hh))
-        dy, dx = shift(a.crop(box_r).reduce(q), b.crop(box_r).reduce(q)); dy, dx = dy * q, dx * q
-        print(f'  chart scale x{sc:.4f}')
-    else:
-        q = 4
-        dy, dx = shift(a.reduce(q), b.reduce(q)); dy, dx = dy * q, dx * q
+    sc, dy, dx = register(a, b)
+    b = b.resize((round(b.width * sc), round(b.height * sc)), Image.LANCZOS)
+    print(f'  {out}: scale x{sc:.4f}')
     # b pixel = a pixel − (dy, dx)
     cx, cy, bw = framing(a)
     inset = max(abs(dx), abs(dy)) + 8
@@ -203,8 +213,9 @@ def split_preview(k, framing, out, on_chart=False, where=None):
     print(out, 'registered by', (dy, dx), 'box', box)
 
 
-# portrait: full frame width, centred on the face (about 40% down the frame)
-split_preview(12, lambda im: (im.width / 2, 0.40 * im.height, im.width), 'og-portrait-split.jpg')
+# portrait: the first portrait (further away, more contrast), full frame width, centred 44%
+# down the frame so the sweater shows (Ben, 2026-10-31)
+split_preview(11, lambda im: (im.width / 2, 0.44 * im.height, im.width), 'og-portrait-split.jpg')
 # chart: the chart plus some of the scene around it, filling the frame
 split_preview(CHART_K, lambda im: (lambda c: (c[0], c[1], 1.3 * c[3] * 1200 / 630))(chart_bbox(im)),
               'og-chart-split.jpg', on_chart=True, where=EXTRA)        # the alternative, not used
