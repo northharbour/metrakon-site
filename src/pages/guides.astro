@@ -23,6 +23,12 @@ const email = contactEmail();
       <span class="muted">Open your scans, choose Lab auto or a calibrated profile, pick the film base, adjust and export. Includes black &amp; white film and scanning tips.</span>
       <span class="qs-go">Read the quickstart <span class="arrow">→</span></span>
     </a>
+    <a class="card qs" href="/guides/rgb-vs-white-light/">
+      <span class="qs-k">Article · scanning light</span>
+      <span class="qs-t">RGB vs white light for film scanning, measured</span>
+      <span class="muted">The same Kodak Gold 200 negatives scanned with a white light, an RGB light, and separate red, green and blue exposures, then converted identically. What each changes, with the numbers.</span>
+      <span class="qs-go">Read the article <span class="arrow">→</span></span>
+    </a>
   </section>
 
   <section class="wrap g-videos">
@@ -54,7 +60,7 @@ const email = contactEmail();
 </Base>
 
 <style>
-  .g-start { padding-top: 56px; }
+  .g-start { padding-top: 56px; display: grid; gap: 14px; }
   .qs { display: flex; flex-direction: column; gap: 8px; padding: clamp(24px, 3vw, 34px); color: var(--text); text-decoration: none !important;
     transition: border-color .15s; }
   .qs:hover { border-color: var(--line-2); }

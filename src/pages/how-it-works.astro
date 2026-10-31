@@ -130,15 +130,15 @@ const LAB_STAGES = [
       <section id="light">
         <h2>Scanning light, measured at the sensor</h2>
         <p>
-          Cameras apply large white-balance gains to raw data before you see anything — on a
-          typical body, around ×2.6 on red and ×1.6 on blue. A light that looks balanced on the
-          camera’s histogram can leave the sensor badly starved of red, and colour negative film
-          blocks most red to begin with. Tuning the light against raw, gain-free sensor values
-          gave a substantial improvement in red-channel quality for the same scan.
+          Cameras apply large white-balance gains to raw data before you see anything — on our
+          body, ×2.6 on red and ×1.6 on blue. A light that looks balanced on the camera’s
+          histogram or in Capture One can leave red and blue well short of the sensor’s range.
+          Tuning the light against raw, gain-free sensor values fills every channel, which leaves
+          headroom for dense film and dense frames.
         </p>
         <div class="stats">
           <div><span class="data">34% → 89%</span><p>Raw red level at clear film base, before and after tuning</p></div>
-          <div><span class="data">~2×</span><p>Cleaner red content for the same exposure and film</p></div>
+          <div><span class="data">×2.6 · ×1.6</span><p>White-balance gains on red and blue, applied before any histogram or clipping warning</p></div>
           <div><span class="data">4.58 → 4.74</span><p>Measured white density — red now resolves to the top of its range</p></div>
         </div>
         <figure class="figure">
@@ -153,6 +153,8 @@ const LAB_STAGES = [
           a white-light profile is as consistent across a roll as an RGB one. Measured on the
           same negatives scanned both ways, narrowband RGB resolves about 20% more separation
           between colours — so RGB extracts more, but white light is a perfectly workable start.
+          The full comparison, including separate red, green and blue exposures, is in
+          <a href="/guides/rgb-vs-white-light/">RGB vs white light for film scanning, measured</a>.
         </p>
         <p class="note">
           One rule holds regardless: a profile belongs to a light source as well as a film stock.

@@ -1,0 +1,494 @@
+---
+// The scanning-light article (2026-10-31). Every number traces to
+// tools/light_comparison/results/; figures in public/assets/light/ come from
+// tools/light_comparison/build_figures.py. DRAFT only sets noindex: set it false to publish,
+// then list the article on /guides/ and link it from /how-it-works/#light.
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Wipe from '../../components/Wipe.astro';
+import ScanLevels from '../../components/ScanLevels.astro';
+import { SITE } from '../../site';
+
+const DRAFT = false;
+const TITLE = 'RGB vs white light for film scanning';
+const DESCRIPTION =
+  'White light, combined RGB or separate red, green and blue exposures? The same Kodak Gold 200 ' +
+  'negatives scanned four ways on one camera and converted identically, with the numbers.';
+const AUTHOR = 'Ben Hurren';
+const PUBLISHED = '2026-10-31';
+const UPDATED = PUBLISHED;
+const A = '/assets/light';
+const dateLabel = new Date(PUBLISHED).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const TOC = [
+  ['methods', 'Three ways to light a negative'],
+  ['test', 'The test'],
+  ['white', 'White light vs RGB'],
+  ['separate', 'Separate exposures'],
+  ['matched', 'Matching the colour'],
+  ['sensor', 'Balancing to the sensor'],
+  ['results', 'Results'],
+  ['choose', 'Which to use'],
+  ['method', 'How we tested'],
+  ['faq', 'Questions'],
+];
+
+// The five scans, in the order every figure and table uses
+const ARMS = [
+  { slug: 'white', label: 'White light', chroma: '21.5' },
+  { slug: 'rgb-camera', label: 'RGB, balanced on screen', chroma: '24.9' },
+  { slug: 'rgb-sensor', label: 'RGB, balanced to the sensor', chroma: '28.3' },
+  { slug: 'trichrome', label: 'Separate R, G, B', chroma: '39.5' },
+];
+
+// Rendered below and repeated as FAQPage structured data (tags stripped).
+const FAQ = [
+  ['Is RGB light better than white light for scanning colour negatives?',
+    'For colour, yes. In our test an RGB light separated colours 13–26% better than a high-CRI white light, with lower hue error and colour that stayed more consistent between under- and overexposed frames. Once colours were matched, noise was similar. A white light that you calibrate for still converts a roll consistently.'],
+  ['Is trichromatic (three-exposure) scanning worth it with a colour camera?',
+    'On our setup it gave the best colour of anything we tested: 65% more colour separation than white light and about 30% more than a single RGB exposure. It takes three frames per negative instead of one. The gain comes from avoiding light leaking between the LEDs and the camera’s colour filters, so it depends on your light and camera. Three single-LED frames of clear film show how much yours leak.'],
+  ['Can editing make a white-light scan look like an RGB one?',
+    'Mostly. More saturation and colour correction bring the colours close, which is why good converters get good results from white light. White light needed about 1.8 times the saturation of our separate-exposure scans. Once matched, its colour noise was similar to an RGB scan’s on a colour chart and somewhat higher on open sky.'],
+  ['Do I need a monochrome camera for RGB scanning?',
+    'No. Separate exposures on a colour camera avoid the LED leak too. A monochrome camera also records every colour at full resolution, without colour filters, but it always needs three exposures per frame.'],
+  ['What white balance should I set when scanning negatives?',
+    'It doesn’t affect the converted colour: white balance is a fixed gain on each channel, and it cancels out when the film base is subtracted. It does affect how you judge exposure, because histograms and clipping warnings are drawn after it. Check the raw values instead.'],
+  ['Why does my scan look clipped in Lightroom or Capture One when the raw file isn’t?',
+    'Both apply the camera’s white balance before showing the image. On our camera that multiplies the red channel by 2.6, so a red channel that uses the sensor’s full range goes off the top of the display. The clear film base is the brightest part of a negative, so if it reads below about 90% of the sensor’s range in every channel, nothing in the frame is clipped.'],
+  ['Should I use RGB light for slide film?',
+    'Usually not. Slide film is made to be viewed under white light, so a high-CRI white light is the better choice. The advantages of RGB described here apply to colour negative film.'],
+  ['Do I need to recalibrate when I change scanning light?',
+    'Yes. A profile belongs to a light as well as a film stock. In our measurements, changing the light changed the result more than changing the stock.'],
+];
+
+const strip = (s: string) => s.replace(/<[^>]+>/g, '');
+const url = new URL('/guides/rgb-vs-white-light/', SITE.url).href;
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'TechArticle',
+      headline: TITLE,
+      description: DESCRIPTION,
+      author: { '@type': 'Person', name: AUTHOR },
+      publisher: { '@type': 'Organization', name: SITE.publisher, url: SITE.url },
+      datePublished: PUBLISHED,
+      dateModified: UPDATED,
+      mainEntityOfPage: url,
+      image: new URL(`${A}/street_trichrome.jpg`, SITE.url).href,
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: strip(a) } })),
+    },
+  ],
+};
+---
+<Base title={TITLE} description={DESCRIPTION} image={`${A}/street_trichrome.jpg`} noindex={DRAFT}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <PageHero
+    eyebrow="Guide · Scanning light"
+    title="RGB vs white light for film scanning, measured"
+    lede="We scanned the same strip of Kodak Gold 200 with a white light, an RGB light, and the RGB light’s three colours one at a time, then converted every scan the same way. This is what changed between them."
+  >
+    <p class="byline data">{AUTHOR} · {SITE.publisher} · {dateLabel}</p>
+  </PageHero>
+
+  <div class="wrap doc-grid">
+    <nav class="toc" aria-label="On this page">
+      <p class="toc-h">On this page</p>
+      {TOC.map(([id, l]) => <a href={`#${id}`} data-toc={id}>{l}</a>)}
+    </nav>
+
+    <article class="doc">
+      <div class="answer">
+        <p class="answer-k data">Short answer</p>
+        <p>
+          For colour negative film, an RGB light gave more accurate colour than a white light, and
+          colour that stayed more consistent from under- to overexposed frames. Scanning the red,
+          green and blue channels as three separate exposures improved colour further: 65% more
+          colour separation than white light on our setup. That is because a colour camera’s
+          filters pick up some light from the other LEDs, and separate exposures avoid it. Once
+          colours were matched, the differences in noise were small.
+        </p>
+      </div>
+
+      <section id="methods">
+        <h2>Three ways to light a negative</h2>
+        <div class="mcards three">
+          <div class="mcard"><span class="data">White</span><h3>A broad spectrum</h3><p>An LED panel or light table covering the whole visible range. One exposure per frame.</p></div>
+          <div class="mcard"><span class="data">RGB</span><h3>Three colours at once</h3><p>Red, green and blue LEDs, each emitting a narrow band, adjustable separately. One exposure per frame.</p></div>
+          <div class="mcard"><span class="data">Separate RGB</span><h3>One colour at a time</h3><p>The same LEDs lit one after another, one exposure each, merged afterwards. Also called trichromatic or trichrome scanning.</p></div>
+        </div>
+        <p>
+          Colour negative film is designed to be printed on paper that responds to narrow bands of
+          blue, green and red. A camera’s colour filters are designed to match human vision, so they
+          are broader and overlap. The differences between the three methods come down to how they
+          deal with that mismatch.
+        </p>
+        <p class="note">
+          This applies to colour negative film. Slide film is made to be viewed under white light,
+          so a good white light is the right choice for it. For black and white film, the colour of
+          the light makes little difference.
+        </p>
+      </section>
+
+      <section id="test">
+        <h2>The test</h2>
+        <p>
+          We shot one strip of Kodak Gold 200, with a colour chart bracketed from three stops under
+          to three over plus a set of everyday scenes, and scanned it four ways on the same camera
+          and stand:
+        </p>
+        <dl class="arms">
+          <dt>White light</dt><dd>A CineStill CS-Lite.</dd>
+          <dt>RGB, balanced on screen</dt><dd>Our own RGB light (670, 540 and 455 nm), set up the way a Capture One user would.</dd>
+          <dt>RGB, balanced to the sensor</dt><dd>The same light, adjusted using the raw values.</dd>
+          <dt>Separate R, G, B</dt><dd>The same LEDs lit one at a time; three frames merged into one raw file.</dd>
+        </dl>
+        <p>
+          Each method got its own Obelisk calibration from its own scans of the chart, and every
+          frame was converted with the same settings. Full details are under <a href="#method">How
+          we tested</a>.
+        </p>
+        <figure class="figure">
+          <div class="cstrip">
+            {ARMS.map((a) => (
+              <div>
+                <img src={`${A}/chart_${a.slug}.jpg`} alt={`Colour chart scanned with ${a.label}, converted with identical settings`} loading="lazy" />
+                <p class="cs-l">{a.label}</p>
+                <p class="cs-v data">C* {a.chroma}</p>
+              </div>
+            ))}
+          </div>
+          <figcaption>
+            The same chart frame, scanned four ways and converted with identical settings. C* is the
+            average colourfulness of the 18 coloured patches. The separate-exposure scan has almost
+            twice the colour of the white-light scan.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="white">
+        <h2>White light vs RGB</h2>
+        <p>
+          Under white light, each of the camera’s colour channels records a wide range of
+          wavelengths, and the ranges overlap. The green channel, which should measure the film’s
+          magenta dye, also picks up some of the yellow and cyan dyes. Calibration corrects most of
+          this, but not all of it, because the amount of overlap changes with the density of the
+          film. A white light also can’t be adjusted per channel: on our scans the orange mask left
+          the blue channel more than a stop darker than green.
+        </p>
+        <p>
+          Each LED in an RGB light emits a narrow band, so each channel measures the film at close to
+          a single wavelength. Compared with white light, after calibrating each:
+        </p>
+        <div class="stats">
+          <div><span class="data">13–26%</span><p>More colour separation</p></div>
+          <div><span class="data">9.3° → 7.7–8.7°</span><p>Average hue error</p></div>
+          <div><span class="data">7.9 → 6.6–7.1</span><p>Colour shift between −3 and +3 stops</p></div>
+        </div>
+        <figure class="figure">
+          <Wipe before={`${A}/trees_white.jpg`} after={`${A}/trees_rgb-sensor.jpg`}
+                beforeLabel="White light" afterLabel="RGB" alt="Street trees on Kodak Gold 200, converted with identical settings" />
+          <figcaption>Drag to compare. Same frame and settings; only the light differs. The biggest visible difference was in greens.</figcaption>
+        </figure>
+      </section>
+
+      <section id="separate">
+        <h2>Separate exposures</h2>
+        <p>
+          A monochrome camera has to scan colour in three exposures, because it has no colour
+          filters. We didn’t expect three exposures to make much difference on a colour camera, which
+          already separates colours with its filters. It turned out to make a large difference.
+        </p>
+        <p>
+          The reason is that the camera’s colour filters don’t fully block the other two LEDs. With
+          all three LEDs on, this is where each type of pixel’s signal came from:
+        </p>
+        <figure class="figure">
+          <div class="tscroll">
+            <table class="tbl xt">
+              <thead><tr><th></th><th>Red LED</th><th>Green LED</th><th>Blue LED</th></tr></thead>
+              <tbody>
+                <tr><th>Red pixels</th><td class="diag">90%</td><td>6%</td><td>4%</td></tr>
+                <tr><th>Green pixels</th><td>14%</td><td class="diag">57%</td><td>29%</td></tr>
+                <tr><th>Blue pixels</th><td>2%</td><td>15%</td><td class="diag">82%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <figcaption>
+            Measured through clear film with the light balanced to the sensor, from single-LED frames
+            of all 26 negatives. Each row adds up to 100%; anything off the diagonal is light from
+            the wrong LED.
+          </figcaption>
+        </figure>
+        <p>
+          Green pixels got 43% of their signal from the red and blue LEDs. Calibration corrects for
+          this, but only approximately: the mixing happens in the light reaching the sensor, while
+          the calibration works on the film’s density, after the scan has been inverted. With one LED
+          on at a time there is no mixing to correct. Compared with a single RGB exposure:
+        </p>
+        <div class="stats">
+          <div><span class="data">1.65× vs 1.26×</span><p>Colour separation, relative to white light</p></div>
+          <div><span class="data">6.0 vs 7.1</span><p>Colour shift between −3 and +3 stops</p></div>
+          <div><span class="data">11.5 vs 11.9</span><p>Colour error (ΔE) on frames left out of the calibration</p></div>
+        </div>
+        <figure class="figure">
+          <Wipe before={`${A}/street_rgb-sensor.jpg`} after={`${A}/street_trichrome.jpg`}
+                beforeLabel="RGB, one exposure" afterLabel="Separate R, G, B" alt="Street with a red car on Kodak Gold 200, converted with identical settings" />
+          <figcaption>Drag to compare. Same LEDs and settings; one exposure against three.</figcaption>
+        </figure>
+        <p>
+          The downside is three frames per negative instead of one, plus a step to merge them. Our
+          three frames lined up within 0.6 of a pixel, so we didn’t align them. How much separate
+          exposures help depends on how far your LEDs overlap with your camera’s filters. Ours peak
+          at 670, 540 and 455 nm, and the camera was a Sony A7R IV. You can measure your own setup
+          by photographing clear film with each LED on its own.
+        </p>
+      </section>
+
+      <section id="matched">
+        <h2>Matching the colour</h2>
+        <p>
+          A white-light scan can be brought close to an RGB scan with colour correction and more
+          saturation, which is why converters such as Negative Lab Pro get good colour from most
+          lights. More saturation also means more colour noise, so we compared the methods with their
+          colour matched. White light needed about 1.8 times the saturation of the separate-exposure
+          scans.
+        </p>
+        <figure class="figure">
+          <Wipe before={`${A}/portrait_white.jpg`} after={`${A}/portrait_trichrome.jpg`}
+                beforeLabel="White light" afterLabel="Separate R, G, B" alt="Portrait on Kodak Gold 200, converted with identical settings" />
+          <figcaption>Identical settings. The white-light scan is flatter. Drag to compare.</figcaption>
+        </figure>
+        <figure class="figure">
+          <Wipe before={`${A}/portrait-matched_white.jpg`} after={`${A}/portrait-matched_trichrome.jpg`}
+                beforeLabel="White light, more saturation" afterLabel="Separate R, G, B" alt="The same portrait with the white-light scan's saturation raised" />
+          <figcaption>The same frame with the white-light scan’s saturation raised from 1.4 to 2.54 in Obelisk, which makes the face as colourful as in the separate-exposure scan. Most of the difference goes, but the skin stays a little yellower: saturation can’t change the hue.</figcaption>
+        </figure>
+        <p>
+          The differences were smaller than we expected. On the colour chart, separate exposures had
+          the least colour noise (9.1, against 12.1 to 14.1 for the others); on a patch of open sky,
+          white light had the most (4.25, against 2.8 to 3.5). At 100% the scans were hard to tell
+          apart, because film grain makes up most of the noise in all of them.
+        </p>
+        <p>
+          Noise depends far more on exposure than on the light. Underexposed frames are stretched
+          further when they are converted, and on those colour noise was up to twice as high as on a
+          normal frame, whichever light we used. Separate exposures had the least colour noise at
+          every exposure from three stops under to three over.
+        </p>
+      </section>
+
+      <section id="sensor">
+        <h2>Balancing the light to the sensor</h2>
+        <figure class="figure first">
+          <div class="levels">
+            <ScanLevels title="Set up on screen (Capture One)" r={47.6} g={67.4} b={46.3}
+                        status="Red and blue under half the sensor’s range" />
+            <ScanLevels title="Balanced to the sensor" r={80.2} g={81.2} b={85.0}
+                        status="Brightest channel in the 85–90% target" ok />
+          </div>
+          <figcaption>
+            Level of each channel at the clear film base, as a share of the sensor’s full range,
+            read from the raw files. Same light and shutter speed; only the LED mix differs. The
+            shaded band is the target for the brightest channel.
+          </figcaption>
+        </figure>
+        <p>
+          Camera histograms, tethering software, Capture One and Lightroom all show the image after
+          the camera’s white balance has been applied. Our camera multiplies the red channel by 2.6
+          and blue by 1.6, so a scan that uses the sensor’s full range in red looks clipped on
+          screen.
+        </p>
+        <p>
+          Setting the white balance on the film base doesn’t help: the base then looks neutral, and
+          nothing on screen shows how much room each channel has left. We set our light up the way a
+          Capture One user might, with white balance taken from the rebate and the exposure raised
+          until the rebate read just under clipping on the colour picker. At the sensor, that left
+          the base at 47% red, 67% green and 46% blue. Balanced using the raw values, the same light
+          reached 80%, 81% and 85%.
+        </p>
+        <p>
+          On this film the extra light made no measurable difference to noise, even on the frames
+          overexposed by two and three stops, because film grain dominates. It also changed the leak: green pixels took 43% of their signal from the other
+          LEDs, up from 25%. The extra headroom matters more with dense stocks such as Vision3,
+          overexposed frames and the densest parts of an image, where a channel can run short of
+          light.
+        </p>
+        <ol class="howto">
+          <li><strong>Check raw values, not the histogram.</strong> Obelisk’s RAW SCAN view shows each channel under the cursor as a percentage of the sensor’s range; RawDigger does the same for any raw file.</li>
+          <li><strong>Keep the clear film base below about 90% in every channel.</strong> It is the brightest part of a negative, so nothing in the frame will clip.</li>
+          <li><strong>Balance the channels when you need the headroom.</strong> If you also edit in Capture One, a setup that reads just under clipping there works for normal stocks.</li>
+        </ol>
+      </section>
+
+      <section id="results">
+        <h2>Results</h2>
+        <div class="tscroll">
+          <table class="tbl res">
+            <thead>
+              <tr><th>Method</th><th>Frames</th><th>Separation</th><th>Colour error</th><th>Shift ±3 stops</th><th>Colour noise, chart / sky</th></tr>
+            </thead>
+            <tbody>
+              <tr><th>White light</th><td>1</td><td>1.00×</td><td>12.9 · 9.3°</td><td>7.9</td><td>12.1 / 4.25</td></tr>
+              <tr><th>RGB, balanced on screen</th><td>1</td><td>1.13×</td><td>12.1 · 8.7°</td><td>6.6</td><td>12.7 / 3.49</td></tr>
+              <tr><th>RGB, balanced to the sensor</th><td>1</td><td>1.26×</td><td>11.9 · 7.7°</td><td>7.1</td><td>14.1 / 3.41</td></tr>
+              <tr><th>Separate R, G, B</th><td>3</td><td>1.65×</td><td>11.5 · 8.0°</td><td>6.0</td><td>9.1 / 2.79</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tnote">
+          Lower is better in every column except separation. Definitions are under <a
+          href="#method">How we tested</a>.
+        </p>
+      </section>
+
+      <section id="choose">
+        <h2>Which to use</h2>
+        <div class="mcards">
+          <div class="mcard"><span class="data">You have a white light</span><h3>Calibrate for it</h3><p>It will convert a roll consistently. RGB mainly improves colour accuracy and consistency between frames.</p></div>
+          <div class="mcard"><span class="data">You’re buying a light</span><h3>An adjustable RGB light</h3><p>Ideally from a maker that publishes the LED wavelengths.</p></div>
+          <div class="mcard"><span class="data">You run a lab</span><h3>RGB, one exposure</h3><p>Calibrated for your light. Separate exposures for work where quality matters more than speed.</p></div>
+          <div class="mcard"><span class="data">Best possible colour</span><h3>Separate exposures</h3><p>On a colour camera or a monochrome one.</p></div>
+        </div>
+        <p>Two things matter whichever light you use:</p>
+        <ul class="points">
+          <li><strong>Invert before applying a camera colour profile.</strong> Raw converters apply the camera’s colour matrix along with its white balance, which mixes the channels before the negative is inverted. On our test brackets that made colour shift across exposures 1.6 to 2.2 times more than working from the camera’s own channels.</li>
+          <li><strong>Calibrate for the light you use.</strong> A profile belongs to a light as well as a film stock; in our measurements, changing the light changed the result more than changing the stock.</li>
+        </ul>
+      </section>
+
+      <section id="method">
+        <h2>How we tested</h2>
+        <dl class="specs">
+          <dt>Camera</dt><dd>Sony A7R IV with a Sony E 105 mm f/2.8 macro at f/5.6, ISO 100. Focus and film position fixed throughout.</dd>
+          <dt>Film</dt><dd>Kodak Gold 200: a ColorChecker bracketed ±3 stops in one-stop steps, plus everyday scenes, on one strip of 26 frames.</dd>
+          <dt>White light</dt><dd>CineStill CS-Lite, CRI 95+ as published (no R9 value given). 1/15 s; film base at 48% red, 75% green and 34% blue of the sensor’s range.</dd>
+          <dt>RGB light</dt><dd>Our own, with LEDs peaking at 670, 540 and 455 nm, at 1/80 s. Balanced to the sensor: base at 80, 81 and 85% (red, green, blue). Balanced on screen: white balance taken from the rebate in Capture One and exposure set so the rebate read about 253 on its colour picker, leaving the base at 47, 67 and 46%.</dd>
+          <dt>Separate exposures</dt><dd>The sensor-balanced LED settings, one LED at a time, 1/80 s each. Merged into one raw file by taking each pixel from the frame lit by the LED of its own colour, with the values unchanged.</dd>
+          <dt>Calibration</dt><dd>Each method calibrated in Obelisk from its own scans of the bracket; every frame converted with the same look.</dd>
+          <dt>Separation</dt><dd>How much saturation the chart’s 18 coloured patches needed to reach their published colourfulness, relative to white light (white light 2.44×, separate exposures 1.48×).</dd>
+          <dt>Colour error</dt><dd>ΔE*ab and hue error of the coloured patches at matched saturation, on each bracket frame in turn, with that frame left out when fitting the colour correction.</dd>
+          <dt>Colour shift</dt><dd>How far each coloured patch moved (a*b*) across the bracket at matched saturation.</dd>
+          <dt>Colour noise</dt><dd>Chart: variation of a*b* within the red, green, blue and grey patches at matched colourfulness, averaged over the −2, 0 and +3 frames, from the raw files at half resolution without demosaicing. Sky: fine-scale a*b* variation in open sky in the full-resolution exports, with each scan’s colour scaled to match the separate-exposure chart.</dd>
+          <dt>Images</dt><dd>Exported from Obelisk at full resolution with identical settings, and reduced for the web. The second portrait’s white-light scan was exported again with saturation 2.54 instead of 1.4.</dd>
+        </dl>
+      </section>
+
+      <section id="faq">
+        <h2>Questions</h2>
+        <div class="faq">
+          {FAQ.map(([q, a]) => (
+            <details>
+              <summary>{q}</summary>
+              <p set:html={a} />
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <div class="doc-cta card">
+        <div>
+          <h3>Calibrate Obelisk for your light</h3>
+          <p class="muted">A profile belongs to a film stock and a light. Calibrating one takes about five minutes with a chart bracket.</p>
+        </div>
+        <a class="btn btn-ghost" href="/how-it-works/#light">How calibration handles light <span class="arrow">→</span></a>
+      </div>
+    </article>
+  </div>
+</Base>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) links.forEach((l) => l.classList.toggle('on', l.dataset.toc === e.target.id));
+  }), { rootMargin: '-30% 0px -60% 0px' });
+  document.querySelectorAll('.doc > section[id]').forEach((s) => io.observe(s));
+</script>
+
+<style>
+  .byline { margin-top: 20px; font-size: 13px; letter-spacing: .04em; }
+  .doc-grid { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); padding-top: 44px; padding-bottom: 88px; }
+  .toc { position: sticky; top: 92px; align-self: start; display: flex; flex-direction: column; gap: 0; }
+  .toc-h { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 10px; }
+  .toc a { color: var(--muted); font-size: 13px; line-height: 1.35; padding: 5px 0 5px 12px; border-left: 2px solid var(--line); text-decoration: none; transition: color .15s, border-color .15s; }
+  .toc a:hover { color: var(--text); }
+  .toc a.on { color: var(--text); border-left-color: var(--amber); }
+  @media (max-width: 900px) { .doc-grid { grid-template-columns: 1fr; padding-top: 32px; } .toc { display: none; } }
+
+  .doc { max-width: 860px; min-width: 0; font-size: 16.5px; }
+  .doc section { padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--line); scroll-margin-top: 92px; }
+  .doc h2 { font-size: clamp(22px, 2.4vw, 28px); margin-bottom: 16px; }
+  .doc h3 { font-size: 17px; margin: 28px 0 8px; }
+  .doc p { color: var(--text-2); }
+  .answer { padding: 20px 22px; margin-bottom: 40px; background: var(--surface); border: 1px solid var(--line); border-left: 2px solid var(--cyan); border-radius: 0 var(--r) var(--r) 0; }
+  .answer-k { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; margin: 0 0 8px; }
+  .answer p:last-child { margin: 0; color: var(--text); }
+  .points { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 10px; }
+  .points li { padding: 14px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); color: var(--muted); font-size: 15px; }
+  .points strong { color: var(--text); }
+  .mcards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 24px 0; }
+  .mcards.three { grid-template-columns: repeat(3, 1fr); }
+  .mcard { padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .mcard .data { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+  .mcard h3 { margin: 8px 0 6px; font-size: 16px; }
+  .mcard p { font-size: 14.5px; color: var(--muted); }
+  @media (max-width: 760px) { .mcards.three { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .mcards { grid-template-columns: 1fr; } }
+  .figure { margin: 26px 0 0; }
+  .figure.first { margin: 0 0 22px; }
+  .levels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 700px) { .levels { grid-template-columns: 1fr; } }
+  .figure + p, .figure + .stats { margin-top: 20px; }
+  .figure figcaption { font-size: 13.5px; color: var(--muted); margin-top: 10px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0 0; }
+  .stats > div { padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .stats .data { font-size: 17px; }
+  .stats p { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
+  .note { font-size: 14.5px; margin-top: 22px; padding: 12px 16px; border-left: 2px solid var(--amber); background: rgba(240,151,63,.05); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+  .howto { padding: 0; margin: 20px 0 0; list-style: none; counter-reset: s; display: grid; gap: 10px; }
+  .howto li { counter-increment: s; position: relative; padding: 2px 0 2px 44px; color: var(--muted); font-size: 15.5px; }
+  .howto li::before { content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-family: var(--mono); font-size: 12px; color: var(--cyan); border: 1px solid var(--line-2); border-radius: 6px; padding: 3px 6px; }
+  .howto strong { color: var(--text); }
+
+  .arms { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 16px 0 18px; font-size: 15px; }
+  .arms dt { color: var(--text); font-weight: 600; }
+  .arms dd { margin: 0; color: var(--muted); }
+  @media (max-width: 640px) { .arms { grid-template-columns: 1fr; gap: 2px; } .arms dd { margin-bottom: 8px; } }
+
+  .cstrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .cstrip img { width: 100%; display: block; border-radius: var(--r-sm); border: 1px solid var(--line); }
+  .cs-l { font-size: 12.5px; color: var(--text) !important; margin: 8px 0 0; line-height: 1.3; }
+  .cs-v { font-size: 12px; margin: 2px 0 0; }
+  @media (max-width: 760px) { .cstrip { grid-template-columns: repeat(2, 1fr); } }
+
+  .tscroll { overflow-x: auto; margin: 22px 0 0; border: 1px solid var(--line); border-radius: var(--r); }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .tbl th, .tbl td { padding: 10px 13px; text-align: left; border-bottom: 1px solid var(--line); }
+  .tbl tbody tr:last-child th, .tbl tbody tr:last-child td { border-bottom: 0; }
+  .tbl thead th { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); background: var(--surface); }
+  .tbl tbody th { color: var(--text); font-weight: 600; white-space: nowrap; }
+  .tbl td { color: var(--text-2); font-family: var(--mono); white-space: nowrap; }
+  .xt td { text-align: center; } .xt thead th:not(:first-child) { text-align: center; }
+  .xt td.diag { background: rgba(79,200,221,.06); }
+  .tnote { font-size: 13.5px; margin-top: 10px; }
+
+  .specs { display: grid; grid-template-columns: 150px 1fr; gap: 10px 18px; margin: 18px 0 0; font-size: 15px; }
+  .specs dt { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); padding-top: 3px; }
+  .specs dd { margin: 0; color: var(--text-2); }
+  @media (max-width: 640px) { .specs { grid-template-columns: 1fr; gap: 4px; } .specs dd { margin-bottom: 10px; } }
+
+  .faq { display: grid; gap: 8px; }
+  .faq details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .faq summary { cursor: pointer; padding: 14px 18px; color: var(--text); font-weight: 600; font-size: 15.5px; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; float: right; color: var(--amber); font-family: var(--mono); }
+  .faq details[open] summary::after { content: '–'; }
+  .faq details p { padding: 0 18px 16px; margin: 0; color: var(--muted); font-size: 15px; }
+
+  .doc-cta { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding: 24px; flex-wrap: wrap; }
+  .doc-cta h3 { margin: 0 0 6px; }
+</style>
