@@ -1,44 +1,46 @@
-// Subscription plans. Rendered on /pricing only once SITE.stage === 'released'.
-// PLACEHOLDERS — tiers, prices and limits are not decided. See the subscription plan doc.
+// The plans on /pricing. Plans differ ONLY in how many frames they export a month and the
+// support around that, never in features (negacon-converter NEXT_BUILD_TODO §4). They are
+// shown before release without prices; `price` appears once SITE.stage === 'released'.
+// Allowances are working figures, NOT final.
 // `checkout` is the payment provider's hosted-checkout URL for that plan.
 
 export type Plan = {
   name: string;
   for: string;
-  monthly: number | null;   // in `currency`; null = "Contact us"
-  yearly: number | null;    // per month, billed yearly
-  seats: string;
-  features: string[];
+  allowance: number | null;  // exported frames per calendar month; null = unlimited
+  scope: string;             // who or what one licence covers
+  price: string | null;      // e.g. '€99'; null = "Contact us" once released
+  priceNote?: string;        // e.g. 'once, with a year of updates', '/ month'
+  extras: string[];          // support and service only: every plan has every feature
   checkout: string;
-  featured?: boolean;
 };
-
-export const CURRENCY = '€';
 
 export const PLANS: Plan[] = [
   {
-    name: 'Studio',
-    for: 'Photographers and archives scanning their own work',
-    monthly: null, yearly: null,
-    seats: '1 scanning station',
-    features: ['Every conversion feature', 'Unlimited calibrated profiles', 'Updates while subscribed', 'Email support'],
+    name: 'Personal',
+    for: 'Photographers scanning their own film',
+    allowance: 1000,
+    scope: 'One person',
+    price: null,
+    extras: ['Email support'],
+    checkout: '',
+  },
+  {
+    name: 'Small lab',
+    for: 'Small labs and scanning services',
+    allowance: 4000,
+    scope: 'One scanning station',
+    price: null,
+    extras: ['Email support'],
     checkout: '',
   },
   {
     name: 'Lab',
-    for: 'Film labs digitising customer rolls',
-    monthly: null, yearly: null,
-    seats: 'Per scanning station',
-    features: ['Everything in Studio', 'Profile sharing across stations', 'Lab onboarding call', 'Priority support'],
-    checkout: '',
-    featured: true,
-  },
-  {
-    name: 'Multi-site',
-    for: 'Lab groups and institutions',
-    monthly: null, yearly: null,
-    seats: '5+ stations',
-    features: ['Everything in Lab', 'Volume pricing', 'Onboarding and rig calibration help', 'Invoice billing'],
+    for: 'Labs scanning customer film every day',
+    allowance: null,
+    scope: 'Per scanning station',
+    price: null,
+    extras: ['Onboarding call and help calibrating your rig', 'Priority support'],
     checkout: '',
   },
 ];

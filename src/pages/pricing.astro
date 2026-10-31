@@ -3,12 +3,30 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import EarlyAccess from '../components/EarlyAccess.astro';
 import { SITE } from '../site';
-import { PLANS, INCLUDED, CURRENCY } from '../data/plans';
+import { PLANS, INCLUDED } from '../data/plans';
 import { trialAvailable } from '../data/release';
 
 const released = SITE.stage === 'released';
 
+// Allowances as rolls of 36, so a photographer can place themselves without counting frames
+const frames = (n: number) => n.toLocaleString('en-GB');
+const rolls = (n: number) => { const r = n / 36; return r >= 50 ? Math.round(r / 10) * 10 : Math.round(r); };
+
+// Before release a plan's button leads to the trial if there is one, else early access
+const preCta = trialAvailable
+  ? { href: '/download/', label: 'Try it free' }
+  : { href: '#early-access', label: 'Request early access' };
+
+// How the allowance is counted: the design in negacon-converter NEXT_BUILD_TODO §4
+const ALLOWANCE = [
+  ['A frame counts once a month.', 'Re-exporting it, or exporting it as both TIFF and JPEG, doesn’t count again.'],
+  ['A roll in progress always finishes.', 'If an export crosses your allowance it completes; the next one waits for the new month or a larger plan.'],
+  ['Nothing else stops.', 'Opening, grading and calibrating carry on at the limit.'],
+  ['You can see where you are.', 'Obelisk shows the frames you’ve used this month and when the count resets.'],
+];
+
 const FAQ = [
+  ['How is Obelisk priced?', `By how many frames you export each month. Every plan includes every feature, so a photographer’s scans convert exactly as a lab’s do; plans differ in their monthly allowance and the support that comes with them.${released ? '' : ' Prices are announced at release.'}`],
   ['Which platforms does it run on?', 'Windows 10 and 11, 64-bit, and macOS 14 or later on Apple silicon (M1 and later).'],
   ...(trialAvailable ? [['Can I try it first?', `Yes. Obelisk runs free for ${SITE.trialDays} days from its first launch, with every feature except export. Download it from the Download page.`]] : []),
   ['Which cameras work?', 'Obelisk reads RAW files from most current camera bodies. The camera is part of the calibration, so a profile is made for the camera and light you actually scan with.'],
@@ -20,36 +38,61 @@ const FAQ = [
   ['What happens to my work if I stop using Obelisk?', 'Your exports are standard TIFF and JPEG files, and every grading decision is written beside the scans in the roll folder rather than locked inside the application.'],
 ];
 ---
-<Base title="Pricing" description="Obelisk is licensed per scanning station. Request early access ahead of the first release.">
+<Base title="Pricing" description="Obelisk plans differ only in how many frames you export each month: affordable for photographers scanning their own film, fairly priced for labs. Every plan includes every feature.">
   <PageHero
     eyebrow={released ? 'Pricing' : 'Pricing & early access'}
-    title={released ? 'One licence per scanning station.' : 'Pricing is announced at release.'}
+    title="Priced by how much you scan."
     lede={released
-      ? 'Every plan includes every conversion feature. Plans differ in how many stations they cover and the support that comes with them.'
-      : 'Obelisk will be sold as a subscription, licensed per scanning station. Early access opens first to a small number of labs and photographers — tell us about your setup below.'}
+      ? 'Every plan includes every feature. Plans differ only in how many frames you export each month, and the support that comes with them.'
+      : 'Obelisk is meant to be affordable for photographers scanning their own film, and fairly priced for labs that scan for a living. Every plan includes every feature; plans differ only in how many frames you export each month. Prices are announced at release.'}
   />
 
-  {released && (
-    <section class="wrap plans">
-      {PLANS.map((p) => (
-        <div class={`plan card ${p.featured ? 'featured' : ''}`}>
-          {p.featured && <span class="badge">Most labs</span>}
-          <h2>{p.name}</h2>
-          <p class="muted small">{p.for}</p>
-          <div class="price">
-            {p.yearly !== null
-              ? <><span class="amt">{CURRENCY}{p.yearly}</span><span class="muted small"> / month, billed yearly</span></>
-              : <span class="amt sm">Contact us</span>}
-          </div>
-          <p class="seats data">{p.seats}</p>
-          <ul>{p.features.map((f) => <li>{f}</li>)}</ul>
-          <a class={`btn ${p.featured ? 'btn-primary' : 'btn-ghost'}`} href={p.checkout || '#early-access'}>
-            {p.checkout ? 'Subscribe' : 'Get in touch'}
-          </a>
+  <section class="wrap plans">
+    {PLANS.map((p) => (
+      <div class="plan card">
+        <h2>{p.name}</h2>
+        <p class="muted small">{p.for}</p>
+        <div class="allow">
+          <span class="amt">{p.allowance === null ? 'Unlimited' : frames(p.allowance)}</span>
+          <span class="allow-k data">frames a month</span>
+          <span class="muted small">{p.allowance === null ? 'No monthly limit' : `About ${rolls(p.allowance)} rolls of 36`}</span>
         </div>
-      ))}
-    </section>
+        <div class="price">
+          {!released
+            ? <span class="muted">Price at release</span>
+            : p.price !== null
+              ? <><span class="price-amt">{p.price}</span>{p.priceNote && <span class="muted small"> {p.priceNote}</span>}</>
+              : <span class="muted">Contact us</span>}
+        </div>
+        <p class="scope data">{p.scope}</p>
+        <ul>{p.extras.map((f) => <li>{f}</li>)}</ul>
+        {released
+          ? <a class="btn btn-ghost" href={p.checkout || '#early-access'}>{p.checkout ? `Choose ${p.name}` : 'Get in touch'}</a>
+          : <a class="btn btn-ghost" href={preCta.href}>{preCta.label}</a>}
+      </div>
+    ))}
+  </section>
+  {!released && (
+    <p class="wrap plans-note muted small">Allowances are working figures and may change before release.</p>
   )}
+
+  <section class="wrap allow-wrap">
+    <div class="allow-grid">
+      <div>
+        <p class="eyebrow">Why volume</p>
+        <h2 class="h-sub">One instrument, sized by how much you scan.</h2>
+        <p class="allow-why">
+          Pricing by features would mean selling a worse conversion to whoever pays less. Every
+          plan gets the same calibration, the same Lab auto and the same tools, so your scans
+          are converted exactly as a lab’s are. What changes is volume: a photographer scanning a
+          few rolls a month shouldn’t pay what a lab scanning hundreds does.
+        </p>
+      </div>
+      <dl class="allow-how">
+        {ALLOWANCE.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+    </div>
+  </section>
 
   <section class="wrap included-wrap">
     <div class="included card">
@@ -96,17 +139,27 @@ const FAQ = [
 <style>
   .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding-top: 56px; }
   .plan { padding: 30px 26px; position: relative; display: flex; flex-direction: column; }
-  .plan.featured { border-color: rgba(240,151,63,.5); box-shadow: 0 0 80px -40px rgba(240,151,63,.6); }
-  .badge { position: absolute; top: -11px; left: 26px; font: 600 11.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; background: var(--amber); color: var(--amber-ink); padding: 6px 9px; border-radius: 999px; }
   .plan h2 { font-size: 24px; margin-bottom: 6px; }
-  .price { margin: 22px 0 6px; }
-  .amt { font-size: 40px; font-weight: 650; letter-spacing: -.03em; }
-  .amt.sm { font-size: 26px; }
-  .seats { font-size: 13px; margin-bottom: 18px; }
+  .allow { display: flex; flex-direction: column; gap: 4px; margin: 24px 0 0; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .amt { font-size: 40px; font-weight: 650; letter-spacing: -.03em; line-height: 1.1; }
+  .allow-k { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+  .price { margin: 18px 0 4px; font-size: 15px; }
+  .price-amt { font-size: 26px; font-weight: 650; letter-spacing: -.02em; }
+  .scope { font-size: 13px; margin-bottom: 18px; }
   .plan ul { list-style: none; padding: 0; margin: 0 0 26px; display: grid; gap: 10px; flex: 1; }
   .plan li, .included li { padding-left: 24px; position: relative; color: var(--text-2); font-size: 15px; }
   .plan li::before, .included li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); }
   @media (max-width: 900px) { .plans { grid-template-columns: 1fr; } }
+  .plans-note { margin-top: 14px; }
+
+  .allow-wrap { padding-top: clamp(56px, 7vw, 88px); }
+  .allow-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }
+  .allow-why { color: var(--text-2); margin-top: 18px; }
+  .allow-how { margin: 0; display: grid; gap: 12px; }
+  .allow-how > div { padding: 16px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .allow-how dt { color: var(--text); font-weight: 600; }
+  .allow-how dd { margin: 2px 0 0; color: var(--muted); font-size: 15.5px; }
+  @media (max-width: 900px) { .allow-grid { grid-template-columns: 1fr; } }
 
   .included-wrap { padding-top: 56px; }
   .included { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; padding: clamp(26px, 4vw, 44px); align-items: center; }

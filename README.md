@@ -16,7 +16,7 @@ npm run build     # static output in dist/
 | `src/site.ts` | Name, release stage, form endpoint, contact email, nav — the launch switches |
 | `src/data/comparison.ts` | Comparison tools, bracket frames, stats (used by home + /compare) |
 | `src/data/labauto.json` | Calibrated vs Lab auto pairs on the home page (`tools/make_labauto_images.py`) |
-| `src/data/plans.ts` | Subscription plans (rendered only when `stage = 'released'`) |
+| `src/data/plans.ts` | Plans by monthly export allowance (always shown; prices only once `stage = 'released'`) |
 | `src/data/videos.ts` | The YouTube videos: listed on `/guides/`, embedded on home and quickstart. Poster stills in `public/assets/video/` |
 | `src/pages/` | `/`, `/how-it-works/`, `/compare/`, `/guides/`, `/quickstart/`, `/download/`, `/pricing/`, 404 |
 | `src/components/` | App-window hero demo, bracket demo, wipe slider, early-access form |
