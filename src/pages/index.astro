@@ -11,6 +11,20 @@ import { video } from '../data/videos';
 
 const intro = video('introduction');
 
+// Tells search engines what the site is: the product, the site name and who makes it
+const publisher = { '@type': 'Organization', name: SITE.publisher, url: 'https://northharbourinstruments.com', logo: new URL('/assets/icon-512.png', SITE.url).href };
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', name: SITE.name, url: `${SITE.url}/`, publisher },
+    {
+      '@type': 'SoftwareApplication', name: SITE.name, url: `${SITE.url}/`, description: SITE.description,
+      applicationCategory: 'MultimediaApplication', operatingSystem: 'Windows 10, Windows 11, macOS 14 or later',
+      image: new URL('/assets/og.jpg', SITE.url).href, publisher,
+    },
+  ],
+};
+
 // Primary call to action: Get Obelisk once released, the free trial while one is out,
 // otherwise the early-access form.
 const primary = SITE.stage === 'released' ? { href: '/pricing/', label: 'Get Obelisk' }
@@ -45,6 +59,7 @@ const LAB_POINTS = [
 ];
 ---
 <Base>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
   <!-- ============ HERO ============ -->
   <section class="hero">
     <div class="grid-bg"></div>
