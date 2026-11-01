@@ -16,7 +16,7 @@ const DESCRIPTION =
   'negatives scanned four ways on one camera and converted identically, with the numbers.';
 const AUTHOR = 'Ben Hurren';
 const PUBLISHED = '2026-10-31';
-const UPDATED = PUBLISHED;
+const UPDATED = '2026-11-01';
 const A = '/assets/light';
 const dateLabel = new Date(PUBLISHED).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -240,7 +240,8 @@ const ld = {
           <figcaption>Drag to compare. Same LEDs and settings; one exposure against three.</figcaption>
         </figure>
         <p>
-          The downside is three frames per negative instead of one, plus a step to merge them. Our
+          The downside is three frames per negative instead of one, plus a step to merge them,
+          which Obelisk now does itself (right-click the roll, <em>Merge trichromes</em>). Our
           three frames lined up within 0.6 of a pixel, so we didn’t align them. How much separate
           exposures help depends on how far your LEDs overlap with your camera’s filters. Ours peak
           at 670, 540 and 455 nm, and the camera was a Sony A7R IV. You can measure your own setup

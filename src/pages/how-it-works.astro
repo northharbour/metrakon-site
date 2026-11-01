@@ -146,20 +146,29 @@ const LAB_STAGES = [
                 beforeLabel="Daylight-balanced" afterLabel="Sensor-balanced" alt="The same negative, converted identically" />
           <figcaption>Drag to compare. The same negative, converted identically; only the scanning light mix differs.</figcaption>
         </figure>
-        <h3>White light works too</h3>
+        <h3>White light, RGB or separate exposures</h3>
         <p>
           None of this makes an RGB source a requirement. Obelisk works with an LED panel or a
-          light table, because calibration is measured for whichever light you actually use, and
+          light table, with an RGB light, and with separate red, green and blue exposures
+          (trichrome), because calibration is measured for whichever light you actually use, and
           a white-light profile is as consistent across a roll as an RGB one. Measured on the
-          same negatives scanned both ways, narrowband RGB resolves about 20% more separation
-          between colours — so RGB extracts more, but white light is a perfectly workable start.
-          The full comparison, including separate red, green and blue exposures, is in
-          <a href="/guides/rgb-vs-white-light/">RGB vs white light for film scanning, measured</a>.
+          same negatives scanned all three ways, a single RGB exposure resolved 13–26% more
+          separation between colours than white light, and separate exposures 65% more — so RGB
+          extracts more, but white light is a perfectly workable start.
+        </p>
+        <p>
+          Separate exposures take three frames per negative, and Obelisk merges them: right-click
+          a roll of single-LED scans and choose <em>Merge trichromes</em>. Each frame becomes one
+          raw DNG, every pixel taken unchanged from the exposure lit by its own colour, and the
+          single-LED scans move to a <em>Trichrome sources</em> folder inside the roll. From there
+          it calibrates and converts like any other scan. The full comparison is in <a href="/guides/rgb-vs-white-light/">RGB
+          vs white light for film scanning, measured</a>.
         </p>
         <p class="note">
-          One rule holds regardless: a profile belongs to a light source as well as a film stock.
-          Scanning the same stock under a different light means one more five-minute chart
-          session — and Obelisk flags a roll whose base signature doesn’t match its profile’s light.
+          One rule holds regardless: a profile belongs to a light source as well as a film stock,
+          and separate exposures count as a light of their own. Scanning the same stock under a
+          different light means one more five-minute chart session — and Obelisk flags a roll
+          whose base signature doesn’t match its profile’s light.
         </p>
       </section>
 

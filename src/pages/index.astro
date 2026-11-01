@@ -51,6 +51,14 @@ const FLAGS = [
   { chip: 'f/2.8 ≠ f/5.6', c: 'var(--yellow)', t: 'Wrong lens setting', d: 'The calibration aperture is stored with the profile and checked against every scan’s EXIF.' },
 ];
 
+// Colour separation relative to white light: the same Kodak Gold 200 negatives scanned all
+// three ways and calibrated separately (/guides/rgb-vs-white-light/).
+const LIGHTS = [
+  { k: 'White light', n: '1×', d: 'An LED panel or a light table, one exposure per frame. Calibrated like any light, and Lab auto ships a generic film for it.' },
+  { k: 'RGB, one exposure', n: '1.13–1.26×', d: 'Red, green and blue LEDs lit together. More colour to work with than white light, from the same single frame.' },
+  { k: 'RGB, separate exposures', n: '1.65×', d: 'Trichrome: one frame per LED. Obelisk merges each set into one raw file — right-click the roll, Merge trichromes — and it calibrates like any other scan.' },
+];
+
 const LAB_POINTS = [
   { k: 'Every frame read', d: 'The film’s grey axis is found in each frame’s near-neutral areas. A frame filled with one colour keeps it.' },
   { k: 'One print density', d: 'Each scene is estimated and printed at one aim: thin frames lifted, dense ones brought down.' },
@@ -189,6 +197,33 @@ const LAB_POINTS = [
         </figure>
       </div>
       <p class="center"><a class="btn btn-ghost" href="/how-it-works/">The full method <span class="arrow">→</span></a></p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ============ SCANNING LIGHT ============ -->
+  <section class="section" id="light">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Scanning light</p>
+        <h2 class="h-section">White light, RGB or trichrome. All three work.</h2>
+        <p class="lede">
+          Calibration is measured under the light you scan with, so a roll converts the same way
+          whichever kind you have. A better light gives more colour to work with; none is required.
+        </p>
+      </div>
+      <ol class="lights">
+        {LIGHTS.map((l) => (
+          <li class="card reveal">
+            <span class="data light-n">{l.n}</span>
+            <h3>{l.k}</h3>
+            <p>{l.d}</p>
+          </li>
+        ))}
+      </ol>
+      <p class="caption lights-cap">Colour separation relative to white light, measured on the same Kodak Gold 200 negatives scanned all three ways.</p>
+      <p class="center"><a class="btn btn-ghost" href="/guides/rgb-vs-white-light/">The three compared, measured <span class="arrow">→</span></a></p>
     </div>
   </section>
 
@@ -440,6 +475,13 @@ const LAB_POINTS = [
   .steps h3 { font-size: 19px; margin-bottom: 10px; }
   .steps p { color: var(--muted); font-size: 15px; line-height: 1.55; }
   @media (max-width: 1000px) { .steps { grid-template-columns: 1fr 1fr; } }
+  .lights { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .lights li { padding: 26px 22px; }
+  .light-n { font-size: 22px; display: block; margin-bottom: 18px; color: var(--text); }
+  .lights h3 { font-size: 19px; margin-bottom: 10px; }
+  .lights p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+  .lights-cap { text-align: center; margin: 14px 0 28px; }
+  @media (max-width: 860px) { .lights { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
   .fig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0 40px; }
   .fig { margin: 0; padding: 14px; }
