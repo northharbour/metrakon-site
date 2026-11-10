@@ -1,15 +1,17 @@
 // The plans on /pricing. Plans differ ONLY in how many frames they export a month and the
-// support around that, never in features (negacon-converter NEXT_BUILD_TODO §4). They are
-// shown before release without prices; `price` appears once SITE.stage === 'released'.
-// Allowances are working figures, NOT final.
-// `checkout` is the payment provider's hosted-checkout URL for that plan.
+// support around that, never in features (negacon-converter NEXT_BUILD_TODO §4). Prices show
+// once SITE.stage === 'released'. Personal is final and on sale (2026-11-10: €99 incl. VAT,
+// sold on the North Harbour Instruments Shopify store, licence issued by hand within one
+// working day). Professional (the tier for professionals and small labs; "Small lab" until
+// 2026-11-10) and Lab are undecided — `price: null` shows "Contact for pricing".
+// `checkout` is the shop's product URL for that plan.
 
 export type Plan = {
   name: string;
   for: string;
   allowance: number | null;  // exported frames per calendar month; null = unlimited
   scope: string;             // who or what one licence covers
-  price: string | null;      // e.g. '€99'; null = "Contact us" once released
+  price: string | null;      // e.g. '€99'; null = "Contact for pricing" once released
   priceNote?: string;        // e.g. 'once, with a year of updates', '/ month'
   extras: string[];          // support and service only: every plan has every feature
   checkout: string;
@@ -19,16 +21,17 @@ export const PLANS: Plan[] = [
   {
     name: 'Personal',
     for: 'Photographers scanning their own film',
-    allowance: 1000,
-    scope: 'One person',
-    price: null,
-    extras: ['Email support'],
-    checkout: '',
+    allowance: 500,
+    scope: 'One person, up to 2 computers',
+    price: '€99',
+    priceNote: 'once, incl. VAT',
+    extras: ['A year of updates', 'Email support'],
+    checkout: 'https://northharbourinstruments.com/products/obelisk-annual-license',
   },
   {
-    name: 'Small lab',
-    for: 'Small labs and scanning services',
-    allowance: 4000,
+    name: 'Professional',
+    for: 'Professionals and small labs scanning for clients',
+    allowance: 2000,   // 2026-11-10: was 4,000 — a 100-roll lab (~3,600 frames) must land on Lab
     scope: 'One scanning station',
     price: null,
     extras: ['Email support'],

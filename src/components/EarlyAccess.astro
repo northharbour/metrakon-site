@@ -1,13 +1,21 @@
 ---
-// Early-access sign-up. Posts to SITE.formEndpoint (a form service — GitHub Pages can't
+// Early-access sign-up (mode 'early', before release) or a Professional / Lab enquiry (mode 'contact', once
+// Obelisk is on sale). Posts to SITE.formEndpoint (a form service — GitHub Pages can't
 // receive a POST). With no endpoint configured it composes an email instead, so the page
 // never ships a dead form.
 import { SITE, contactEmail } from '../site';
+const { mode = 'early' } = Astro.props as { mode?: 'early' | 'contact' };
 const hasEndpoint = !!SITE.formEndpoint;
 const provider = SITE.formProvider.name;
+const T = mode === 'contact'
+  ? { subject: 'Obelisk enquiry', button: 'Send', done: 'Thanks — we’ll get back to you soon.',
+      note: 'Used only to reply to you about Obelisk.' }
+  : { subject: 'Obelisk early access', button: 'Request early access',
+      done: 'Thanks — you’re on the list. We’ll be in touch before release.',
+      note: 'Used only to contact you about Obelisk. No newsletter unless you ask.' };
 ---
 <form class="ea" method="POST" action={hasEndpoint ? SITE.formEndpoint : undefined}
-      data-ea data-mail={contactEmail()}>
+      data-ea data-mail={contactEmail()} data-subject={T.subject} data-done={T.done}>
   <div class="ea-row">
     <label class="fld"><span>Email</span><input type="email" name="email" required autocomplete="email" placeholder="you@yourlab.com" /></label>
     <label class="fld"><span>Lab or studio <em>(optional)</em></span><input type="text" name="organisation" autocomplete="organization" /></label>
@@ -29,11 +37,11 @@ const provider = SITE.formProvider.name;
       <span>I agree to my details being processed as described in the <a href="/privacy/#early-access">privacy policy</a>.</span>
     </label>
   )}
-  <input type="hidden" name="_subject" value="Obelisk early access" />
+  <input type="hidden" name="_subject" value={T.subject} />
   <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
   <div class="ea-foot">
-    <button class="btn btn-primary" type="submit">Request early access <span class="arrow">→</span></button>
-    <p class="muted small" data-ea-msg>Used only to contact you about Obelisk. No newsletter unless you ask.</p>
+    <button class="btn btn-primary" type="submit">{T.button} <span class="arrow">→</span></button>
+    <p class="muted small" data-ea-msg>{T.note}</p>
   </div>
 </form>
 
@@ -48,7 +56,7 @@ const provider = SITE.formProvider.name;
         const mail = f.dataset.mail;
         if (!mail) { msg.textContent = 'Sign-up is not open yet — check back soon.'; return; }
         const body = [...data.entries()].filter(([k]) => k !== '_gotcha').map(([k, v]) => `${k}: ${v}`).join('\n');
-        location.href = `mailto:${mail}?subject=${encodeURIComponent('Obelisk early access')}&body=${encodeURIComponent(body)}`;
+        location.href = `mailto:${mail}?subject=${encodeURIComponent(f.dataset.subject || 'Obelisk')}&body=${encodeURIComponent(body)}`;
         return;
       }
       const btn = f.querySelector('button')!; btn.disabled = true;
@@ -56,7 +64,7 @@ const provider = SITE.formProvider.name;
         const r = await fetch(f.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
         if (!r.ok) throw new Error();
         f.querySelectorAll('input,textarea,button').forEach((el) => ((el as HTMLInputElement).disabled = true));
-        msg.textContent = 'Thanks — you’re on the list. We’ll be in touch before release.';
+        msg.textContent = f.dataset.done || 'Thanks.';
         msg.style.color = 'var(--cyan)';
       } catch {
         btn.disabled = false;

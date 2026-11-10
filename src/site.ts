@@ -10,7 +10,7 @@ export const SITE = {
 
   // Release state drives the CTAs and the pricing page. 'early-access' until the first
   // paid release; then 'released' (shows prices + the Download link).
-  stage: 'early-access' as 'early-access' | 'released',
+  stage: 'released' as 'early-access' | 'released',
 
   // Early-access form. GitHub Pages cannot receive a POST, so this must be a form
   // service endpoint (Formspree, Buttondown, Tally…). Empty = the form falls back to
@@ -42,7 +42,7 @@ export const LEGAL = {
   phone: '',         // optional but recommended (§ 5 DDG wants a second fast channel)
   vatId: 'DE453709438',         // USt-IdNr., only if you have one (Kleinunternehmer: leave empty)
   register: '',      // only for a registered company, e.g. 'Amtsgericht München, HRB 12345'
-  updated: '2026-10-24',
+  updated: '2026-11-10',
 };
 
 export const legalMissing = () =>

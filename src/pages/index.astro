@@ -409,7 +409,9 @@ const LAB_POINTS = [
           </p>
           <div class="hero-cta" style="justify-content:center">
             <a class="btn btn-primary" href="/download/">Download free trial <span class="arrow">→</span></a>
-            <a class="btn btn-ghost" href="/pricing/#early-access">Request early access</a>
+            {SITE.stage === 'released'
+              ? <a class="btn btn-ghost" href="/pricing/">Plans and pricing</a>
+              : <a class="btn btn-ghost" href="/pricing/#early-access">Request early access</a>}
           </div>
         </>
       ) : (

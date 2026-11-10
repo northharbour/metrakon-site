@@ -22,11 +22,17 @@ const ALLOWANCE = [
   ['A frame counts once a month.', 'Re-exporting it, or exporting it as both TIFF and JPEG, doesn’t count again.'],
   ['A roll in progress always finishes.', 'If an export crosses your allowance it completes; the next one waits for the new month or a larger plan.'],
   ['Nothing else stops.', 'Opening, grading and calibrating carry on at the limit.'],
-  ['You can see where you are.', 'Obelisk shows the frames you’ve used this month and when the count resets.'],
+  // 'You can see where you are. Obelisk shows the frames you’ve used this month and when the
+  // count resets.' — put back when the app has the counter (NEXT_BUILD_TODO §4); 0.4.0 doesn't.
 ];
 
 const FAQ = [
   ['How is Obelisk priced?', `By how many frames you export each month. Every plan includes every feature, so a photographer’s scans convert exactly as a lab’s do; plans differ in their monthly allowance and the support that comes with them.${released ? '' : ' Prices are announced at release.'}`],
+  ...(released ? [
+    ['What does a Personal licence include?', 'Every feature, for one person on up to two computers: 500 exported frames a month and a year of updates, for €99 once, including VAT. Every version released during that year keeps working with your licence for good.'],
+    ['How do I get my licence?', 'By email, within one working day of your order. It is a small file: open Obelisk, choose Help → Licence… and load it. Anything you have already done in the trial stays as it is.'],
+    ['What happens after the year of updates?', 'Obelisk keeps working with every version released during your year. Newer versions need a renewed licence.'],
+  ] : []),
   ['Which platforms does it run on?', 'Windows 10 and 11, 64-bit, and macOS 14 or later on Apple silicon (M1 and later).'],
   ...(trialAvailable ? [['Can I try it first?', `Yes. Obelisk runs free for ${SITE.trialDays} days from its first launch, with every feature except export. Download it from the Download page.`]] : []),
   ['Which cameras work?', 'Obelisk reads RAW files from most current camera bodies. The camera is part of the calibration, so a profile is made for the camera and light you actually scan with.'],
@@ -62,18 +68,24 @@ const FAQ = [
             ? <span class="muted">Price at release</span>
             : p.price !== null
               ? <><span class="price-amt">{p.price}</span>{p.priceNote && <span class="muted small"> {p.priceNote}</span>}</>
-              : <span class="muted">Contact us</span>}
+              : <span class="muted">Contact for pricing</span>}
         </div>
         <p class="scope data">{p.scope}</p>
         <ul>{p.extras.map((f) => <li>{f}</li>)}</ul>
         {released
-          ? <a class="btn btn-ghost" href={p.checkout || '#early-access'}>{p.checkout ? `Choose ${p.name}` : 'Get in touch'}</a>
+          ? <a class="btn btn-ghost" href={p.checkout || '#contact'}>{p.checkout ? `Choose ${p.name}` : 'Get in touch'}</a>
           : <a class="btn btn-ghost" href={preCta.href}>{preCta.label}</a>}
       </div>
     ))}
   </section>
   {!released && (
     <p class="wrap plans-note muted small">Allowances are working figures and may change before release.</p>
+  )}
+  {released && (
+    <p class="wrap plans-note muted small">
+      Prices include VAT. Personal licences arrive by email within one working day.
+      {trialAvailable && <> Not sure yet? <a href="/download/">Try Obelisk free for {SITE.trialDays} days</a> — every feature except export.</>}
+    </p>
   )}
 
   <section class="wrap allow-wrap">
@@ -104,22 +116,38 @@ const FAQ = [
     </div>
   </section>
 
-  <section class="wrap ea-wrap" id="early-access">
+  <section class="wrap ea-wrap" id="contact">
+    <span id="early-access"></span>
     <div class="ea-grid">
-      <div>
-        <p class="eyebrow">Early access</p>
-        <h2 class="h-section">Scan with Obelisk before release.</h2>
-        <p class="lede" style="margin-top:18px">
-          We are onboarding a small group first, so each rig can be calibrated properly and every
-          rough edge gets fixed before general release.
-        </p>
-        <ul class="ea-points">
-          <li>Help calibrating your first stocks on your rig</li>
-          <li>Direct line to the developer</li>
-          <li>A say in what ships in the first release</li>
-        </ul>
-      </div>
-      <div class="card ea-card"><EarlyAccess /></div>
+      {released ? (
+        <div>
+          <p class="eyebrow">Professionals and labs</p>
+          <h2 class="h-section">Scanning for clients?</h2>
+          <p class="lede" style="margin-top:18px">
+            Professional and Lab plans are set up with you. Tell us about your rig and how much
+            you scan, and we will get back to you with pricing.
+          </p>
+          <ul class="ea-points">
+            <li>Help calibrating the stocks you scan on your rig</li>
+            <li>Direct line to the developer</li>
+          </ul>
+        </div>
+      ) : (
+        <div>
+          <p class="eyebrow">Early access</p>
+          <h2 class="h-section">Scan with Obelisk before release.</h2>
+          <p class="lede" style="margin-top:18px">
+            We are onboarding a small group first, so each rig can be calibrated properly and every
+            rough edge gets fixed before general release.
+          </p>
+          <ul class="ea-points">
+            <li>Help calibrating your first stocks on your rig</li>
+            <li>Direct line to the developer</li>
+            <li>A say in what ships in the first release</li>
+          </ul>
+        </div>
+      )}
+      <div class="card ea-card"><EarlyAccess mode={released ? 'contact' : 'early'} /></div>
     </div>
   </section>
 
@@ -167,6 +195,7 @@ const FAQ = [
   @media (max-width: 820px) { .included { grid-template-columns: 1fr; gap: 24px; } }
 
   .ea-wrap { padding-top: clamp(72px, 9vw, 112px); scroll-margin-top: 80px; }
+  #early-access { display: block; scroll-margin-top: 80px; }   /* old links still land here */
   .ea-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }
   .ea-points { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 12px; }
   .ea-points li { padding-left: 26px; position: relative; color: var(--text-2); }

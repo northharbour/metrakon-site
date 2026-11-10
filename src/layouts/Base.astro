@@ -90,7 +90,9 @@ const cta = SITE.stage === 'released'
         </div>
         <div>
           <h4>Company</h4>
-          <a href="/pricing/#early-access">Early access</a>
+          {SITE.stage === 'released'
+            ? <a href="/pricing/#contact">Pro and lab enquiries</a>
+            : <a href="/pricing/#early-access">Early access</a>}
           {contactEmail() && <a href={`mailto:${contactEmail()}`}>Contact</a>}
         </div>
         <div>
