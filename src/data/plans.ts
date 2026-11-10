@@ -4,6 +4,8 @@
 // sold on the North Harbour Instruments Shopify store, licence issued by hand within one
 // working day). Professional (the tier for professionals and small labs; "Small lab" until
 // 2026-11-10) and Lab are undecided — `price: null` shows "Contact for pricing".
+// Personal's terms are also written out in /licence-terms/ (src/pages/licence-terms.astro):
+// changing them there = a NEW version of the licence terms, never an edit of the old one.
 // `checkout` is the shop's product URL for that plan.
 
 export type Plan = {
