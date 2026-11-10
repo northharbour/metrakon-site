@@ -25,11 +25,14 @@ const ld = {
   ],
 };
 
-// Primary call to action: Get Obelisk once released, the free trial while one is out,
-// otherwise the early-access form.
-const primary = SITE.stage === 'released' ? { href: '/pricing/', label: 'Get Obelisk' }
-  : trialAvailable ? { href: '/download/', label: 'Download free trial' }
+// Primary call to action: the free trial while one is out, else Get Obelisk once released,
+// else the early-access form. Once on sale, buying sits right beside it.
+const primary = trialAvailable ? { href: '/download/', label: 'Download free trial' }
+  : SITE.stage === 'released' ? { href: '/pricing/', label: 'Get Obelisk' }
   : { href: '/pricing/#early-access', label: 'Request early access' };
+const secondary = SITE.stage === 'released' && trialAvailable
+  ? { href: '/pricing/', label: 'Buy Obelisk' }
+  : { href: '#consistency', label: 'See it on a real roll' };
 
 const FEATURES = [
   { k: 'Overnight conversion', d: 'Outside working hours Obelisk finds the day’s orders by itself, converts every roll whose film stock it knows, and has previews waiting in the morning. Nothing to queue.' },
@@ -82,7 +85,7 @@ const LAB_POINTS = [
       </p>
       <div class="hero-cta">
         <a class="btn btn-primary" href={primary.href}>{primary.label} <span class="arrow">→</span></a>
-        <a class="btn btn-ghost" href="#consistency">See it on a real roll</a>
+        <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>
       </div>
       <ul class="hero-meta">
         <li>In daily production at a working film lab</li>

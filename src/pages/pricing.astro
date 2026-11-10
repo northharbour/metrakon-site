@@ -51,7 +51,14 @@ const FAQ = [
     lede={released
       ? 'Every plan includes every feature. Plans differ only in how many frames you export each month, and the support that comes with them.'
       : 'Obelisk is meant to be affordable for photographers scanning their own film, and fairly priced for labs that scan for a living. Every plan includes every feature; plans differ only in how many frames you export each month. Prices are announced at release.'}
-  />
+  >
+    {released && trialAvailable && (
+      <div class="ph-cta">
+        <a class="btn btn-primary" href="/download/">Download free trial <span class="arrow">→</span></a>
+        <span class="muted small">{SITE.trialDays} days, every feature except export.</span>
+      </div>
+    )}
+  </PageHero>
 
   <section class="wrap plans">
     {PLANS.map((p) => (
@@ -180,6 +187,7 @@ const FAQ = [
   .plan li::before, .included li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); }
   @media (max-width: 900px) { .plans { grid-template-columns: 1fr; } }
   .plans-note { margin-top: 14px; }
+  .ph-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 30px; }
 
   .allow-wrap { padding-top: clamp(56px, 7vw, 88px); }
   .allow-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }

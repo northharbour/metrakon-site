@@ -24,7 +24,11 @@ const released = one?.date ?? rel?.date;
     eyebrow="Download"
     title={`Try Obelisk free for ${days} days.`}
     lede="Every feature works in the trial except export: convert, grade and compare your own rolls, with Lab auto or with stocks you calibrate yourself. Saving TIFF and JPEG files needs a licence."
-  />
+  >
+    {SITE.stage === 'released' && (
+      <p class="buy-line"><a href="/pricing/">Buy a licence</a> — Personal is €99 once, incl. VAT.</p>
+    )}
+  </PageHero>
 
   {none ? (
     <section class="wrap dl-wrap soon-wrap">
@@ -104,6 +108,7 @@ const released = one?.date ?? rel?.date;
   .file { font-size: 12.5px; margin: 12px 0 0; overflow-wrap: anywhere; }
   .soon-line { margin-top: 18px; }
   .rel-line { margin-top: 18px; }
+  .buy-line { margin-top: 18px; color: var(--text-2); }
   .qs-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; padding: 20px 24px; color: var(--text); text-decoration: none !important; transition: border-color .15s; }
   .qs-link:hover { border-color: var(--line-2); }
   .qs-link strong { display: block; margin-bottom: 2px; }

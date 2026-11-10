@@ -17,10 +17,11 @@ const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — film n
 const path = Astro.url.pathname;
 const canonical = new URL(path, SITE.url).href;
 const ogImage = new URL(image, SITE.url).href;
-const cta = SITE.stage === 'released'
-  ? { href: '/pricing/', label: 'Get Obelisk' }
-  : trialAvailable
-    ? { href: '/download/', label: 'Download trial' }
+// Header button: the free trial whenever there is one (buying is Pricing, in the nav)
+const cta = trialAvailable
+  ? { href: '/download/', label: 'Download free trial' }
+  : SITE.stage === 'released'
+    ? { href: '/pricing/', label: 'Get Obelisk' }
     : { href: '/pricing/#early-access', label: 'Request early access' };
 ---
 <!doctype html>
