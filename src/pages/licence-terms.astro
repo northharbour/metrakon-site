@@ -3,13 +3,16 @@
 // withdrawal, warranty and liability are deliberately NOT here — they belong to the shop's
 // terms of sale / withdrawal information (German consumer law voids home-made clauses on
 // those). A licence keeps the terms in force on the day it was bought: a change to the
-// Personal plan's terms (plans.ts) = a new version below, never an edit of version 1.
+// Personal plan's terms (plans.ts) = a new version here, never an edit of a published one.
+// Each earlier version stays online word for word: licence-terms/1.astro.
+// Version 2 (2026-11-12): the online licence check (30 days, computers), the export check
+// before an export starts. The app side: negacon-converter licence.py.
 import LegalPage from '../components/LegalPage.astro';
 import { LEGAL, SITE } from '../site';
 const L = LEGAL;
 const SHOP = 'https://northharbourinstruments.com/policies';
 ---
-<LegalPage title="Licence terms" heading="Obelisk licence terms" updated="2026-11-10">
+<LegalPage title="Licence terms" heading="Obelisk licence terms" updated="2026-11-12">
   <p>
     These terms set out what you may do with Obelisk, the film negative conversion software
     from {L.trading} ({L.name}). They apply to the free trial and to Personal licences.
@@ -22,7 +25,7 @@ const SHOP = 'https://northharbourinstruments.com/policies';
     {' '}<a href={`${SHOP}/refund-policy`}>withdrawal and refund information</a> of our shop,
     and by the law.
   </p>
-  <p class="muted small">Version 1, in force from 10 November 2026.</p>
+  <p class="muted small">Version 2, in force from 12 November 2026. Licences bought before that keep <a href="/licence-terms/1/">version 1</a>.</p>
 
   <h2>1. The free trial</h2>
   <p>
@@ -39,7 +42,7 @@ const SHOP = 'https://northharbourinstruments.com/policies';
   </p>
   <ul>
     <li><strong>For one person:</strong> you, the person named in the licence file.</li>
-    <li><strong>On up to two computers</strong> that you use.</li>
+    <li><strong>On up to two computers</strong> that you use (section 5).</li>
     <li><strong>With every feature</strong> of Obelisk.</li>
     <li><strong>Up to 500 exported frames per calendar month</strong> (section 3).</li>
     <li>
@@ -58,9 +61,18 @@ const SHOP = 'https://northharbourinstruments.com/policies';
     </li>
     <li>Contact sheets and profile exports do not count.</li>
     <li>
-      An export that is running when you reach your allowance finishes. Further exports wait
-      for the next calendar month, or for a licence with a larger allowance.
+      A frame is recognised by its image data, so renaming or moving a scan does not make it
+      a new frame.
     </li>
+    <li>
+      The allowance is checked before an export starts. An export that has started always
+      finishes. An export is accepted while its new frames fit into what is left of the
+      month’s allowance, plus a margin of a tenth of the allowance (at most 40 frames) so that
+      the last roll of a month can be finished. A larger export is not started, and Obelisk
+      tells you how many frames are left. Further exports wait for the next calendar month,
+      or for a licence with a larger allowance.
+    </li>
+    <li>Obelisk shows the frames you have used this month under Help → Licence.</li>
     <li>Everything else, such as opening, grading and calibrating, keeps working at the limit.</li>
     <li>Unused frames do not carry over to the next month.</li>
   </ul>
@@ -72,7 +84,35 @@ const SHOP = 'https://northharbourinstruments.com/policies';
     Keep the file to yourself. If you lose it, we will send it to you again, free of charge.
   </p>
 
-  <h2>5. What is not allowed</h2>
+  <h2>5. The online licence check</h2>
+  <p>
+    Obelisk contacts our licence server when it starts, and about once a day while it runs.
+    It sends your licence file, a code that identifies the computer without naming it, the
+    Obelisk version and the number of frames exported in the current month. It never sends
+    images, file names or anything else about your work. Our
+    {' '}<a href="/privacy/#licence-check">privacy policy</a> describes this in full.
+  </p>
+  <ul>
+    <li>
+      <strong>Once every 30 days.</strong> Obelisk needs to reach the licence server at
+      least once every 30 days. A new licence works for 30 days from the day it was issued
+      before the first check is needed. If your licence has not been confirmed for 30 days,
+      Obelisk stops working until the computer is online again. Nothing is deleted.
+    </li>
+    <li>
+      <strong>Your computers.</strong> A computer counts as one of your two while Obelisk
+      has been used on it with your licence in the last 30 days. If both places are taken,
+      Obelisk does not start on a further computer. A place becomes free by itself 30 days
+      after Obelisk was last used on that computer. If you replace a computer, write to us
+      and we free its place straight away.
+    </li>
+    <li>
+      <strong>No internet?</strong> If a computer cannot be connected to the internet, write
+      to us before you buy: we can issue a licence that does not need the check.
+    </li>
+  </ul>
+
+  <h2>6. What is not allowed</h2>
   <ul>
     <li>
       Using Obelisk beyond what your licence allows: on more computers, by more people, or
@@ -80,7 +120,10 @@ const SHOP = 'https://northharbourinstruments.com/policies';
     </li>
     <li>Sharing or publishing your licence file.</li>
     <li>Renting out or lending Obelisk, or letting other people use it under your licence.</li>
-    <li>Removing, bypassing or tampering with the licence check or the export allowance.</li>
+    <li>
+      Removing, bypassing or tampering with the licence check, the online licence check or
+      the export allowance.
+    </li>
     <li>
       Decompiling or reverse engineering Obelisk, except where the law allows it (for example
       §§ 69d and 69e of the German Copyright Act).
@@ -88,44 +131,49 @@ const SHOP = 'https://northharbourinstruments.com/policies';
   </ul>
   <p>Anyone who wants Obelisk can download the free trial from this site.</p>
 
-  <h2>6. Passing your licence on</h2>
+  <h2>7. Passing your licence on</h2>
   <p>
     You may pass your licence on to someone else, as a whole. Tell us first: we issue a new
     licence file in their name, on the terms of your licence, and your own file stops working
-    with versions released after that. You then stop using Obelisk under the licence and
+    at its next licence check. You then stop using Obelisk under the licence and
     delete your copies of the licence file.
   </p>
 
-  <h2>7. Your work</h2>
+  <h2>8. Your work</h2>
   <p>
     Your scans, exports, profiles and grading belong to you. Obelisk works on your computer and
     does not upload your images. If your trial or licence ends, your files, your exports and
     the grading saved beside your scans stay where they are.
   </p>
 
-  <h2>8. If these terms are broken</h2>
+  <h2>9. If these terms are broken</h2>
   <p>
     If you seriously break these terms, for example by publishing your licence file, we may end
-    your licence. Versions of Obelisk released after that will refuse it.
+    your licence. Obelisk then stops accepting it at its next licence check, and versions
+    released after that refuse it.
   </p>
 
-  <h2>9. Warranty, liability and withdrawal</h2>
+  <h2>10. Warranty, liability and withdrawal</h2>
   <p>
     These follow the law and the terms and withdrawal information of our shop. Nothing in these
     licence terms limits your rights as a consumer.
   </p>
 
-  <h2>10. Changes to these terms</h2>
+  <h2>11. Changes to these terms</h2>
   <p>
     Your licence keeps the terms that applied on the day you bought it. If we change these
     terms, the new version applies only to licences bought after the change. Every version
     stays listed on this page.
   </p>
   <ul>
-    <li>Version 1, 10 November 2026: this version.</li>
+    <li>
+      Version 2, 12 November 2026: this version. New: the online licence check (section 5),
+      and the export allowance is checked before an export starts (section 3).
+    </li>
+    <li><a href="/licence-terms/1/">Version 1</a>, 10 November 2026.</li>
   </ul>
 
-  <h2>11. Contact</h2>
+  <h2>12. Contact</h2>
   <address>
     {L.name}{L.trading && <>, {L.trading}</>}<br />
     {L.street}, {L.city}, {L.country}<br />

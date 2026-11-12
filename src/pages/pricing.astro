@@ -20,10 +20,9 @@ const preCta = trialAvailable
 // How the allowance is counted: the design in negacon-converter NEXT_BUILD_TODO §4
 const ALLOWANCE = [
   ['A frame counts once a month.', 'Re-exporting it, or exporting it as both TIFF and JPEG, doesn’t count again.'],
-  ['A roll in progress always finishes.', 'If an export crosses your allowance it completes; the next one waits for the new month or a larger plan.'],
+  ['An export that has started always finishes.', 'The allowance is checked before an export starts, with a margin of up to 40 frames so the last roll of a month can be finished.'],
   ['Nothing else stops.', 'Opening, grading and calibrating carry on at the limit.'],
-  // 'You can see where you are. Obelisk shows the frames you’ve used this month and when the
-  // count resets.' — put back when the app has the counter (NEXT_BUILD_TODO §4); 0.4.0 doesn't.
+  ['You can see where you are.', 'Help → Licence shows the frames you’ve used this month and when the count starts again.'],
 ];
 
 const FAQ = [
@@ -31,6 +30,7 @@ const FAQ = [
   ...(released ? [
     ['What does a Personal licence include?', 'Every feature, for one person on up to two computers: 500 exported frames a month and a year of updates, for €99 once, including VAT. Every version released during that year keeps working with your licence for good.'],
     ['How do I get my licence?', 'By email, within one working day of your order. It is a small file: open Obelisk, choose Help → Licence… and load it. Anything you have already done in the trial stays as it is.'],
+    ['Does Obelisk need an internet connection?', 'Only briefly. Obelisk confirms your licence online when it starts and needs to reach our licence server at least once every 30 days. Conversion itself runs entirely on your computer, and your images are never sent anywhere.'],
     ['What happens after the year of updates?', 'Obelisk keeps working with every version released during your year. Newer versions need a renewed licence.'],
   ] : []),
   ['Which platforms does it run on?', 'Windows 10 and 11, 64-bit, and macOS 14 or later on Apple silicon (M1 and later).'],

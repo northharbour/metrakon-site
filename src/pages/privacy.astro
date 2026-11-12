@@ -97,6 +97,42 @@ const fp = SITE.formEndpoint && SITE.formProvider.name ? SITE.formProvider : nul
     record for as long as the licence is in use.
   </p>
 
+  <h3 id="licence-check">The licence check in Obelisk</h3>
+  <p>
+    Obelisk, the application, contacts our licence server when it starts and about once a day
+    while it runs. With a licence installed it sends:
+  </p>
+  <ul>
+    <li>your licence file (it contains your name, email address, order number and licence terms);</li>
+    <li>a code that identifies the computer. It is a one-way hash, from which neither the computer’s name nor its serial number can be read;</li>
+    <li>the Obelisk version, whether it runs on macOS or Windows, and the number of frames exported in the current month.</li>
+  </ul>
+  <p>
+    The server checks that the licence file is genuine and answers whether the licence is
+    valid, and which Obelisk version is the newest. It stores the licence number, the
+    computer code, the monthly frame count, the Obelisk version and the time of the first and
+    last check per month. It does not store the licence file, your name, your email address
+    or your IP address. Without a licence (during the trial) Obelisk only asks for the newest
+    version and sends nothing that identifies you or the computer. Images, file names and
+    anything else about your work are never sent.
+  </p>
+  <p>
+    We use this to confirm that a licence is valid and has not been withdrawn, to count the
+    computers and exported frames a licence allows, and to tell you about updates. The legal
+    basis is the performance of the licence contract (Art. 6(1)(b) GDPR) and our legitimate
+    interest in preventing misuse of licences (Art. 6(1)(f) GDPR). Check records are deleted
+    after 13 months.
+  </p>
+  <p>
+    The licence server runs on Cloudflare (Cloudflare, Inc., 101 Townsend Street, San
+    Francisco, CA 94107, USA), which processes the data on our behalf. Its database is located
+    in Western Europe. As with any internet connection, your IP address is transmitted to
+    Cloudflare when Obelisk connects, and Cloudflare may process connection data on servers
+    outside the EU; Cloudflare, Inc. is certified under the EU–US Data Privacy Framework
+    (Art. 45 GDPR). Details:
+    {' '}<a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Cloudflare’s privacy policy</a>.
+  </p>
+
   <h2 id="video">6. Embedded video (YouTube)</h2>
   <p>
     Where a page contains a video, it shows a still image from this site in its place, and your
